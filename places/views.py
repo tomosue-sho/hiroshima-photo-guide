@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from .models import Location, Area
 from django.shortcuts import get_object_or_404
+from .models import About
 
 def about(request):
     return render(request, "places/about.html")
@@ -53,3 +54,9 @@ def area_detail(request, area_id):
             'locations': locations
         }
     )
+
+def about(request):
+    about = About.objects.first()
+    return render(request, 'places/about.html', {
+        'about': about
+    })

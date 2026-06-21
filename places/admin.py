@@ -1,5 +1,6 @@
 from django.contrib import admin
 from .models import Area, Location, Photo
+from .models import About, AboutImage
 
 
 class PhotoInline(admin.TabularInline):
@@ -34,3 +35,6 @@ class PhotoAdmin(admin.ModelAdmin):
         'camera',
         'lens'
     )
+
+admin.site.register(About)
+admin.site.register(AboutImage)
