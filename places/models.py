@@ -120,56 +120,56 @@ class Photo(models.Model):
     def __str__(self):
         return f"{self.location.name} Photo"
 
-def save(self, *args, **kwargs):
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
 
-    super().save(*args, **kwargs)
-
-    try:
-        with open(self.image.path, "rb") as f:
-            tags = exifread.process_file(f)
+        try:
+            if self.image and hasattr(self.image, "path"):
+                with open(self.image.path, "rb") as f:
+                    tags = exifread.process_file(f)
 
         # EXIF優先だが、手入力を潰さない
-        if not self.lens:
-            lens = tags.get("EXIF LensModel")
-            if lens:
-                self.lens = str(lens)
+            if not self.lens:
+                lens = tags.get("EXIF LensModel")
+                if lens:
+                    self.lens = str(lens)
 
-        if not self.camera:
-            camera = tags.get("Image Model")
-            if camera:
-                self.camera = str(camera)
+            if not self.camera:
+                camera = tags.get("Image Model")
+                if camera:
+                    self.camera = str(camera)
 
-        if not self.iso:
-            iso = tags.get("EXIF ISOSpeedRatings")
-            if iso:
-                self.iso = str(iso)
+            if not self.iso:
+                iso = tags.get("EXIF ISOSpeedRatings")
+                if iso:
+                    self.iso = str(iso)
 
-        if not self.aperture:
-            aperture = tags.get("EXIF FNumber")
-            if aperture:
-                self.aperture = str(aperture)
+            if not self.aperture:
+                aperture = tags.get("EXIF FNumber")
+                if aperture:
+                    self.aperture = str(aperture)
 
-        if not self.shutter_speed:
-            shutter = tags.get("EXIF ExposureTime")
-            if shutter:
-                self.shutter_speed = str(shutter)
+            if not self.shutter_speed:
+                shutter = tags.get("EXIF ExposureTime")
+                if shutter:
+                    self.shutter_speed = str(shutter)
 
-        if not self.focal_length:
-            focal = tags.get("EXIF FocalLength")
-            if focal:
-                self.focal_length = str(focal)
+            if not self.focal_length:
+                focal = tags.get("EXIF FocalLength")
+                if focal:
+                    self.focal_length = str(focal)
 
-        super().save(update_fields=[
-            "camera",
-            "lens",
-            "iso",
-            "aperture",
-            "shutter_speed",
-            "focal_length"
-        ])
+            super().save(update_fields=[
+                "camera",
+                "lens",
+                "iso",
+                "aperture",
+                "shutter_speed",
+                "focal_length"
+            ])
 
-    except Exception as e:
-        print("EXIF ERROR:", e)
+        except Exception as e:
+            print("EXIF ERROR:", e)
         
 class About(models.Model):
     title = models.CharField(max_length=200, default="About")
