@@ -1,8 +1,7 @@
 from django.db import models
-from PIL import Image
-from PIL.ExifTags import TAGS
-import exifread
 from fractions import Fraction
+import exifread
+
 
 class Area(models.Model):
     name = models.CharField(max_length=100)
@@ -17,10 +16,13 @@ class Area(models.Model):
         return self.name
 
 
-from django.db import models
-
 class Location(models.Model):
-    area = models.ForeignKey(Area, on_delete=models.CASCADE, null=True, blank=True)
+    area = models.ForeignKey(
+        Area,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True
+    )
 
     name = models.CharField(max_length=200)
     description = models.TextField()
@@ -55,65 +57,28 @@ class Location(models.Model):
     def __str__(self):
         return self.name
 
-class Photo(models.Model):
 
+class Photo(models.Model):
     location = models.ForeignKey(
         Location,
         on_delete=models.CASCADE,
         related_name='photos'
     )
 
-    image = models.ImageField(
-        upload_to='locations/'
-    )
+    image = models.ImageField(upload_to='locations/')
 
-    caption = models.CharField(
-        max_length=200,
-        blank=True
-    )
-
-    camera = models.CharField(
-        max_length=100,
-        blank=True
-    )
-
-    lens = models.CharField(
-        max_length=100,
-        blank=True
-    )
-
-    film = models.CharField(
-        max_length=100,
-        blank=True
-    )
-
-    iso = models.CharField(
-        max_length=50,
-        blank=True
-    )
-
-    aperture = models.CharField(
-        max_length=50,
-        blank=True
-    )
-
-    shutter_speed = models.CharField(
-        max_length=50,
-        blank=True
-    )
-
-    focal_length = models.CharField(
-        max_length=50,
-        blank=True
-    )
+    caption = models.CharField(max_length=200, blank=True)
+    camera = models.CharField(max_length=100, blank=True)
+    lens = models.CharField(max_length=100, blank=True)
+    film = models.CharField(max_length=100, blank=True)
+    iso = models.CharField(max_length=50, blank=True)
+    aperture = models.CharField(max_length=50, blank=True)
+    shutter_speed = models.CharField(max_length=50, blank=True)
+    focal_length = models.CharField(max_length=50, blank=True)
 
     def formatted_aperture(self):
-
         try:
-            return round(
-                float(Fraction(self.aperture)),
-                1
-            )
+            return round(float(Fraction(self.aperture)), 1)
         except:
             return self.aperture
 
@@ -121,14 +86,18 @@ class Photo(models.Model):
         return f"{self.location.name} Photo"
 
     def save(self, *args, **kwargs):
+        # まず通常保存（Cloudinary含め安全）
         super().save(*args, **kwargs)
 
         try:
-            if self.image and hasattr(self.image, "path"):
-                with open(self.image.path, "rb") as f:
-                    tags = exifread.process_file(f)
+            # Cloudinary対応：pathがある場合のみEXIF読む
+            if not self.image or not hasattr(self.image, "path"):
+                return
 
-        # EXIF優先だが、手入力を潰さない
+            with open(self.image.path, "rb") as f:
+                tags = exifread.process_file(f)
+
+            # EXIF優先（手入力は維持）
             if not self.lens:
                 lens = tags.get("EXIF LensModel")
                 if lens:
@@ -159,6 +128,7 @@ class Photo(models.Model):
                 if focal:
                     self.focal_length = str(focal)
 
+            # EXIF更新分だけ保存
             super().save(update_fields=[
                 "camera",
                 "lens",
@@ -170,7 +140,8 @@ class Photo(models.Model):
 
         except Exception as e:
             print("EXIF ERROR:", e)
-        
+
+
 class About(models.Model):
     title = models.CharField(max_length=200, default="About")
     description = models.TextField()
@@ -183,10 +154,11 @@ class About(models.Model):
 
     def __str__(self):
         return self.title
-    
+
+
 class AboutImage(models.Model):
     about = models.ForeignKey(
-        "About",
+        About,
         on_delete=models.CASCADE,
         related_name="images"
     )
