@@ -1,0 +1,76 @@
+{% extends 'places/base.html' %}
+
+{% block title %}Home | Hiroshima Through Film{% endblock %}
+
+{% block content %}
+
+<!-- HERO -->
+<div class="hero-image mb-5">
+
+    <div class="p-5 bg-dark text-white rounded-3">
+
+        <div class="container-fluid py-5">
+
+            <h1 class="display-4">
+                Hiroshima Through Film
+            </h1>
+
+            <p class="col-md-8 fs-5 text-light opacity-75">
+                A visual archive of Hiroshima captured on film.
+                Each area is a chapter of memory, light, and place.
+            </p>
+
+            <a href="#areas" class="btn btn-outline-light mt-3">
+                Enter the Archive
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- AREA SECTION -->
+<h2 id="areas" class="mb-4 display-6">
+    Areas
+</h2>
+
+<div class="row g-4 museum-gallery">
+
+    {% for area in areas %}
+
+    <div class="col-12 col-md-6 col-lg-4">
+
+        <a href="{% url 'area_detail' area.id %}" class="museum-item">
+
+            <div class="museum-frame">
+
+                {% if area.image %}
+                <img src="{{ area.image.url }}"
+                     class="museum-img"
+                     alt="{{ area.name }}">
+                {% else %}
+                <div class="museum-img d-flex align-items-center justify-content-center bg-light">
+                    No Image
+                </div>
+                {% endif %}
+
+                <div class="p-3 text-center">
+
+                    <h5 class="mb-0">
+                        {{ area.name }}
+                    </h5>
+
+                </div>
+
+            </div>
+
+        </a>
+
+    </div>
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}

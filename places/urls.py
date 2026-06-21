@@ -1,0 +1,18 @@
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.home, name='home'),
+    path(
+        'location/<int:location_id>/',
+        views.location_detail,
+        name='location_detail'
+    ),
+    path(
+    'area/<int:area_id>/',
+    views.area_detail,
+    name='area_detail'
+),
+    path("about/", views.about, name="about")
+
+]

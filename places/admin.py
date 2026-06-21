@@ -1,0 +1,36 @@
+from django.contrib import admin
+from .models import Area, Location, Photo
+
+
+class PhotoInline(admin.TabularInline):
+    model = Photo
+    extra = 1
+
+
+@admin.register(Area)
+class AreaAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(Location)
+class LocationAdmin(admin.ModelAdmin):
+    list_display = ('name', 'area')
+    search_fields = ('name',)
+    list_filter = ('area',)
+    inlines = [PhotoInline]
+
+@admin.register(Photo)
+class PhotoAdmin(admin.ModelAdmin):
+    list_display = (
+        "location",
+        "camera",
+        "lens",
+        "iso",
+        "aperture"
+    )
+
+    search_fields = (
+        'location__name',
+        'camera',
+        'lens'
+    )
