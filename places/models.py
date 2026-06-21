@@ -59,12 +59,7 @@ class Location(models.Model):
 
 
 class Photo(models.Model):
-    location = models.ForeignKey(
-        Location,
-        on_delete=models.CASCADE,
-        related_name='photos'
-    )
-
+    location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name='photos')
     image = models.ImageField(upload_to='locations/')
 
     caption = models.CharField(max_length=200, blank=True)
@@ -75,6 +70,13 @@ class Photo(models.Model):
     aperture = models.CharField(max_length=50, blank=True)
     shutter_speed = models.CharField(max_length=50, blank=True)
     focal_length = models.CharField(max_length=50, blank=True)
+
+    def __str__(self):
+        return f"{self.location.name} Photo"
+
+    def save(self, *args, **kwargs):
+        # ❗絶対にEXIFやfile操作しない（Cloudinary安全化）
+        super().save(*args, **kwargs)
 
     def formatted_aperture(self):
         try:
