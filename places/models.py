@@ -1,6 +1,5 @@
 from django.db import models
 from fractions import Fraction
-import exifread
 
 
 class Area(models.Model):
@@ -21,7 +20,8 @@ class Location(models.Model):
         Area,
         on_delete=models.CASCADE,
         null=True,
-        blank=True
+        blank=True,
+        related_name="locations"
     )
 
     name = models.CharField(max_length=200)
@@ -86,10 +86,8 @@ class Photo(models.Model):
         return f"{self.location.name} Photo"
 
     def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-
-        # EXIF処理は一旦完全停止（重要）
-        return
+       super().save(*args, **kwargs)
+       return
 
 
 class About(models.Model):
