@@ -86,47 +86,10 @@ class Photo(models.Model):
         return f"{self.location.name} Photo"
 
     def save(self, *args, **kwargs):
-        try:
-            super().save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
-            if not self.image:
-                return
-
-            if not hasattr(self.image, "path"):
-                return
-
-            with open(self.image.path, "rb") as f:
-                tags = exifread.process_file(f)
-            
-            if not self.lens and "EXIF LensModel" in tags:
-                self.lens = str(tags["EXIF LensModel"])
-
-            if not self.camera and "Image Model" in tags:
-                self.camera = str(tags["Image Model"])
-
-            if not self.iso and "EXIF ISOSpeedRatings" in tags:
-                self.iso = str(tags["EXIF ISOSpeedRatings"])
-
-            if not self.aperture and "EXIF FNumber" in tags:
-                self.aperture = str(tags["EXIF FNumber"])
-
-            if not self.shutter_speed and "EXIF ExposureTime" in tags:
-                self.shutter_speed = str(tags["EXIF ExposureTime"])
-
-            if not self.focal_length and "EXIF FocalLength" in tags:
-                self.focal_length = str(tags["EXIF FocalLength"])
-
-            super().save(update_fields=[
-                "camera",
-                "lens",
-                "iso",
-                "aperture",
-                "shutter_speed",
-                "focal_length"
-            ])
-
-        except Exception as e:
-            print("EXIF ERROR:", e)
+        # EXIF処理は一旦完全停止（重要）
+        return
 
 
 class About(models.Model):
