@@ -86,49 +86,36 @@ class Photo(models.Model):
         return f"{self.location.name} Photo"
 
     def save(self, *args, **kwargs):
-        # まず通常保存（Cloudinary含め安全）
-        super().save(*args, **kwargs)
-
         try:
-            # Cloudinary対応：pathがある場合のみEXIF読む
-            if not self.image or not hasattr(self.image, "path"):
+            super().save(*args, **kwargs)
+
+            if not self.image:
+                return
+
+            if not hasattr(self.image, "path"):
                 return
 
             with open(self.image.path, "rb") as f:
                 tags = exifread.process_file(f)
+            
+            if not self.lens and "EXIF LensModel" in tags:
+                self.lens = str(tags["EXIF LensModel"])
 
-            # EXIF優先（手入力は維持）
-            if not self.lens:
-                lens = tags.get("EXIF LensModel")
-                if lens:
-                    self.lens = str(lens)
+            if not self.camera and "Image Model" in tags:
+                self.camera = str(tags["Image Model"])
 
-            if not self.camera:
-                camera = tags.get("Image Model")
-                if camera:
-                    self.camera = str(camera)
+            if not self.iso and "EXIF ISOSpeedRatings" in tags:
+                self.iso = str(tags["EXIF ISOSpeedRatings"])
 
-            if not self.iso:
-                iso = tags.get("EXIF ISOSpeedRatings")
-                if iso:
-                    self.iso = str(iso)
+            if not self.aperture and "EXIF FNumber" in tags:
+                self.aperture = str(tags["EXIF FNumber"])
 
-            if not self.aperture:
-                aperture = tags.get("EXIF FNumber")
-                if aperture:
-                    self.aperture = str(aperture)
+            if not self.shutter_speed and "EXIF ExposureTime" in tags:
+                self.shutter_speed = str(tags["EXIF ExposureTime"])
 
-            if not self.shutter_speed:
-                shutter = tags.get("EXIF ExposureTime")
-                if shutter:
-                    self.shutter_speed = str(shutter)
+            if not self.focal_length and "EXIF FocalLength" in tags:
+                self.focal_length = str(tags["EXIF FocalLength"])
 
-            if not self.focal_length:
-                focal = tags.get("EXIF FocalLength")
-                if focal:
-                    self.focal_length = str(focal)
-
-            # EXIF更新分だけ保存
             super().save(update_fields=[
                 "camera",
                 "lens",
