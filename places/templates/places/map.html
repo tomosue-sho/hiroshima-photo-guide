@@ -1,0 +1,62 @@
+{% extends 'places/base.html' %}
+
+{% block title %}Map | Hiroshima Through Film{% endblock %}
+
+{% block content %}
+
+<h1 class="display-4 mb-3">Location Map</h1>
+
+<p class="text-muted mb-4">
+    Explore Hiroshima Through Film locations from the map.
+</p>
+
+<div id="location-map"></div>
+
+<link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
+
+<script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+</script>
+
+<script>
+    const map = L.map('location-map').setView([34.395483, 132.453592], 12);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    const locations = [
+        {% for location in locations %}
+        {
+            name: "{{ location.name|escapejs }}",
+            lat: {{ location.latitude }},
+            lng: {{ location.longitude }},
+            url: "{% url 'location_detail' location.id %}",
+            area: "{{ location.area.name|default:''|escapejs }}"
+        },
+        {% endfor %}
+    ];
+
+    locations.forEach(function(location) {
+        const marker = L.marker([location.lat, location.lng]).addTo(map);
+
+        marker.bindPopup(`
+            <strong>${location.name}</strong><br>
+            <span>${location.area}</span><br>
+            <a href="${location.url}">View photos</a>
+        `);
+    });
+
+    if (locations.length > 0) {
+        const bounds = locations.map(location => [location.lat, location.lng]);
+        map.fitBounds(bounds, {
+            padding: [30, 30]
+        });
+    }
+</script>
+
+{% endblock %}

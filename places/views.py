@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from .models import Location, Area
+from .models import Location, Area, Location
 from django.shortcuts import get_object_or_404
 from .models import About
 
@@ -59,4 +59,15 @@ def about(request):
     about = About.objects.first()
     return render(request, 'places/about.html', {
         'about': about
+    })
+    
+def location_map(request):
+    locations = Location.objects.exclude(
+        latitude__isnull=True
+    ).exclude(
+        longitude__isnull=True
+    )
+
+    return render(request, 'places/map.html', {
+        'locations': locations
     })
