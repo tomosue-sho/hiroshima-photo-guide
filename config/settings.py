@@ -126,10 +126,6 @@ USE_TZ = True
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-STATIC_URL = 'static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
-
 AWS_ACCESS_KEY_ID = os.environ.get("R2_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.environ.get("R2_SECRET_ACCESS_KEY")
 
@@ -140,5 +136,12 @@ AWS_S3_ENDPOINT_URL = (
 )
 
 AWS_S3_REGION_NAME = "auto"
+AWS_S3_SIGNATURE_VERSION = "s3v4"
+
+AWS_QUERYSTRING_AUTH = False
+
+AWS_S3_CUSTOM_DOMAIN = (
+    "pub-8e8dc8f4f0b74a38985802440b2a12bb.r2.dev"
+)
 
 DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
