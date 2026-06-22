@@ -27,6 +27,9 @@ class Location(models.Model):
     name = models.CharField(max_length=200)
     description = models.TextField()
     address = models.CharField(max_length=300)
+    
+    latitude = models.FloatField(blank=True, null=True)
+    longitude = models.FloatField(blank=True, null=True)
 
     image = models.ImageField(upload_to='locations/', blank=True, null=True)
     youtube_url = models.URLField(blank=True, null=True)

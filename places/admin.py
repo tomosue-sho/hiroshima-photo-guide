@@ -15,7 +15,7 @@ class AreaAdmin(admin.ModelAdmin):
 
 @admin.register(Location)
 class LocationAdmin(admin.ModelAdmin):
-    list_display = ('name', 'area')
+    list_display = ('name', 'area', 'latitude', 'longitude')
     search_fields = ('name',)
     list_filter = ('area',)
     inlines = [PhotoInline]
