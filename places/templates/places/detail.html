@@ -60,7 +60,7 @@
 
                 <a href="{{ photo.image.url }}"
                    data-lightbox="gallery"
-                   data-title="{{ photo.caption|default:location.name }} | 📷 {{ photo.camera }} | 🔍 {{ photo.lens }} | ISO {{ photo.iso }} | F{{ photo.formatted_aperture }} | {{ photo.shutter_speed }}s | {{ photo.focal_length }}mm"
+                   data-title="{{ photo.caption|default:location.name }} | 📷 {{ photo.camera }} | 🔍 {{ photo.lens }} | ISO {{ photo.iso }} | F{{ photo.formatted_aperture }} | {{ photo.shutter_speed }}s | {{ photo.formatted_focal_length }}mm"
                    class="museum-item">
 
                     <div class="museum-frame">
