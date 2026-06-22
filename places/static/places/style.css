@@ -405,3 +405,45 @@ iframe {
         border-radius: 10px;
     }
 }
+
+/* ===== Photo horizontal gallery ===== */
+
+.photo-scroll-gallery {
+    display: flex;
+
+    gap: 24px;
+
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    padding-bottom: 20px;
+
+    
+}
+
+.photo-scroll-item {
+    flex: 0 0 300px;
+
+    
+}
+
+
+/* scrollbar */
+.photo-scroll-gallery::-webkit-scrollbar {
+    height: 8px;
+}
+
+.photo-scroll-gallery::-webkit-scrollbar-thumb {
+    background: #c8c2b8;
+    border-radius: 10px;
+}
+
+
+/* mobile */
+@media (max-width: 768px) {
+
+    .photo-scroll-item {
+        flex-basis: 80%;
+    }
+
+}
