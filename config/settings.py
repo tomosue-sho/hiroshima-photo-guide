@@ -44,8 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'places',
-    'cloudinary',
-    'cloudinary_storage',
+    'storages',
 ]
 
 MIDDLEWARE = [
@@ -131,15 +130,15 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-import cloudinary
-import cloudinary.uploader
-import cloudinary.api
+AWS_ACCESS_KEY_ID = os.environ.get("R2_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.environ.get("R2_SECRET_ACCESS_KEY")
 
-cloudinary.config(
-    cloud_name=os.environ.get("CLOUDINARY_CLOUD_NAME"),
-    api_key=os.environ.get("CLOUDINARY_API_KEY"),
-    api_secret=os.environ.get("CLOUDINARY_API_SECRET"),
-    )
+AWS_STORAGE_BUCKET_NAME = os.environ.get("R2_BUCKET_NAME")
 
-DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
+AWS_S3_ENDPOINT_URL = (
+    f"https://{os.environ.get('R2_ACCOUNT_ID')}.r2.cloudflarestorage.com"
+)
 
+AWS_S3_REGION_NAME = "auto"
+
+DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
