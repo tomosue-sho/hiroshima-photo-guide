@@ -29,12 +29,19 @@
 </div>
 
 <h3 class="mb-3">Locations</h3>
+<div class="location-jump-list mb-4">
+    {% for location in locations %}
+        <a href="#location-{{ location.id }}" class="location-chip">
+            {{ location.name }}
+        </a>
+    {% endfor %}
+</div>
 
 <div class="row">
 
     {% for location in locations %}
 
-    <div class="col-md-6 mb-4">
+    <div class="col-md-6 mb-4" id="location-{{ location.id }}">
 
         <div class="card h-100 shadow-sm">
 

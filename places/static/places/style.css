@@ -170,3 +170,223 @@ iframe {
     color: #2f2d2a;
 }
 
+/* ===== Mobile layout fix ===== */
+
+@media (max-width: 768px) {
+
+    body {
+        overflow-x: hidden;
+    }
+
+    .hero-image {
+        border-radius: 10px;
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .hero-image .p-5 {
+        padding: 2rem 1.25rem !important;
+    }
+
+    .hero-image .container-fluid {
+        padding: 1.5rem 0 !important;
+    }
+
+    .hero-image h1,
+    .display-4 {
+        font-size: 2.2rem;
+        line-height: 1.1;
+    }
+
+    .hero-image p {
+        font-size: 1rem !important;
+        line-height: 1.7;
+        width: 100%;
+    }
+
+    .hero-image .btn {
+        width: 100%;
+        padding: 0.75rem 1rem;
+    }
+
+    #areas {
+        font-size: 2rem;
+        margin-top: 2rem;
+    }
+
+    .museum-gallery {
+        margin-top: 1rem;
+        padding-bottom: 40px;
+    }
+
+    .museum-frame {
+        padding: 10px;
+    }
+
+    .museum-frame::before {
+        inset: 5px;
+    }
+
+    .museum-img {
+        height: 220px;
+    }
+
+    .museum-frame h5 {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+
+    .hero-image .p-5 {
+        padding: 1.5rem 1rem !important;
+    }
+
+    .hero-image h1,
+    .display-4 {
+        font-size: 1.9rem;
+    }
+
+    .museum-img {
+        height: 200px;
+    }
+
+    .museum-gallery .col-12 {
+        margin-bottom: 12px;
+    }
+}
+
+/* ===== Hero mobile adjustment ===== */
+
+@media (max-width: 768px) {
+
+    .hero-image {
+        margin-bottom: 2rem !important;
+    }
+
+    .hero-image .p-5 {
+        padding: 1.5rem !important;
+    }
+
+    .hero-image .py-5 {
+        padding-top: 1rem !important;
+        padding-bottom: 1rem !important;
+    }
+
+    .hero-image h1 {
+        font-size: 2rem;
+        line-height: 1.15;
+    }
+
+    .hero-image p {
+        font-size: 0.95rem !important;
+        line-height: 1.5;
+        margin-bottom: 0.8rem;
+    }
+
+    .hero-image .btn {
+        font-size: 0.9rem;
+        padding: 0.45rem 0.9rem;
+    }
+}
+
+/* ===== Force mobile hero compact ===== */
+
+@media (max-width: 768px) {
+
+    .hero-image {
+        margin-bottom: 20px !important;
+    }
+
+    .hero-image > .p-5 {
+        padding: 16px !important;
+    }
+
+    .hero-image .container-fluid {
+        padding-top: 8px !important;
+        padding-bottom: 8px !important;
+    }
+
+    .hero-image h1.display-4 {
+        font-size: 1.8rem !important;
+        margin-bottom: 10px;
+    }
+
+    .hero-image p {
+        font-size: 0.9rem !important;
+        margin-bottom: 10px;
+    }
+
+    .hero-image .btn {
+        margin-top: 5px !important;
+    }
+}
+
+.location-jump-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.location-chip {
+    display: inline-block;
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    color: #3f3a34;
+    background: #fff;
+    border: 1px solid #e4ded4;
+    border-radius: 999px;
+    text-decoration: none;
+}
+
+.location-chip:hover {
+    background: #2f2d2a;
+    color: #fff;
+}
+
+@media (max-width: 768px) {
+    .card-img-top {
+        height: 170px !important;
+    }
+
+    .card-body {
+        padding: 0.9rem;
+    }
+
+    .card-text {
+        font-size: 0.9rem;
+    }
+}
+
+/* ===== Mobile film gallery horizontal scroll ===== */
+
+@media (max-width: 768px) {
+
+    .museum-gallery {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        gap: 14px;
+        padding-bottom: 20px;
+        margin-left: -4px;
+        margin-right: -4px;
+        scroll-snap-type: x mandatory;
+    }
+
+    .museum-gallery > .col-12,
+    .museum-gallery > .col-sm-6,
+    .museum-gallery > .col-lg-4 {
+        flex: 0 0 82%;
+        max-width: 82%;
+        margin-bottom: 0;
+        scroll-snap-align: start;
+    }
+
+    .museum-gallery .museum-img {
+        height: 260px;
+    }
+
+    .photo-meta {
+        font-size: 0.7rem;
+    }
+}

@@ -59,7 +59,12 @@ class Location(models.Model):
 
 
 class Photo(models.Model):
-    location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name='photos')
+    location = models.ForeignKey(
+        Location,
+        on_delete=models.CASCADE,
+        related_name='photos'
+    )
+
     image = models.ImageField(upload_to='locations/')
 
     caption = models.CharField(max_length=200, blank=True)
@@ -71,25 +76,80 @@ class Photo(models.Model):
     shutter_speed = models.CharField(max_length=50, blank=True)
     focal_length = models.CharField(max_length=50, blank=True)
 
-    def __str__(self):
-        return f"{self.location.name} Photo"
-
-    def save(self, *args, **kwargs):
-        # ❗絶対にEXIFやfile操作しない（Cloudinary安全化）
-        super().save(*args, **kwargs)
-
     def formatted_aperture(self):
         try:
             return round(float(Fraction(self.aperture)), 1)
         except:
             return self.aperture
+        
+    def formatted_focal_length(self):
+        try:
+            return round(float(Fraction(self.focal_length)))
+        except:
+            return self.focal_length
 
     def __str__(self):
         return f"{self.location.name} Photo"
 
     def save(self, *args, **kwargs):
-       super().save(*args, **kwargs)
-       return
+        # まず画像をR2へ保存
+        super().save(*args, **kwargs)
+
+        # 画像がない場合は何もしない
+        if not self.image:
+            return
+
+        try:
+            import exifread
+
+            # R2対応：self.image.path は使わない
+            self.image.open("rb")
+            tags = exifread.process_file(self.image, details=False)
+            self.image.close()
+
+            update_fields = []
+
+            if not self.lens:
+                lens = tags.get("EXIF LensModel")
+                if lens:
+                    self.lens = str(lens)
+                    update_fields.append("lens")
+
+            if not self.camera:
+                camera = tags.get("Image Model")
+                if camera:
+                    self.camera = str(camera)
+                    update_fields.append("camera")
+
+            if not self.iso:
+                iso = tags.get("EXIF ISOSpeedRatings")
+                if iso:
+                    self.iso = str(iso)
+                    update_fields.append("iso")
+
+            if not self.aperture:
+                aperture = tags.get("EXIF FNumber")
+                if aperture:
+                    self.aperture = str(aperture)
+                    update_fields.append("aperture")
+
+            if not self.shutter_speed:
+                shutter = tags.get("EXIF ExposureTime")
+                if shutter:
+                    self.shutter_speed = str(shutter)
+                    update_fields.append("shutter_speed")
+
+            if not self.focal_length:
+                focal = tags.get("EXIF FocalLength")
+                if focal:
+                    self.focal_length = str(focal)
+                    update_fields.append("focal_length")
+
+            if update_fields:
+                super().save(update_fields=update_fields)
+
+        except Exception as e:
+            print("EXIF SKIPPED:", e)
 
 
 class About(models.Model):
