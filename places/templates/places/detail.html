@@ -200,20 +200,19 @@
     
         setInterval(function () {
             if (userInteracted) return;
-    
+        
             const maxScroll = gallery.scrollWidth - gallery.clientWidth;
-    
+        
+            if (maxScroll <= 10) return;
+        
             if (gallery.scrollLeft >= maxScroll - 5) {
-                slowScrollTo(0, 2000);
+                slowScrollTo(0, 2500);
             } else {
-                slowScrollTo(
-                    gallery.scrollLeft + 320,
-                    2000
-                );
+                const next = Math.min(gallery.scrollLeft + 320, maxScroll);
+                slowScrollTo(next, 2500);
             }
-    
-        }, 4500);
-    
+        
+        }, 5000);
     
         gallery.addEventListener("touchstart", function () {
             userInteracted = true;
