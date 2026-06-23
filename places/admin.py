@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import Area, Location, Photo
 from .models import About, AboutImage
-
+from .models import Gear
 
 class PhotoInline(admin.TabularInline):
     model = Photo
@@ -38,3 +38,9 @@ class PhotoAdmin(admin.ModelAdmin):
 
 admin.site.register(About)
 admin.site.register(AboutImage)
+
+@admin.register(Gear)
+class GearAdmin(admin.ModelAdmin):
+    list_display = ("name", "gear_type")
+    list_filter = ("gear_type",)
+    search_fields = ("name", "description")

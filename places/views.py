@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from .models import Location, Area, Location
 from django.shortcuts import get_object_or_404
 from .models import About
+from .models import Gear
 
 def about(request):
     return render(request, "places/about.html")
@@ -79,4 +80,10 @@ def location_photos(request, location_id):
     return render(request, 'places/location_photos.html', {
         'location': location,
         'photos': photos
+    })
+    
+def gear_list(request):
+    gears = Gear.objects.all()
+    return render(request, "places/gear.html", {
+        "gears": gears
     })

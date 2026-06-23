@@ -7,24 +7,34 @@
     {% if about %}
 
         {% if about.image %}
-            <img src="{{ about.image.url }}" class="hero-photo mb-4">
+            <img src="{{ about.image.url }}"
+                 class="about-main-photo mb-4"
+                 alt="{{ about.title }}">
         {% endif %}
 
         <h1 class="display-4 mb-3">
             {{ about.title }}
         </h1>
 
-        <p class="lead">
-            {{ about.description }}
+        <p class="lead about-description">
+            {{ about.description|linebreaks }}
         </p>
 
         {% if about.images.all %}
+
+        <h3 class="mt-5 mb-3">Behind the Archive</h3>
 
         <div class="row g-3 mb-5">
 
             {% for img in about.images.all %}
                 <div class="col-6 col-md-4">
-                    <img src="{{ img.image.url }}" class="img-fluid rounded shadow-sm">
+                    <a href="{{ img.image.url }}"
+                       data-lightbox="about-gallery"
+                       data-title="{{ about.title }}">
+                        <img src="{{ img.image.url }}"
+                             class="img-fluid rounded shadow-sm about-gallery-img"
+                             alt="{{ about.title }}">
+                    </a>
                 </div>
             {% endfor %}
 

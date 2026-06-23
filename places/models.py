@@ -177,3 +177,19 @@ class AboutImage(models.Model):
     )
 
     image = models.ImageField(upload_to="about/")
+    
+class Gear(models.Model):
+    GEAR_TYPES = [
+        ("camera", "Camera"),
+        ("lens", "Lens"),
+        ("film", "Film"),
+        ("accessory", "Accessory"),
+    ]
+
+    name = models.CharField(max_length=200)
+    gear_type = models.CharField(max_length=50, choices=GEAR_TYPES, default="camera")
+    description = models.TextField()
+    image = models.ImageField(upload_to="gear/", blank=True, null=True)
+
+    def __str__(self):
+        return self.name
