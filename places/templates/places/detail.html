@@ -30,15 +30,13 @@
     <p class="text-muted">Hiroshima Through Film Collection</p>
 </div>
 
-<div class="row g-5">
-    
-    <!-- LEFT: CONTENT -->
-    <div class="col-md-8">
+<div class="row g-5 mb-5">
 
-        {% if location.youtube_url %}
+    {% if location.youtube_url %}
+    <div class="col-md-6">
         <h3 class="mb-3">Video</h3>
-    
-        <div class="ratio ratio-16x9 mb-5">
+
+        <div class="ratio ratio-16x9">
             <iframe
                 src="{{ location.get_youtube_embed_url }}"
                 title="YouTube video player"
@@ -48,22 +46,28 @@
                 allowfullscreen>
             </iframe>
         </div>
+    </div>
+
+    <div class="col-md-6">
+    {% else %}
+    <div class="col-12">
     {% endif %}
 
-    <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4">
-        <h3 class="mb-0">Film Gallery</h3>
-    
-        <a href="{% url 'location_photos' location.id %}"
-           class="btn btn-outline-dark btn-sm">
-            View All Photos
-        </a>
-    </div>
+        <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4">
+            <h3 class="mb-0">Film Gallery</h3>
+
+            <a href="{% url 'location_photos' location.id %}"
+               class="btn btn-outline-dark btn-sm">
+                View All Photos
+            </a>
+        </div>
 
         <div class="photo-scroll-gallery">
 
             {% for photo in location.photos.all %}
-            
-        <div class="photo-scroll-item">
+
+            <div class="photo-scroll-item">
+
                 <a href="{{ photo.image.url }}"
                    data-lightbox="gallery"
                    data-title="{{ photo.caption|default:location.name }} | 📷 {{ photo.camera }} | 🔍 {{ photo.lens }} | ISO {{ photo.iso }} | F{{ photo.formatted_aperture }} | {{ photo.shutter_speed }}s | {{ photo.formatted_focal_length }}mm"
@@ -111,38 +115,35 @@
 
     </div>
 
-    <!-- RIGHT: INFO PANEL -->
-    <div class="col-md-4">
+</div>
 
-        <div class="location-info-card p-4">
+<div class="location-info-card p-4 p-md-5 mb-5">
 
-            <h3 class="mb-3">About This Location</h3>
+    <h3 class="mb-3">About This Location</h3>
 
-            <p class="lead">{{ location.description }}</p>
-
-            <hr>
-
-            <h5>Location Information</h5>
-
-            <p>{{ location.address }}</p>
-
-            {% if location.latitude and location.longitude %}
-<a class="btn btn-dark w-100 mt-3"
-   target="_blank"
-   href="https://www.google.com/maps/search/?api=1&query={{ location.latitude }},{{ location.longitude }}">
-    Open in Google Maps
-</a>
-{% else %}
-<a class="btn btn-dark w-100 mt-3"
-   target="_blank"
-   href="https://www.google.com/maps/search/?api=1&query={{ location.address }}">
-    Open in Google Maps
-</a>
-{% endif %}
-
-        </div>
-
+    <div class="location-description">
+        {{ location.description|linebreaks }}
     </div>
+
+    <hr>
+
+    <h5>Location Information</h5>
+
+    <p>{{ location.address }}</p>
+
+    {% if location.latitude and location.longitude %}
+    <a class="btn btn-dark mt-3"
+       target="_blank"
+       href="https://www.google.com/maps/search/?api=1&query={{ location.latitude }},{{ location.longitude }}">
+        Open in Google Maps
+    </a>
+    {% else %}
+    <a class="btn btn-dark mt-3"
+       target="_blank"
+       href="https://www.google.com/maps/search/?api=1&query={{ location.address }}">
+        Open in Google Maps
+    </a>
+    {% endif %}
 
 </div>
 

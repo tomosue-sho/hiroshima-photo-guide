@@ -526,3 +526,16 @@ iframe {
         height: 160px;
     }
 }
+
+.location-description {
+    max-width: 900px;
+    line-height: 1.9;
+    font-size: 1.05rem;
+}
+
+@media (max-width: 768px) {
+    .location-description {
+        font-size: 1rem;
+        line-height: 1.8;
+    }
+}
