@@ -447,3 +447,45 @@ iframe {
     }
 
 }
+
+/* ===== Full photo collection page ===== */
+
+.photo-grid-gallery {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+    padding-bottom: 60px;
+}
+
+.photo-grid-item {
+    min-width: 0;
+}
+
+.photo-grid-img {
+    width: 100%;
+    height: 260px;
+    object-fit: cover;
+    display: block;
+}
+
+@media (max-width: 992px) {
+    .photo-grid-gallery {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 22px;
+    }
+
+    .photo-grid-img {
+        height: 240px;
+    }
+}
+
+@media (max-width: 576px) {
+    .photo-grid-gallery {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+
+    .photo-grid-img {
+        height: 260px;
+    }
+}

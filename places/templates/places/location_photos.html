@@ -1,0 +1,103 @@
+{% extends 'places/base.html' %}
+
+{% block title %}Photos | {{ location.name }} | Hiroshima Through Film{% endblock %}
+
+{% block content %}
+
+<nav class="breadcrumb-container mb-3">
+    <a href="{% url 'home' %}">Home</a>
+    <span>›</span>
+
+    {% if location.area %}
+    <a href="{% url 'area_detail' location.area.id %}">
+        {{ location.area.name }}
+    </a>
+    <span>›</span>
+    {% endif %}
+
+    <a href="{% url 'location_detail' location.id %}">
+        {{ location.name }}
+    </a>
+
+    <span>›</span>
+    <span class="current">Photos</span>
+</nav>
+
+<div class="mb-5">
+    <h1 class="display-4">{{ location.name }}</h1>
+    <p class="text-muted">
+        Photo Collection
+    </p>
+
+    <a href="{% url 'location_detail' location.id %}" class="btn btn-outline-dark btn-sm">
+        ← Back to Location
+    </a>
+</div>
+
+<div class="photo-grid-gallery">
+
+    {% for photo in photos %}
+
+    <div class="photo-grid-item">
+
+        <a href="{{ photo.image.url }}"
+           data-lightbox="location-photo-list"
+           data-title="{{ photo.caption|default:location.name }} | 📷 {{ photo.camera }} | 🔍 {{ photo.lens }} | ISO {{ photo.iso }} | F{{ photo.formatted_aperture }} | {{ photo.shutter_speed }}s | {{ photo.formatted_focal_length }}mm">
+
+            <div class="museum-frame">
+                <img src="{{ photo.image.url }}"
+                     class="photo-grid-img"
+                     alt="{{ photo.caption|default:location.name }}">
+            </div>
+
+        </a>
+
+        {% if photo.caption %}
+        <p class="museum-caption">{{ photo.caption }}</p>
+        {% endif %}
+
+        <div class="photo-meta">
+
+            {% if photo.camera %}
+            <div>📷 {{ photo.camera }}</div>
+            {% endif %}
+
+            {% if photo.lens %}
+            <div>🔍 {{ photo.lens }}</div>
+            {% endif %}
+
+            <div>
+                {% if photo.iso %}
+                    ISO {{ photo.iso }}
+                {% endif %}
+
+                {% if photo.aperture %}
+                    · F{{ photo.formatted_aperture }}
+                {% endif %}
+
+                {% if photo.shutter_speed %}
+                    · {{ photo.shutter_speed }}s
+                {% endif %}
+
+                {% if photo.focal_length %}
+                    · {{ photo.formatted_focal_length }}mm
+                {% endif %}
+            </div>
+
+            {% if photo.film %}
+            <div>🎞 {{ photo.film }}</div>
+            {% endif %}
+
+        </div>
+
+    </div>
+
+    {% empty %}
+
+    <p class="text-muted">No photos available yet.</p>
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}

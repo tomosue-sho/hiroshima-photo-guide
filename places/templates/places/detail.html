@@ -50,7 +50,14 @@
         </div>
     {% endif %}
 
-        <h3 class="mb-4 border-bottom pb-3">Film Gallery</h3>
+    <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4">
+        <h3 class="mb-0">Film Gallery</h3>
+    
+        <a href="{% url 'location_photos' location.id %}"
+           class="btn btn-outline-dark btn-sm">
+            View All Photos
+        </a>
+    </div>
 
         <div class="photo-scroll-gallery">
 
