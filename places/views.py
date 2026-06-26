@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from .models import Location, Area, Location
 from django.shortcuts import get_object_or_404
 from .models import About
-from .models import Gear
+from .models import Gear, Collaborator
 from .forms import MessageForm
 
 def about(request):
@@ -59,9 +59,16 @@ def area_detail(request, area_id):
 
 def about(request):
     about = About.objects.first()
-    return render(request, 'places/about.html', {
-        'about': about
-    })
+    collaborators = Collaborator.objects.filter(is_visible=True)
+
+    return render(
+        request,
+        "places/about.html",
+        {
+            "about": about,
+            "collaborators": collaborators,
+        }
+    )
     
 def location_map(request):
     locations = Location.objects.exclude(

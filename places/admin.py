@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import Area, Location, Photo
-from .models import About, AboutImage
+from .models import About, AboutImage, Collaborator
 from .models import Gear, Message
 
 class PhotoInline(admin.TabularInline):
@@ -51,3 +51,9 @@ class MessageAdmin(admin.ModelAdmin):
     list_filter = ("is_read", "country", "created_at")
     search_fields = ("name", "email", "country", "suggested_location", "message")
     readonly_fields = ("created_at",)
+    
+@admin.register(Collaborator)
+class CollaboratorAdmin(admin.ModelAdmin):
+    list_display = ("name", "role", "is_visible", "created_at")
+    list_filter = ("is_visible", "created_at")
+    search_fields = ("name", "role", "description")

@@ -462,3 +462,19 @@ class Message(models.Model):
 
     def __str__(self):
         return f"{self.name} - {self.suggested_location or 'Message'}"
+    
+class Collaborator(models.Model):
+    name = models.CharField(max_length=100)
+    role = models.CharField(max_length=200, blank=True)
+    description = models.TextField()
+    image = models.ImageField(upload_to="collaborators/", blank=True, null=True)
+    website_url = models.URLField(blank=True, null=True)
+    instagram_url = models.URLField(blank=True, null=True)
+    is_visible = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["name"]
+
+    def __str__(self):
+        return self.name
