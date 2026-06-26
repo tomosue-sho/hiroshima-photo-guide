@@ -1,0 +1,62 @@
+{% extends 'places/base.html' %}
+
+{% block title %}Contact | Hiroshima Through Film{% endblock %}
+
+{% block content %}
+
+<div class="container my-5">
+
+    <div class="mb-5">
+        <h1 class="display-5">Contact / Suggest a Location</h1>
+        <p class="text-muted">
+            Do you know a beautiful or hidden place in Hiroshima?
+            Please send me your message or location suggestion.
+        </p>
+    </div>
+
+    <div class="location-info-card p-4 p-md-5">
+
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="mb-3">
+                {{ form.name.label_tag }}
+                {{ form.name }}
+                {{ form.name.errors }}
+            </div>
+
+            <div class="mb-3">
+                {{ form.email.label_tag }}
+                {{ form.email }}
+                {{ form.email.errors }}
+            </div>
+
+            <div class="mb-3">
+                {{ form.country.label_tag }}
+                {{ form.country }}
+                {{ form.country.errors }}
+            </div>
+
+            <div class="mb-3">
+                {{ form.suggested_location.label_tag }}
+                {{ form.suggested_location }}
+                {{ form.suggested_location.errors }}
+            </div>
+
+            <div class="mb-4">
+                {{ form.message.label_tag }}
+                {{ form.message }}
+                {{ form.message.errors }}
+            </div>
+
+            <button type="submit" class="btn btn-dark">
+                Send Message
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -447,3 +447,18 @@ class Gear(models.Model):
 
     def __str__(self):
         return self.name
+
+class Message(models.Model):
+    name = models.CharField(max_length=100)
+    email = models.EmailField(blank=True)
+    country = models.CharField(max_length=100, blank=True)
+    suggested_location = models.CharField(max_length=200, blank=True)
+    message = models.TextField()
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.name} - {self.suggested_location or 'Message'}"

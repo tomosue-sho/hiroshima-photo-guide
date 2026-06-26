@@ -3,6 +3,7 @@ from .models import Location, Area, Location
 from django.shortcuts import get_object_or_404
 from .models import About
 from .models import Gear
+from .forms import MessageForm
 
 def about(request):
     return render(request, "places/about.html")
@@ -87,3 +88,16 @@ def gear_list(request):
     return render(request, "places/gear.html", {
         "gears": gears
     })
+    
+def contact(request):
+    if request.method == "POST":
+        form = MessageForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+            return render(request, "places/contact_success.html")
+
+    else:
+        form = MessageForm()
+
+    return render(request, "places/contact.html", {"form": form})

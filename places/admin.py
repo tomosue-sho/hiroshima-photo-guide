@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import Area, Location, Photo
 from .models import About, AboutImage
-from .models import Gear
+from .models import Gear, Message
 
 class PhotoInline(admin.TabularInline):
     model = Photo
@@ -44,3 +44,10 @@ class GearAdmin(admin.ModelAdmin):
     list_display = ("name", "gear_type")
     list_filter = ("gear_type",)
     search_fields = ("name", "description")
+    
+@admin.register(Message)
+class MessageAdmin(admin.ModelAdmin):
+    list_display = ("name", "country", "suggested_location", "is_read", "created_at")
+    list_filter = ("is_read", "country", "created_at")
+    search_fields = ("name", "email", "country", "suggested_location", "message")
+    readonly_fields = ("created_at",)

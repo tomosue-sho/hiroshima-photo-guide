@@ -9,4 +9,5 @@ urlpatterns = [
     path("map/", views.location_map, name="location_map"),
     path('location/<int:location_id>/photos/',views.location_photos,name='location_photos'),
     path("gear/", views.gear_list, name="gear_list"),
+    path("contact/", views.contact, name="contact"),
 ]
