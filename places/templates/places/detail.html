@@ -19,9 +19,19 @@
 </nav>
 
 <div class="hero-image mb-5">
-    <img src="{{ location.image.url }}"
-         alt="{{ location.name }}"
-         class="img-fluid w-100 hero-photo">
+    {% if location.image_medium %}
+        <img src="{{ location.image_medium.url }}"
+             alt="{{ location.name }}"
+             class="img-fluid w-100 hero-photo"
+             loading="eager"
+             decoding="async">
+    {% else %}
+        <img src="{{ location.image.url }}"
+             alt="{{ location.name }}"
+             class="img-fluid w-100 hero-photo"
+             loading="eager"
+             decoding="async">
+    {% endif %}
 </div>
 {% endif %}
 
@@ -71,16 +81,27 @@
             <div class="photo-scroll-item">
 
                 <a href="{{ photo.image.url }}"
-                   data-lightbox="gallery"
-                   data-title="{{ photo.caption|default:location.name }} | 📷 {{ photo.camera }} | 🔍 {{ photo.lens }} | ISO {{ photo.iso }} | F{{ photo.formatted_aperture }} | {{ photo.shutter_speed }}s | {{ photo.formatted_focal_length }}mm"
-                   class="museum-item">
+   data-lightbox="gallery"
+   data-title="{{ photo.caption|default:location.name }} | 📷 {{ photo.camera }} | 🔍 {{ photo.lens }} | ISO {{ photo.iso }} | F{{ photo.formatted_aperture }} | {{ photo.shutter_speed }}s | {{ photo.formatted_focal_length }}mm"
+   class="museum-item">
 
-                    <div class="museum-frame">
-                        <img src="{{ photo.image.url }}"
-                             class="img-fluid museum-img">
-                    </div>
+    <div class="museum-frame">
+        {% if photo.image_thumb %}
+    <img src="{{ photo.image_thumb.url }}"
+         class="img-fluid museum-img"
+         alt="{{ photo.caption|default:location.name }}"
+         loading="lazy"
+         decoding="async">
+{% elif photo.image %}
+    <img src="{{ photo.image.url }}"
+         class="img-fluid museum-img"
+         alt="{{ photo.caption|default:location.name }}"
+         loading="lazy"
+         decoding="async">
+{% endif %}
+    </div>
 
-                </a>
+</a>
 
                 {% if photo.caption %}
                 <p class="museum-caption">{{ photo.caption }}</p>

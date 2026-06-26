@@ -41,16 +41,26 @@
     <div class="photo-grid-item">
 
         <a href="{{ photo.image.url }}"
-           data-lightbox="location-photo-list"
-           data-title="{{ photo.caption|default:location.name }} | 📷 {{ photo.camera }} | 🔍 {{ photo.lens }} | ISO {{ photo.iso }} | F{{ photo.formatted_aperture }} | {{ photo.shutter_speed }}s | {{ photo.formatted_focal_length }}mm">
-
-            <div class="museum-frame">
-                <img src="{{ photo.image.url }}"
-                     class="photo-grid-img"
-                     alt="{{ photo.caption|default:location.name }}">
-            </div>
-
-        </a>
+        data-lightbox="location-photo-list"
+        data-title="{{ photo.caption|default:location.name }} | 📷 {{ photo.camera }} | 🔍 {{ photo.lens }} | ISO {{ photo.iso }} | F{{ photo.formatted_aperture }} | {{ photo.shutter_speed }}s | {{ photo.formatted_focal_length }}mm">
+     
+         <div class="museum-frame">
+             {% if photo.image_thumb %}
+                 <img src="{{ photo.image_thumb.url }}"
+                      class="photo-grid-img"
+                      alt="{{ photo.caption|default:location.name }}"
+                      loading="lazy"
+                      decoding="async">
+             {% elif photo.image %}
+                 <img src="{{ photo.image.url }}"
+                      class="photo-grid-img"
+                      alt="{{ photo.caption|default:location.name }}"
+                      loading="lazy"
+                      decoding="async">
+             {% endif %}
+         </div>
+     
+     </a>
 
         {% if photo.caption %}
         <p class="museum-caption">{{ photo.caption }}</p>

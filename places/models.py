@@ -1,5 +1,6 @@
 from django.db import models
 from fractions import Fraction
+from .image_utils import create_webp_variant, build_variant_filename
 
 
 class Area(models.Model):
@@ -11,9 +12,95 @@ class Area(models.Model):
         null=True
     )
 
+    image_large = models.ImageField(
+        upload_to="areas/large/",
+        blank=True,
+        null=True
+    )
+    image_medium = models.ImageField(
+        upload_to="areas/medium/",
+        blank=True,
+        null=True
+    )
+    image_thumb = models.ImageField(
+        upload_to="areas/thumb/",
+        blank=True,
+        null=True
+    )
+
+    def save(self, *args, **kwargs):
+        old_image_name = None
+
+        if self.pk:
+            try:
+                old = Area.objects.get(pk=self.pk)
+                old_image_name = old.image.name
+            except Area.DoesNotExist:
+                pass
+
+        super().save(*args, **kwargs)
+
+        if not self.image:
+            return
+
+        image_changed = old_image_name != self.image.name
+
+        should_generate = (
+            image_changed
+            or not self.image_large
+            or not self.image_medium
+            or not self.image_thumb
+        )
+
+        if not should_generate:
+            return
+
+        try:
+            large = create_webp_variant(
+                self.image,
+                max_width=1800,
+                quality=82
+            )
+            medium = create_webp_variant(
+                self.image,
+                max_width=1200,
+                quality=78
+            )
+            thumb = create_webp_variant(
+                self.image,
+                max_width=600,
+                quality=75
+            )
+
+            self.image_large.save(
+                build_variant_filename(self.image.name, "large"),
+                large,
+                save=False
+            )
+            self.image_medium.save(
+                build_variant_filename(self.image.name, "medium"),
+                medium,
+                save=False
+            )
+            self.image_thumb.save(
+                build_variant_filename(self.image.name, "thumb"),
+                thumb,
+                save=False
+            )
+
+            super().save(
+                update_fields=[
+                    "image_large",
+                    "image_medium",
+                    "image_thumb",
+                ]
+            )
+
+        except Exception as e:
+            print("AREA IMAGE VARIANT SKIPPED:", e)
+
     def __str__(self):
         return self.name
-
 
 class Location(models.Model):
     area = models.ForeignKey(
@@ -32,6 +119,23 @@ class Location(models.Model):
     longitude = models.FloatField(blank=True, null=True)
 
     image = models.ImageField(upload_to='locations/', blank=True, null=True)
+
+    image_large = models.ImageField(
+        upload_to="locations/large/",
+        blank=True,
+        null=True
+    )
+    image_medium = models.ImageField(
+        upload_to="locations/medium/",
+        blank=True,
+        null=True
+    )
+    image_thumb = models.ImageField(
+        upload_to="locations/thumb/",
+        blank=True,
+        null=True
+    )
+
     youtube_url = models.URLField(blank=True, null=True)
 
     def get_youtube_embed_url(self):
@@ -57,6 +161,77 @@ class Location(models.Model):
 
         return None
 
+    def save(self, *args, **kwargs):
+        old_image_name = None
+
+        if self.pk:
+            try:
+                old = Location.objects.get(pk=self.pk)
+                old_image_name = old.image.name
+            except Location.DoesNotExist:
+                pass
+
+        super().save(*args, **kwargs)
+
+        if not self.image:
+            return
+
+        image_changed = old_image_name != self.image.name
+
+        should_generate = (
+            image_changed
+            or not self.image_large
+            or not self.image_medium
+            or not self.image_thumb
+        )
+
+        if not should_generate:
+            return
+
+        try:
+            large = create_webp_variant(
+                self.image,
+                max_width=1800,
+                quality=82
+            )
+            medium = create_webp_variant(
+                self.image,
+                max_width=1200,
+                quality=78
+            )
+            thumb = create_webp_variant(
+                self.image,
+                max_width=600,
+                quality=75
+            )
+
+            self.image_large.save(
+                build_variant_filename(self.image.name, "large"),
+                large,
+                save=False
+            )
+            self.image_medium.save(
+                build_variant_filename(self.image.name, "medium"),
+                medium,
+                save=False
+            )
+            self.image_thumb.save(
+                build_variant_filename(self.image.name, "thumb"),
+                thumb,
+                save=False
+            )
+
+            super().save(
+                update_fields=[
+                    "image_large",
+                    "image_medium",
+                    "image_thumb",
+                ]
+            )
+
+        except Exception as e:
+            print("LOCATION IMAGE VARIANT SKIPPED:", e)
+
     def __str__(self):
         return self.name
 
@@ -69,6 +244,22 @@ class Photo(models.Model):
     )
 
     image = models.ImageField(upload_to='locations/')
+
+    image_large = models.ImageField(
+        upload_to="locations/large/",
+        blank=True,
+        null=True
+    )
+    image_medium = models.ImageField(
+        upload_to="locations/medium/",
+        blank=True,
+        null=True
+    )
+    image_thumb = models.ImageField(
+        upload_to="locations/thumb/",
+        blank=True,
+        null=True
+    )
 
     caption = models.CharField(max_length=200, blank=True)
     camera = models.CharField(max_length=100, blank=True)
@@ -95,22 +286,83 @@ class Photo(models.Model):
         return f"{self.location.name} Photo"
 
     def save(self, *args, **kwargs):
-        # まず画像をR2へ保存
+        old_image_name = None
+
+        if self.pk:
+            try:
+                old = Photo.objects.get(pk=self.pk)
+                old_image_name = old.image.name
+            except Photo.DoesNotExist:
+                pass
+
+        # まず元画像をR2へ保存
         super().save(*args, **kwargs)
 
-        # 画像がない場合は何もしない
         if not self.image:
             return
 
+        image_changed = old_image_name != self.image.name
+
+        update_fields = []
+
+        # 縮小版WebPを生成
+        should_generate_variants = (
+            image_changed
+            or not self.image_large
+            or not self.image_medium
+            or not self.image_thumb
+        )
+
+        if should_generate_variants:
+            try:
+                large = create_webp_variant(
+                    self.image,
+                    max_width=1800,
+                    quality=82
+                )
+                medium = create_webp_variant(
+                    self.image,
+                    max_width=1200,
+                    quality=78
+                )
+                thumb = create_webp_variant(
+                    self.image,
+                    max_width=600,
+                    quality=75
+                )
+
+                self.image_large.save(
+                    build_variant_filename(self.image.name, "large"),
+                    large,
+                    save=False
+                )
+                self.image_medium.save(
+                    build_variant_filename(self.image.name, "medium"),
+                    medium,
+                    save=False
+                )
+                self.image_thumb.save(
+                    build_variant_filename(self.image.name, "thumb"),
+                    thumb,
+                    save=False
+                )
+
+                update_fields.extend([
+                    "image_large",
+                    "image_medium",
+                    "image_thumb",
+                ])
+
+            except Exception as e:
+                print("PHOTO IMAGE VARIANT SKIPPED:", e)
+
+        # EXIF読み取り
         try:
             import exifread
 
-            # R2対応：self.image.path は使わない
             self.image.open("rb")
             tags = exifread.process_file(self.image, details=False)
             self.image.close()
-
-            update_fields = []
 
             if not self.lens:
                 lens = tags.get("EXIF LensModel")
@@ -148,11 +400,12 @@ class Photo(models.Model):
                     self.focal_length = str(focal)
                     update_fields.append("focal_length")
 
-            if update_fields:
-                super().save(update_fields=update_fields)
-
         except Exception as e:
             print("EXIF SKIPPED:", e)
+
+        if update_fields:
+            update_fields = list(dict.fromkeys(update_fields))
+            super().save(update_fields=update_fields)
 
 
 class About(models.Model):
@@ -178,6 +431,7 @@ class AboutImage(models.Model):
 
     image = models.ImageField(upload_to="about/")
     
+
 class Gear(models.Model):
     GEAR_TYPES = [
         ("camera", "Camera"),

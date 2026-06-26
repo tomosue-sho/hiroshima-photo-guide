@@ -45,10 +45,18 @@
 
             <div class="museum-frame">
 
-                {% if area.image %}
+                {% if area.image_thumb %}
+                <img src="{{ area.image_thumb.url }}"
+                     class="museum-img"
+                     alt="{{ area.name }}"
+                     loading="lazy"
+                     decoding="async">
+                {% elif area.image %}
                 <img src="{{ area.image.url }}"
                      class="museum-img"
-                     alt="{{ area.name }}">
+                     alt="{{ area.name }}"
+                     loading="lazy"
+                     decoding="async">
                 {% else %}
                 <div class="museum-img d-flex align-items-center justify-content-center bg-light">
                     No Image
