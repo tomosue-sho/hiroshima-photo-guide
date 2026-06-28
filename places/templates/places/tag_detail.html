@@ -44,13 +44,25 @@
             <div class="col-md-4">
                 <div class="card h-100 shadow-sm border-0">
 
-                    {% if location.image %}
-                        <a href="{% url 'location_detail' location.id %}">
-                            <img src="{{ location.image.url }}"
-                                 class="card-img-top"
-                                 alt="{{ location.name }}">
-                        </a>
-                    {% endif %}
+                    {% if location.image_medium %}
+                    <a href="{% url 'location_detail' location.id %}">
+                        <img src="{{ location.image_medium.url }}"
+                             class="card-img-top tag-location-card-img"
+                             alt="{{ location.name }}">
+                    </a>
+                {% elif location.image_thumb %}
+                    <a href="{% url 'location_detail' location.id %}">
+                        <img src="{{ location.image_thumb.url }}"
+                             class="card-img-top tag-location-card-img"
+                             alt="{{ location.name }}">
+                    </a>
+                {% elif location.image %}
+                    <a href="{% url 'location_detail' location.id %}">
+                        <img src="{{ location.image.url }}"
+                             class="card-img-top tag-location-card-img"
+                             alt="{{ location.name }}">
+                    </a>
+                {% endif %}
 
                     <div class="card-body">
 

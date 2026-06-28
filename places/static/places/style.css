@@ -547,6 +547,11 @@ iframe {
     overflow: hidden;
 }
 
+.tag-location-card-img {
+    height: 220px;
+    object-fit: cover;
+}
+
 @media (max-width: 768px) {
     #tag-map {
         height: 320px;
