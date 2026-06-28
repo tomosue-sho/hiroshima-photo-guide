@@ -1,0 +1,153 @@
+{% extends 'places/base.html' %}
+
+{% block title %}
+{{ tag.name }} Locations | Hiroshima Through Film
+{% endblock %}
+
+{% block content %}
+
+<div class="container my-5">
+
+    <div class="mb-4 d-flex gap-2 flex-wrap">
+        <a href="{% url 'tag_list' %}" class="btn btn-outline-dark btn-sm">
+            ← Back to Tags
+        </a>
+
+        <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-sm">
+            Back to Home
+        </a>
+    </div>
+
+    <div class="mb-5">
+        <h1 class="display-5">
+            {{ tag.name }}
+            {% if tag.name_ja %}
+                / {{ tag.name_ja }}
+            {% endif %}
+        </h1>
+
+        <p class="text-muted">
+            Locations tagged with {{ tag.name }}.
+        </p>
+    </div>
+    {% if map_locations %}
+    <div class="mb-5">
+        <h3 class="mb-3">Map</h3>
+
+        <div id="tag-map"></div>
+    </div>
+{% endif %}
+    <div class="row g-4">
+
+        {% for location in locations %}
+
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm border-0">
+
+                    {% if location.image %}
+                        <a href="{% url 'location_detail' location.id %}">
+                            <img src="{{ location.image.url }}"
+                                 class="card-img-top"
+                                 alt="{{ location.name }}">
+                        </a>
+                    {% endif %}
+
+                    <div class="card-body">
+
+                        <h5 class="card-title">
+                            <a href="{% url 'location_detail' location.id %}"
+                               class="text-decoration-none text-dark">
+                                {{ location.name }}
+                            </a>
+                        </h5>
+
+                        {% if location.area %}
+                            <p class="text-muted small mb-2">
+                                {{ location.area.name }}
+                            </p>
+                        {% endif %}
+
+                        <p class="card-text">
+                            {{ location.description|truncatewords:25 }}
+                        </p>
+
+                        {% if location.tags.all %}
+                            <div class="mb-3">
+                                {% for t in location.tags.all %}
+                                    <a href="{% url 'tag_detail' t.slug %}"
+                                       class="badge text-bg-light text-decoration-none">
+                                        #{{ t.name }}
+                                    </a>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <a href="{% url 'location_detail' location.id %}"
+                           class="btn btn-dark btn-sm">
+                            View Location
+                        </a>
+
+                    </div>
+
+                </div>
+            </div>
+
+        {% empty %}
+
+            <p>No locations found for this tag.</p>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+{% if map_locations %}
+
+<link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
+
+<script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const map = L.map("tag-map");
+
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            maxZoom: 19,
+            attribution: "&copy; OpenStreetMap contributors"
+        }).addTo(map);
+
+        const markers = [];
+
+        {% for location in map_locations %}
+            const marker{{ forloop.counter }} = L.marker([
+                {{ location.latitude }},
+                {{ location.longitude }}
+            ]).addTo(map);
+
+            marker{{ forloop.counter }}.bindPopup(`
+                <strong>{{ location.name|escapejs }}</strong><br>
+                {% if location.area %}
+                    <span>{{ location.area.name|escapejs }}</span><br>
+                {% endif %}
+                <a href="{% url 'location_detail' location.id %}">View Location</a>
+            `);
+
+            markers.push(marker{{ forloop.counter }});
+        {% endfor %}
+
+        const group = L.featureGroup(markers);
+
+        if (markers.length === 1) {
+            map.setView(markers[0].getLatLng(), 13);
+        } else {
+            map.fitBounds(group.getBounds().pad(0.2));
+        }
+    });
+</script>
+{% endif %}
+{% endblock %}

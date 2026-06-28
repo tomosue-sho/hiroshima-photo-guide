@@ -2,6 +2,18 @@ from django.db import models
 from fractions import Fraction
 from .image_utils import create_webp_variant, build_variant_filename
 
+class Tag(models.Model):
+    name = models.CharField(max_length=100)
+    name_ja = models.CharField(max_length=100, blank=True)
+    slug = models.SlugField(unique=True)
+
+    class Meta:
+        ordering = ["name"]
+
+    def __str__(self):
+        if self.name_ja:
+            return f"{self.name} / {self.name_ja}"
+        return self.name
 
 class Area(models.Model):
     name = models.CharField(max_length=100)
@@ -107,6 +119,12 @@ class Location(models.Model):
         Area,
         on_delete=models.CASCADE,
         null=True,
+        blank=True,
+        related_name="locations"
+    )
+    
+    tags = models.ManyToManyField(
+        Tag,
         blank=True,
         related_name="locations"
     )

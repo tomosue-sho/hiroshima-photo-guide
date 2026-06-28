@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Area, Location, Photo
+from .models import Area, Location, Photo, Tag
 from .models import About, AboutImage, Collaborator
 from .models import Gear, Message
 
@@ -15,9 +15,10 @@ class AreaAdmin(admin.ModelAdmin):
 
 @admin.register(Location)
 class LocationAdmin(admin.ModelAdmin):
-    list_display = ('name', 'area', 'latitude', 'longitude')
-    search_fields = ('name',)
-    list_filter = ('area',)
+    list_display = ("name", "area", "latitude", "longitude")
+    search_fields = ("name",)
+    list_filter = ("area", "tags")
+    filter_horizontal = ("tags",)
     inlines = [PhotoInline]
 
 @admin.register(Photo)
@@ -57,3 +58,9 @@ class CollaboratorAdmin(admin.ModelAdmin):
     list_display = ("name", "role", "is_visible", "created_at")
     list_filter = ("is_visible", "created_at")
     search_fields = ("name", "role", "description")
+    
+@admin.register(Tag)
+class TagAdmin(admin.ModelAdmin):
+    list_display = ("name", "name_ja", "slug")
+    search_fields = ("name", "name_ja", "slug")
+    prepopulated_fields = {"slug": ("name",)}

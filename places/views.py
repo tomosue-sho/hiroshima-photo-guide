@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from .models import Location, Area, Location
 from django.shortcuts import get_object_or_404
 from .models import About
-from .models import Gear, Collaborator
+from .models import Gear, Collaborator, Tag
 from .forms import MessageForm
 
 def about(request):
@@ -108,3 +108,23 @@ def contact(request):
         form = MessageForm()
 
     return render(request, "places/contact.html", {"form": form})
+
+def tag_list(request):
+    tags = Tag.objects.all()
+    return render(request, "places/tag_list.html", {"tags": tags})
+
+
+def tag_detail(request, slug):
+    tag = get_object_or_404(Tag, slug=slug)
+    locations = tag.locations.all()
+    map_locations = locations.exclude(latitude__isnull=True).exclude(longitude__isnull=True)
+
+    return render(
+        request,
+        "places/tag_detail.html",
+        {
+            "tag": tag,
+            "locations": locations,
+            "map_locations": map_locations,
+        }
+    )

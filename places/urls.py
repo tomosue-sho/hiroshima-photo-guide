@@ -10,4 +10,6 @@ urlpatterns = [
     path('location/<int:location_id>/photos/',views.location_photos,name='location_photos'),
     path("gear/", views.gear_list, name="gear_list"),
     path("contact/", views.contact, name="contact"),
+    path("tags/", views.tag_list, name="tag_list"),
+    path("tag/<slug:slug>/", views.tag_detail, name="tag_detail"),
 ]

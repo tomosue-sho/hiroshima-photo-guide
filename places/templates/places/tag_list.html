@@ -1,0 +1,39 @@
+{% extends 'places/base.html' %}
+
+{% block title %}Tags | Hiroshima Through Film{% endblock %}
+
+{% block content %}
+
+<div class="container my-5">
+
+    <div class="mb-4">
+        <a href="{% url 'home' %}" class="btn btn-outline-dark btn-sm">
+            ← Back to Home
+        </a>
+    </div>
+
+    <h1 class="display-5 mb-3">Explore by Tag</h1>
+
+    <p class="text-muted mb-4">
+        Find Hiroshima locations by theme, such as shrines, temples, night views, food, nature, and hidden spots.
+    </p>
+
+    <div class="d-flex flex-wrap gap-2">
+
+        {% for tag in tags %}
+            <a href="{% url 'tag_detail' tag.slug %}"
+               class="btn btn-outline-dark btn-sm">
+                {{ tag.name }}
+                {% if tag.name_ja %}
+                    / {{ tag.name_ja }}
+                {% endif %}
+            </a>
+        {% empty %}
+            <p>No tags found.</p>
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endblock %}
