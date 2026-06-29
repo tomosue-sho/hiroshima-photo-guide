@@ -9,7 +9,8 @@
         {% if about.image %}
             <img src="{{ about.image.url }}"
                  class="about-main-photo mb-4"
-                 alt="{{ about.title }}">
+                 alt="{{ about.title }}"
+                 loading="lazy">
         {% endif %}
 
         <h1 class="display-4 mb-3">
@@ -33,7 +34,8 @@
                            data-title="{{ about.title }}">
                             <img src="{{ img.image.url }}"
                                  class="img-fluid rounded shadow-sm about-gallery-img"
-                                 alt="{{ about.title }}">
+                                 alt="{{ about.title }}"
+                                 loading="lazy">
                         </a>
                     </div>
                 {% endfor %}
@@ -55,7 +57,8 @@
                             {% if collaborator.image %}
                                 <img src="{{ collaborator.image.url }}"
                                      class="img-fluid rounded mb-3"
-                                     alt="{{ collaborator.name }}">
+                                     alt="{{ collaborator.name }}"
+                                     loading="lazy">
                             {% endif %}
 
                             <h4>{{ collaborator.name }}</h4>

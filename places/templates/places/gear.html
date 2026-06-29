@@ -19,8 +19,9 @@
 
             {% if gear.image %}
             <img src="{{ gear.image.url }}"
-                 class="museum-img"
-                 alt="{{ gear.name }}">
+            class="museum-img"
+            alt="{{ gear.name }}"
+            loading="lazy">
             {% endif %}
 
             <div class="p-3">
