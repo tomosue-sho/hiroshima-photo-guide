@@ -20,31 +20,41 @@
 
 <div class="hero-image mb-5">
     {% if location.image_medium %}
-        <img src="{{ location.image_medium.url }}"
-             alt="{{ location.name }}"
-             class="img-fluid w-100 hero-photo"
-             loading="eager"
-             decoding="async">
+        <img
+            src="{{ location.image_medium.url }}"
+            alt="{{ location.name }}"
+            class="img-fluid w-100 hero-photo"
+            loading="eager"
+            decoding="async"
+        >
     {% else %}
-        <img src="{{ location.image.url }}"
-             alt="{{ location.name }}"
-             class="img-fluid w-100 hero-photo"
-             loading="eager"
-             decoding="async">
+        <img
+            src="{{ location.image.url }}"
+            alt="{{ location.name }}"
+            class="img-fluid w-100 hero-photo"
+            loading="eager"
+            decoding="async"
+        >
     {% endif %}
 </div>
 {% endif %}
 
 <div class="mb-5">
     <h1 class="display-4">{{ location.name }}</h1>
-    <p class="text-muted">Hiroshima Through Film Collection</p>
+
+    <p class="text-muted">
+        Hiroshima Through Film Collection
+    </p>
 
     {% if location.tags.all %}
         <div class="mt-3">
             {% for tag in location.tags.all %}
-                <a href="{% url 'tag_detail' tag.slug %}"
-                   class="badge text-bg-light text-decoration-none me-1">
+                <a
+                    href="{% url 'tag_detail' tag.slug %}"
+                    class="badge text-bg-light text-decoration-none me-1"
+                >
                     #{{ tag.name }}
+
                     {% if tag.name_ja %}
                         / {{ tag.name_ja }}
                     {% endif %}
@@ -57,33 +67,35 @@
 <div class="row g-5 mb-5">
 
     {% if location.youtube_url %}
-    <div class="col-md-6">
-        <div class="video-section-title border-bottom pb-3 mb-4">
-            <h3 class="mb-0">Video</h3>
+        <div class="col-md-6">
+            <div class="video-section-title border-bottom pb-3 mb-4">
+                <h3 class="mb-0">Video</h3>
+            </div>
+
+            <div class="ratio ratio-16x9">
+                <iframe
+                    src="{{ location.get_youtube_embed_url }}"
+                    title="YouTube video player"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerpolicy="strict-origin-when-cross-origin"
+                    allowfullscreen
+                ></iframe>
+            </div>
         </div>
 
-        <div class="ratio ratio-16x9">
-            <iframe
-                src="{{ location.get_youtube_embed_url }}"
-                title="YouTube video player"
-                frameborder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                referrerpolicy="strict-origin-when-cross-origin"
-                allowfullscreen>
-            </iframe>
-        </div>
-    </div>
-
-    <div class="col-md-6">
+        <div class="col-md-6">
     {% else %}
-    <div class="col-12">
+        <div class="col-12">
     {% endif %}
 
         <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4">
             <h3 class="mb-0">Film Gallery</h3>
 
-            <a href="{% url 'location_photos' location.id %}"
-               class="btn btn-outline-dark btn-sm">
+            <a
+                href="{% url 'location_photos' location.id %}"
+                class="btn btn-outline-dark btn-sm"
+            >
                 View All Photos
             </a>
         </div>
@@ -92,59 +104,92 @@
 
             {% for photo in location.photos.all %}
 
-            <div class="photo-scroll-item">
+                <div class="photo-scroll-item">
 
-                <a href="{{ photo.image.url }}"
-   data-lightbox="gallery"
-   data-title="{{ photo.caption|default:location.name }} | 📷 {{ photo.camera }} | 🔍 {{ photo.lens }} | ISO {{ photo.iso }} | F{{ photo.formatted_aperture }} | {{ photo.shutter_speed }}s | {{ photo.formatted_focal_length }}mm"
-   class="museum-item">
+                    <a
+                        href="{% if photo.image_large %}{{ photo.image_large.url }}{% elif photo.image_medium %}{{ photo.image_medium.url }}{% else %}{{ photo.image.url }}{% endif %}"
+                        data-lightbox="gallery"
+                        data-title="{{ photo.caption|default:location.name }} | 📷 {{ photo.camera }} | 🔍 {{ photo.lens }} | ISO {{ photo.iso }} | F{{ photo.formatted_aperture }} | {{ photo.shutter_speed }}s | {{ photo.formatted_focal_length }}mm"
+                        class="museum-item"
+                    >
+                        <div class="museum-frame">
 
-    <div class="museum-frame">
-        {% if photo.image_thumb %}
-    <img src="{{ photo.image_thumb.url }}"
-         class="img-fluid museum-img"
-         alt="{{ photo.caption|default:location.name }}"
-         loading="lazy"
-         decoding="async">
-{% elif photo.image %}
-    <img src="{{ photo.image.url }}"
-         class="img-fluid museum-img"
-         alt="{{ photo.caption|default:location.name }}"
-         loading="lazy"
-         decoding="async">
-{% endif %}
-    </div>
+                            {% if photo.image_thumb %}
+                                <img
+                                    src="{{ photo.image_thumb.url }}"
+                                    class="img-fluid museum-img"
+                                    alt="{{ photo.caption|default:location.name }}"
+                                    loading="lazy"
+                                    decoding="async"
+                                >
+                            {% elif photo.image_medium %}
+                                <img
+                                    src="{{ photo.image_medium.url }}"
+                                    class="img-fluid museum-img"
+                                    alt="{{ photo.caption|default:location.name }}"
+                                    loading="lazy"
+                                    decoding="async"
+                                >
+                            {% elif photo.image %}
+                                <img
+                                    src="{{ photo.image.url }}"
+                                    class="img-fluid museum-img"
+                                    alt="{{ photo.caption|default:location.name }}"
+                                    loading="lazy"
+                                    decoding="async"
+                                >
+                            {% endif %}
 
-</a>
+                        </div>
+                    </a>
 
-                {% if photo.caption %}
-                <p class="museum-caption">{{ photo.caption }}</p>
-                {% endif %}
-
-                <div class="photo-meta">
-
-                    {% if photo.camera %}
-                        <div>📷 {{ photo.camera }}</div>
+                    {% if photo.caption %}
+                        <p class="museum-caption">
+                            {{ photo.caption }}
+                        </p>
                     {% endif %}
 
-                    {% if photo.lens %}
-                        <div>🔍 {{ photo.lens }}</div>
-                    {% endif %}
+                    <div class="photo-meta">
 
-                    <div>
-                        ISO {{ photo.iso }}
-                        · F{{ photo.formatted_aperture }}
-                        · {{ photo.shutter_speed }}s
-                        · {{ photo.formatted_focal_length }}mm
+                        {% if photo.camera %}
+                            <div>📷 {{ photo.camera }}</div>
+                        {% endif %}
+
+                        {% if photo.lens %}
+                            <div>🔍 {{ photo.lens }}</div>
+                        {% endif %}
+
+                        <div>
+                            {% if photo.iso %}
+                                ISO {{ photo.iso }}
+                            {% endif %}
+
+                            {% if photo.aperture %}
+                                · F{{ photo.formatted_aperture }}
+                            {% endif %}
+
+                            {% if photo.shutter_speed %}
+                                · {{ photo.shutter_speed }}s
+                            {% endif %}
+
+                            {% if photo.focal_length %}
+                                · {{ photo.formatted_focal_length }}mm
+                            {% endif %}
+                        </div>
+
+                        {% if photo.film %}
+                            <div>🎞 {{ photo.film }}</div>
+                        {% endif %}
+
                     </div>
-
-                    {% if photo.film %}
-                        <div>🎞 {{ photo.film }}</div>
-                    {% endif %}
 
                 </div>
 
-            </div>
+            {% empty %}
+
+                <p class="text-muted">
+                    No photos are available yet.
+                </p>
 
             {% endfor %}
 
@@ -156,7 +201,9 @@
 
 <div class="location-info-card p-4 p-md-5 mb-5">
 
-    <h3 class="mb-3">About This Location</h3>
+    <h3 class="mb-3">
+        About This Location
+    </h3>
 
     <div class="location-description">
         {{ location.description|linebreaks }}
@@ -169,114 +216,158 @@
     <p>{{ location.address }}</p>
 
     {% if location.latitude and location.longitude %}
-    <a class="btn btn-dark mt-3"
-       target="_blank"
-       href="https://www.google.com/maps/search/?api=1&query={{ location.latitude }},{{ location.longitude }}">
-        Open in Google Maps
-    </a>
+        <a
+            class="btn btn-dark mt-3"
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://www.google.com/maps/search/?api=1&query={{ location.latitude }},{{ location.longitude }}"
+        >
+            Open in Google Maps
+        </a>
     {% else %}
-    <a class="btn btn-dark mt-3"
-       target="_blank"
-       href="https://www.google.com/maps/search/?api=1&query={{ location.address }}">
-        Open in Google Maps
-    </a>
+        <a
+            class="btn btn-dark mt-3"
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://www.google.com/maps/search/?api=1&query={{ location.address|urlencode }}"
+        >
+            Open in Google Maps
+        </a>
     {% endif %}
 
 </div>
+
 <div class="location-info-card p-4 p-md-5 mb-5">
 
-    <h3 class="mb-3">Looking for a camera for your trip?</h3>
+    <h3 class="mb-3">
+        Looking for a camera for your trip?
+    </h3>
 
     <p class="location-description mb-3">
         I also sell used Japanese cameras, lenses, and photography accessories on eBay.
         If you are looking for a camera to bring on your travels, please feel free to check my eBay profile.
     </p>
 
-    <a class="btn btn-outline-dark"
-       href="https://www.ebay.com/sch/i.html?_ssn=aichaa96"
-       target="_blank"
-       rel="noopener">
-       View my eBay listings
+    <a
+        class="btn btn-outline-dark"
+        href="https://www.ebay.com/sch/i.html?_ssn=aichaa96"
+        target="_blank"
+        rel="noopener noreferrer"
+    >
+        View my eBay listings
     </a>
 
 </div>
+
 <!-- MAP -->
 <div class="mt-5">
+
     {% if location.latitude and location.longitude %}
-    <iframe
-        width="100%"
-        height="300"
-        style="border:0"
-        loading="lazy"
-        allowfullscreen
-        src="https://www.google.com/maps?q={{ location.latitude }},{{ location.longitude }}&output=embed">
-    </iframe>
+        <iframe
+            width="100%"
+            height="300"
+            style="border: 0;"
+            loading="lazy"
+            allowfullscreen
+            referrerpolicy="strict-origin-when-cross-origin"
+            title="Map of {{ location.name }}"
+            src="https://www.google.com/maps?q={{ location.latitude }},{{ location.longitude }}&output=embed"
+        ></iframe>
     {% else %}
-    <iframe
-        width="100%"
-        height="300"
-        style="border:0"
-        loading="lazy"
-        allowfullscreen
-        src="https://www.google.com/maps?q={{ location.address }}&output=embed">
-    </iframe>
+        <iframe
+            width="100%"
+            height="300"
+            style="border: 0;"
+            loading="lazy"
+            allowfullscreen
+            referrerpolicy="strict-origin-when-cross-origin"
+            title="Map of {{ location.name }}"
+            src="https://www.google.com/maps?q={{ location.address|urlencode }}&output=embed"
+        ></iframe>
     {% endif %}
+
 </div>
+
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const gallery = document.querySelector(".photo-scroll-gallery");
-    
-        if (!gallery) return;
-    
+
+        if (!gallery) {
+            return;
+        }
+
         let userInteracted = false;
-    
+        let isAnimating = false;
+
         function slowScrollTo(target, duration) {
+            if (isAnimating) {
+                return;
+            }
+
+            isAnimating = true;
+
             const start = gallery.scrollLeft;
             const distance = target - start;
             const startTime = performance.now();
-    
+
             function animation(currentTime) {
                 const elapsed = currentTime - startTime;
                 const progress = Math.min(elapsed / duration, 1);
-    
+
                 gallery.scrollLeft = start + distance * progress;
-    
-                if (progress < 1) {
+
+                if (progress < 1 && !userInteracted) {
                     requestAnimationFrame(animation);
+                } else {
+                    isAnimating = false;
                 }
             }
-    
+
             requestAnimationFrame(animation);
         }
-    
-        setInterval(function () {
-            if (userInteracted) return;
-        
+
+        const autoScrollInterval = setInterval(function () {
+            if (userInteracted || isAnimating) {
+                return;
+            }
+
             const maxScroll = gallery.scrollWidth - gallery.clientWidth;
-        
-            if (maxScroll <= 10) return;
-        
+
+            if (maxScroll <= 10) {
+                return;
+            }
+
             if (gallery.scrollLeft >= maxScroll - 5) {
                 slowScrollTo(0, 2500);
             } else {
-                const next = Math.min(gallery.scrollLeft + 320, maxScroll);
+                const next = Math.min(
+                    gallery.scrollLeft + 320,
+                    maxScroll
+                );
+
                 slowScrollTo(next, 2500);
             }
-        
         }, 5000);
-    
-        gallery.addEventListener("touchstart", function () {
+
+        function stopAutoScroll() {
             userInteracted = true;
+            isAnimating = false;
+
+            clearInterval(autoScrollInterval);
+        }
+
+        gallery.addEventListener("touchstart", stopAutoScroll, {
+            passive: true
         });
-    
-        gallery.addEventListener("mousedown", function () {
-            userInteracted = true;
+
+        gallery.addEventListener("mousedown", stopAutoScroll);
+
+        gallery.addEventListener("wheel", stopAutoScroll, {
+            passive: true
         });
-    
-        gallery.addEventListener("wheel", function () {
-            userInteracted = true;
-        });
-    
+
+        gallery.addEventListener("keydown", stopAutoScroll);
     });
-    </script>
+</script>
+
 {% endblock %}

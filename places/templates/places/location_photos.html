@@ -9,10 +9,10 @@
     <span>›</span>
 
     {% if location.area %}
-    <a href="{% url 'area_detail' location.area.id %}">
-        {{ location.area.name }}
-    </a>
-    <span>›</span>
+        <a href="{% url 'area_detail' location.area.id %}">
+            {{ location.area.name }}
+        </a>
+        <span>›</span>
     {% endif %}
 
     <a href="{% url 'location_detail' location.id %}">
@@ -25,11 +25,15 @@
 
 <div class="mb-5">
     <h1 class="display-4">{{ location.name }}</h1>
+
     <p class="text-muted">
         Photo Collection
     </p>
 
-    <a href="{% url 'location_detail' location.id %}" class="btn btn-outline-dark btn-sm">
+    <a
+        href="{% url 'location_detail' location.id %}"
+        class="btn btn-outline-dark btn-sm"
+    >
         ← Back to Location
     </a>
 </div>
@@ -38,73 +42,97 @@
 
     {% for photo in photos %}
 
-    <div class="photo-grid-item">
+        <div class="photo-grid-item">
 
-        <a href="{{ photo.image.url }}"
-        data-lightbox="location-photo-list"
-        data-title="{{ photo.caption|default:location.name }} | 📷 {{ photo.camera }} | 🔍 {{ photo.lens }} | ISO {{ photo.iso }} | F{{ photo.formatted_aperture }} | {{ photo.shutter_speed }}s | {{ photo.formatted_focal_length }}mm">
-     
-         <div class="museum-frame">
-             {% if photo.image_thumb %}
-                 <img src="{{ photo.image_thumb.url }}"
-                      class="photo-grid-img"
-                      alt="{{ photo.caption|default:location.name }}"
-                      loading="lazy"
-                      decoding="async">
-             {% elif photo.image %}
-                 <img src="{{ photo.image.url }}"
-                      class="photo-grid-img"
-                      alt="{{ photo.caption|default:location.name }}"
-                      loading="lazy"
-                      decoding="async">
-             {% endif %}
-         </div>
-     
-     </a>
+            <a
+                href="{% if photo.image_large %}{{ photo.image_large.url }}{% elif photo.image_medium %}{{ photo.image_medium.url }}{% else %}{{ photo.image.url }}{% endif %}"
+                data-lightbox="location-photo-list"
+                data-title="{{ photo.caption|default:location.name }} | 📷 {{ photo.camera }} | 🔍 {{ photo.lens }} | ISO {{ photo.iso }} | F{{ photo.formatted_aperture }} | {{ photo.shutter_speed }}s | {{ photo.formatted_focal_length }}mm"
+                class="museum-item"
+            >
+                <div class="museum-frame">
 
-        {% if photo.caption %}
-        <p class="museum-caption">{{ photo.caption }}</p>
-        {% endif %}
+                    {% if photo.image_thumb %}
+                        <img
+                            src="{{ photo.image_thumb.url }}"
+                            class="photo-grid-img"
+                            alt="{{ photo.caption|default:location.name }}"
+                            loading="lazy"
+                            decoding="async"
+                        >
+                    {% elif photo.image_medium %}
+                        <img
+                            src="{{ photo.image_medium.url }}"
+                            class="photo-grid-img"
+                            alt="{{ photo.caption|default:location.name }}"
+                            loading="lazy"
+                            decoding="async"
+                        >
+                    {% elif photo.image %}
+                        <img
+                            src="{{ photo.image.url }}"
+                            class="photo-grid-img"
+                            alt="{{ photo.caption|default:location.name }}"
+                            loading="lazy"
+                            decoding="async"
+                        >
+                    {% endif %}
 
-        <div class="photo-meta">
+                </div>
+            </a>
 
-            {% if photo.camera %}
-            <div>📷 {{ photo.camera }}</div>
+            {% if photo.caption %}
+                <p class="museum-caption">
+                    {{ photo.caption }}
+                </p>
             {% endif %}
 
-            {% if photo.lens %}
-            <div>🔍 {{ photo.lens }}</div>
-            {% endif %}
+            <div class="photo-meta">
 
-            <div>
-                {% if photo.iso %}
-                    ISO {{ photo.iso }}
+                {% if photo.camera %}
+                    <div>📷 {{ photo.camera }}</div>
                 {% endif %}
 
-                {% if photo.aperture %}
-                    · F{{ photo.formatted_aperture }}
+                {% if photo.lens %}
+                    <div>🔍 {{ photo.lens }}</div>
                 {% endif %}
 
-                {% if photo.shutter_speed %}
-                    · {{ photo.shutter_speed }}s
+                {% if photo.iso or photo.aperture or photo.shutter_speed or photo.focal_length %}
+                    <div>
+                        {% if photo.iso %}
+                            ISO {{ photo.iso }}
+                        {% endif %}
+
+                        {% if photo.aperture %}
+                            {% if photo.iso %} · {% endif %}
+                            F{{ photo.formatted_aperture }}
+                        {% endif %}
+
+                        {% if photo.shutter_speed %}
+                            {% if photo.iso or photo.aperture %} · {% endif %}
+                            {{ photo.shutter_speed }}s
+                        {% endif %}
+
+                        {% if photo.focal_length %}
+                            {% if photo.iso or photo.aperture or photo.shutter_speed %} · {% endif %}
+                            {{ photo.formatted_focal_length }}mm
+                        {% endif %}
+                    </div>
                 {% endif %}
 
-                {% if photo.focal_length %}
-                    · {{ photo.formatted_focal_length }}mm
+                {% if photo.film %}
+                    <div>🎞 {{ photo.film }}</div>
                 {% endif %}
+
             </div>
-
-            {% if photo.film %}
-            <div>🎞 {{ photo.film }}</div>
-            {% endif %}
 
         </div>
 
-    </div>
-
     {% empty %}
 
-    <p class="text-muted">No photos available yet.</p>
+        <p class="text-muted">
+            No photos available yet.
+        </p>
 
     {% endfor %}
 
