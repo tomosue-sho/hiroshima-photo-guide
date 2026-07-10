@@ -363,27 +363,22 @@ iframe {
 @media (max-width: 768px) {
 
     .museum-gallery {
-        display: flex;
-        flex-wrap: nowrap;
-        overflow-x: auto;
-        gap: 14px;
-        padding-bottom: 20px;
-        margin-left: -4px;
-        margin-right: -4px;
-        scroll-snap-type: x mandatory;
-    }
-
-    .museum-gallery > .col-12,
-    .museum-gallery > .col-sm-6,
-    .museum-gallery > .col-lg-4 {
-        flex: 0 0 82%;
-        max-width: 82%;
-        margin-bottom: 0;
-        scroll-snap-align: start;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
     }
 
     .museum-gallery .museum-img {
-        height: 260px;
+        height: 140px;
+    }
+
+    .museum-frame {
+        padding: 8px;
+    }
+
+    .museum-caption,
+    .museum-frame h5 {
+        font-size: 0.85rem;
     }
 
     .photo-meta {
