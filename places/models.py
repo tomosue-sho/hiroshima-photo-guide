@@ -302,6 +302,9 @@ class Photo(models.Model):
 
     def __str__(self):
         return f"{self.location.name} Photo"
+    
+    class Meta:
+        ordering = ["id"]
 
     def save(self, *args, **kwargs):
         old_image_name = None
