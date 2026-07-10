@@ -83,7 +83,7 @@ def location_map(request):
 
 def location_photos(request, location_id):
     location = get_object_or_404(Location, id=location_id)
-    photos = location.photos.all()
+    photos = location.photos.all().order_by("id")
 
     return render(request, 'places/location_photos.html', {
         'location': location,
