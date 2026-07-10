@@ -432,16 +432,61 @@ class Photo(models.Model):
 class About(models.Model):
     title = models.CharField(max_length=200, default="About")
     description = models.TextField()
+    image = models.ImageField(upload_to="about/", blank=True, null=True)
 
-    image = models.ImageField(
-        upload_to="about/",
-        blank=True,
-        null=True
-    )
+    image_large = models.ImageField(upload_to="about/large/", blank=True, null=True)
+    image_medium = models.ImageField(upload_to="about/medium/", blank=True, null=True)
+    image_thumb = models.ImageField(upload_to="about/thumb/", blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        old_image_name = None
+
+        if self.pk:
+            try:
+                old = About.objects.get(pk=self.pk)
+                old_image_name = old.image.name
+            except About.DoesNotExist:
+                pass
+
+        super().save(*args, **kwargs)
+
+        if not self.image:
+            return
+
+        image_changed = old_image_name != self.image.name
+
+        should_generate = (
+            image_changed
+            or not self.image_large
+            or not self.image_medium
+            or not self.image_thumb
+        )
+
+        if not should_generate:
+            return
+
+        try:
+            large = create_webp_variant(self.image, max_width=1800, quality=82)
+            medium = create_webp_variant(self.image, max_width=1200, quality=78)
+            thumb = create_webp_variant(self.image, max_width=600, quality=75)
+
+            self.image_large.save(
+                build_variant_filename(self.image.name, "large"), large, save=False
+            )
+            self.image_medium.save(
+                build_variant_filename(self.image.name, "medium"), medium, save=False
+            )
+            self.image_thumb.save(
+                build_variant_filename(self.image.name, "thumb"), thumb, save=False
+            )
+
+            super().save(update_fields=["image_large", "image_medium", "image_thumb"])
+
+        except Exception as e:
+            print("ABOUT IMAGE VARIANT SKIPPED:", e)
 
     def __str__(self):
         return self.title
-
 
 class AboutImage(models.Model):
     about = models.ForeignKey(
@@ -451,7 +496,58 @@ class AboutImage(models.Model):
     )
 
     image = models.ImageField(upload_to="about/")
-    
+
+    image_large = models.ImageField(upload_to="about/large/", blank=True, null=True)
+    image_medium = models.ImageField(upload_to="about/medium/", blank=True, null=True)
+    image_thumb = models.ImageField(upload_to="about/thumb/", blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        old_image_name = None
+
+        if self.pk:
+            try:
+                old = AboutImage.objects.get(pk=self.pk)
+                old_image_name = old.image.name
+            except AboutImage.DoesNotExist:
+                pass
+
+        super().save(*args, **kwargs)
+
+        if not self.image:
+            return
+
+        image_changed = old_image_name != self.image.name
+
+        should_generate = (
+            image_changed
+            or not self.image_large
+            or not self.image_medium
+            or not self.image_thumb
+        )
+
+        if not should_generate:
+            return
+
+        try:
+            large = create_webp_variant(self.image, max_width=1800, quality=82)
+            medium = create_webp_variant(self.image, max_width=1200, quality=78)
+            thumb = create_webp_variant(self.image, max_width=600, quality=75)
+
+            self.image_large.save(
+                build_variant_filename(self.image.name, "large"), large, save=False
+            )
+            self.image_medium.save(
+                build_variant_filename(self.image.name, "medium"), medium, save=False
+            )
+            self.image_thumb.save(
+                build_variant_filename(self.image.name, "thumb"), thumb, save=False
+            )
+
+            super().save(update_fields=["image_large", "image_medium", "image_thumb"])
+
+        except Exception as e:
+            print("ABOUTIMAGE VARIANT SKIPPED:", e)
+
 
 class Gear(models.Model):
     GEAR_TYPES = [
@@ -465,6 +561,57 @@ class Gear(models.Model):
     gear_type = models.CharField(max_length=50, choices=GEAR_TYPES, default="camera")
     description = models.TextField()
     image = models.ImageField(upload_to="gear/", blank=True, null=True)
+
+    image_large = models.ImageField(upload_to="gear/large/", blank=True, null=True)
+    image_medium = models.ImageField(upload_to="gear/medium/", blank=True, null=True)
+    image_thumb = models.ImageField(upload_to="gear/thumb/", blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        old_image_name = None
+
+        if self.pk:
+            try:
+                old = Gear.objects.get(pk=self.pk)
+                old_image_name = old.image.name
+            except Gear.DoesNotExist:
+                pass
+
+        super().save(*args, **kwargs)
+
+        if not self.image:
+            return
+
+        image_changed = old_image_name != self.image.name
+
+        should_generate = (
+            image_changed
+            or not self.image_large
+            or not self.image_medium
+            or not self.image_thumb
+        )
+
+        if not should_generate:
+            return
+
+        try:
+            large = create_webp_variant(self.image, max_width=1800, quality=82)
+            medium = create_webp_variant(self.image, max_width=1200, quality=78)
+            thumb = create_webp_variant(self.image, max_width=600, quality=75)
+
+            self.image_large.save(
+                build_variant_filename(self.image.name, "large"), large, save=False
+            )
+            self.image_medium.save(
+                build_variant_filename(self.image.name, "medium"), medium, save=False
+            )
+            self.image_thumb.save(
+                build_variant_filename(self.image.name, "thumb"), thumb, save=False
+            )
+
+            super().save(update_fields=["image_large", "image_medium", "image_thumb"])
+
+        except Exception as e:
+            print("GEAR VARIANT SKIPPED:", e)
 
     def __str__(self):
         return self.name
@@ -489,6 +636,11 @@ class Collaborator(models.Model):
     role = models.CharField(max_length=200, blank=True)
     description = models.TextField()
     image = models.ImageField(upload_to="collaborators/", blank=True, null=True)
+
+    image_large = models.ImageField(upload_to="collaborators/large/", blank=True, null=True)
+    image_medium = models.ImageField(upload_to="collaborators/medium/", blank=True, null=True)
+    image_thumb = models.ImageField(upload_to="collaborators/thumb/", blank=True, null=True)
+
     website_url = models.URLField(blank=True, null=True)
     instagram_url = models.URLField(blank=True, null=True)
     is_visible = models.BooleanField(default=True)
@@ -496,6 +648,53 @@ class Collaborator(models.Model):
 
     class Meta:
         ordering = ["name"]
+
+    def save(self, *args, **kwargs):
+        old_image_name = None
+
+        if self.pk:
+            try:
+                old = Collaborator.objects.get(pk=self.pk)
+                old_image_name = old.image.name
+            except Collaborator.DoesNotExist:
+                pass
+
+        super().save(*args, **kwargs)
+
+        if not self.image:
+            return
+
+        image_changed = old_image_name != self.image.name
+
+        should_generate = (
+            image_changed
+            or not self.image_large
+            or not self.image_medium
+            or not self.image_thumb
+        )
+
+        if not should_generate:
+            return
+
+        try:
+            large = create_webp_variant(self.image, max_width=1800, quality=82)
+            medium = create_webp_variant(self.image, max_width=1200, quality=78)
+            thumb = create_webp_variant(self.image, max_width=600, quality=75)
+
+            self.image_large.save(
+                build_variant_filename(self.image.name, "large"), large, save=False
+            )
+            self.image_medium.save(
+                build_variant_filename(self.image.name, "medium"), medium, save=False
+            )
+            self.image_thumb.save(
+                build_variant_filename(self.image.name, "thumb"), thumb, save=False
+            )
+
+            super().save(update_fields=["image_large", "image_medium", "image_thumb"])
+
+        except Exception as e:
+            print("COLLABORATOR VARIANT SKIPPED:", e)
 
     def __str__(self):
         return self.name

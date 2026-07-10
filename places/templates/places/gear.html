@@ -17,7 +17,12 @@
     <div class="col-12 col-md-6 col-lg-4">
         <div class="museum-frame h-100">
 
-            {% if gear.image %}
+            {% if gear.image_thumb %}
+            <img src="{{ gear.image_thumb.url }}"
+            class="museum-img"
+            alt="{{ gear.name }}"
+            loading="lazy">
+            {% elif gear.image %}
             <img src="{{ gear.image.url }}"
             class="museum-img"
             alt="{{ gear.name }}"
