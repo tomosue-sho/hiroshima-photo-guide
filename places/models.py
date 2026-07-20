@@ -130,6 +130,12 @@ class Location(models.Model):
     )
 
     name = models.CharField(max_length=200)
+    
+    added_at = models.DateTimeField(
+        auto_now_add=True,
+        null=True
+    )
+
     description = models.TextField()
     address = models.CharField(max_length=300)
     

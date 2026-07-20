@@ -80,5 +80,54 @@
     {% endfor %}
 
 </div>
+<!-- LATEST UPDATES -->
+{% if latest_locations %}
 
+<section class="mb-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+
+        <h2 class="display-6 mb-0">
+            Latest Updates
+        </h2>
+
+        <a href="{% url 'update_list' %}"
+           class="btn btn-outline-dark btn-sm">
+            View All
+        </a>
+
+    </div>
+
+    <div class="list-group">
+
+        {% for location in latest_locations %}
+
+        <a href="{% url 'location_detail' location.id %}"
+           class="list-group-item list-group-item-action
+                  d-flex flex-column flex-md-row
+                  justify-content-between align-items-md-center gap-2">
+
+            <div>
+                <strong>{{ location.name }}</strong>
+                <span class="text-muted ms-md-2">
+                    was added.
+                </span>
+            </div>
+
+            <time
+                class="text-muted small"
+                datetime="{{ location.added_at|date:'Y-m-d' }}"
+            >
+                {{ location.added_at|date:"Y.m.d" }}
+            </time>
+
+        </a>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+{% endif %}
 {% endblock %}

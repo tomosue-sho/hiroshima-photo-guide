@@ -613,3 +613,38 @@ iframe {
     color: #8a857d;
     background: #eeeae4;
 }
+
+.update-thumbnail {
+    width: 72px;
+    height: 54px;
+    object-fit: cover;
+    display: block;
+}
+
+.update-thumbnail-placeholder {
+    width: 72px;
+    height: 54px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #eeeeee;
+    color: #777777;
+    font-size: 0.65rem;
+    text-align: center;
+}
+
+.min-width-0 {
+    min-width: 0;
+}
+
+@media (max-width: 576px) {
+    .update-thumbnail {
+        width: 60px;
+        height: 45px;
+    }
+
+    .update-thumbnail-placeholder {
+        width: 60px;
+        height: 45px;
+    }
+}

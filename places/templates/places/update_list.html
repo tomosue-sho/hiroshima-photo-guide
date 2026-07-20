@@ -1,0 +1,111 @@
+{% extends 'places/base.html' %}
+
+{% block title %}Latest Updates | Hiroshima Through Film{% endblock %}
+
+{% block content %}
+
+<section class="py-4">
+
+    <div class="mb-4">
+
+        <a href="{% url 'home' %}"
+           class="btn btn-outline-dark btn-sm mb-4">
+            ← Back to Home
+        </a>
+
+        <h1 class="display-5 mb-3">
+            Latest Updates
+        </h1>
+
+        <p class="text-muted">
+            Newly added photography locations.
+        </p>
+
+    </div>
+
+    {% if new_locations %}
+
+    <div class="list-group">
+
+        {% for location in new_locations %}
+
+        <a href="{% url 'location_detail' location.id %}"
+        class="list-group-item list-group-item-action
+               d-flex align-items-center gap-3 py-3">
+     
+         <!-- Thumbnail -->
+         <div class="flex-shrink-0">
+     
+             {% if location.image_thumb %}
+                 <img src="{{ location.image_thumb.url }}"
+                      alt="{{ location.name }}"
+                      width="72"
+                      height="54"
+                      class="rounded update-thumbnail"
+                      loading="lazy"
+                      decoding="async">
+     
+             {% elif location.image %}
+                 <img src="{{ location.image.url }}"
+                      alt="{{ location.name }}"
+                      width="72"
+                      height="54"
+                      class="rounded update-thumbnail"
+                      loading="lazy"
+                      decoding="async">
+     
+             {% else %}
+                 <div class="update-thumbnail-placeholder rounded">
+                     No Image
+                 </div>
+             {% endif %}
+     
+         </div>
+     
+         <!-- Location information -->
+         <div class="flex-grow-1 min-width-0">
+     
+             <strong class="d-block">
+                 {{ location.name }}
+             </strong>
+     
+             {% if location.area %}
+                 <span class="text-muted small">
+                     {{ location.area.name }}
+                 </span>
+             {% endif %}
+     
+         </div>
+     
+         <!-- Date -->
+         <time class="text-muted small flex-shrink-0"
+               datetime="{{ location.added_at|date:'Y-m-d' }}">
+             {{ location.added_at|date:"Y.m.d" }}
+         </time>
+     
+     </a>
+
+        {% endfor %}
+
+    </div>
+
+    {% else %}
+
+    <div class="alert alert-light border">
+        No updates are currently available.
+    </div>
+
+    {% endif %}
+
+    <div class="mt-4">
+
+        <a href="{% url 'home' %}"
+           class="btn btn-outline-dark">
+            ← Back to Home
+        </a>
+
+    </div>
+
+</section>
+
+{% endblock %}
