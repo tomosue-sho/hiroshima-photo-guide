@@ -1,6 +1,7 @@
 from django.db import models
 from fractions import Fraction
 from .image_utils import create_webp_variant, build_variant_filename
+from django.utils import timezone
 
 class Tag(models.Model):
     name = models.CharField(max_length=100)
@@ -132,7 +133,7 @@ class Location(models.Model):
     name = models.CharField(max_length=200)
     
     added_at = models.DateTimeField(
-        auto_now_add=True,
+        default=timezone.now,
         null=True
     )
 
