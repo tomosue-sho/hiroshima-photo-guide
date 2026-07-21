@@ -4,6 +4,7 @@ from django.shortcuts import get_object_or_404
 from .models import About
 from .models import Gear, Collaborator, Tag
 from .forms import MessageForm
+from django.urls import reverse
 
 def home(request):
     locations = Location.objects.all()
@@ -147,3 +148,40 @@ def update_list(request):
             "new_locations": new_locations,
         }
     )
+
+def japan(request):
+    japan_locations = (
+        Location.objects
+        .filter(
+            area__collection="japan",
+            latitude__isnull=False,
+            longitude__isnull=False,
+        )
+        .select_related("area")
+        .order_by("area__name", "name")
+    )
+
+    japan_markers = []
+
+    for location in japan_locations:
+        japan_markers.append({
+            "name": location.name,
+            "area": location.area.name,
+            "latitude": float(location.latitude),
+            "longitude": float(location.longitude),
+            "url": reverse("location_detail", args=[location.id]),
+        })
+
+    japan_areas = (
+        Area.objects
+        .filter(collection="japan")
+        .order_by("name")
+    )
+
+    context = {
+        "japan_locations": japan_locations,
+        "japan_markers": japan_markers,
+        "japan_areas": japan_areas,
+    }
+
+    return render(request, "places/japan.html", context)

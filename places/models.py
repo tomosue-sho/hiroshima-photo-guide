@@ -17,6 +17,18 @@ class Tag(models.Model):
         return self.name
 
 class Area(models.Model):
+    COLLECTION_CHOICES = [
+        ("hiroshima", "Hiroshima"),
+        ("japan", "Japan"),
+    ]
+
+    collection = models.CharField(
+        max_length=20,
+        choices=COLLECTION_CHOICES,
+        default="hiroshima",
+        db_index=True,
+    )
+    
     name = models.CharField(max_length=100)
 
     image = models.ImageField(

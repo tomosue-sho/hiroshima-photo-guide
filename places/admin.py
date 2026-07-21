@@ -10,17 +10,55 @@ class PhotoInline(admin.TabularInline):
 
 @admin.register(Area)
 class AreaAdmin(admin.ModelAdmin):
-    pass
+    list_display = (
+        "name",
+        "collection",
+    )
 
+    list_filter = (
+        "collection",
+    )
+
+    search_fields = (
+        "name",
+    )
 
 @admin.register(Location)
 class LocationAdmin(admin.ModelAdmin):
-    list_display = ("name", "area", "latitude", "longitude")
-    search_fields = ("name",)
-    list_filter = ("area", "tags")
-    filter_horizontal = ("tags",)
-    inlines = [PhotoInline]
+    list_display = (
+        "name",
+        "area",
+        "get_collection",
+        "latitude",
+        "longitude",
+    )
 
+    search_fields = (
+        "name",
+        "area__name",
+    )
+
+    list_filter = (
+        "area__collection",
+        "area",
+        "tags",
+    )
+
+    filter_horizontal = (
+        "tags",
+    )
+
+    inlines = [
+        PhotoInline,
+    ]
+
+    @admin.display(
+        description="Collection",
+        ordering="area__collection",
+    )
+    def get_collection(self, obj):
+        return obj.area.get_collection_display()
+    
 @admin.register(Photo)
 class PhotoAdmin(admin.ModelAdmin):
     list_display = (

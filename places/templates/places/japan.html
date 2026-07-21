@@ -1,0 +1,204 @@
+{% extends "places/base.html" %}
+
+{% block title %}
+Japan Through Film | Hiroshima Through Film
+{% endblock %}
+
+{% block breadcrumb %}
+<nav class="breadcrumb-container mb-3">
+    <a href="{% url 'home' %}">Home</a>
+    <span>›</span>
+    <a href="{% url 'about' %}">About</a>
+    <span>›</span>
+    <span class="current">Japan Through Film</span>
+</nav>
+{% endblock %}
+
+{% block content %}
+
+<link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+>
+
+<div class="container py-5">
+
+    <div class="mb-4">
+        <a
+            href="{% url 'about' %}"
+            class="btn btn-outline-secondary btn-sm"
+        >
+            ← Back to About
+        </a>
+    </div>
+
+    <header class="mb-5">
+        <p class="text-muted mb-2">
+            Beyond Hiroshima
+        </p>
+
+        <h1 class="display-4 mb-4">
+            Japan Through Film
+        </h1>
+
+        <p class="lead mb-0">
+            A slowly growing collection of photography locations
+            discovered across Japan.
+        </p>
+    </header>
+    <!-- JAPAN MAP -->
+    <section class="mb-5">
+        <div
+            id="japan-map"
+            style="
+                width: 100%;
+                height: 620px;
+                border-radius: 4px;
+                overflow: hidden;
+            "
+        ></div>
+    </section>
+
+    <!-- AREAS -->
+    <section class="mb-5">
+        <div class="border-bottom pb-3 mb-4">
+            <h2 class="mb-0">
+                Areas
+            </h2>
+        </div>
+
+        {% if japan_areas %}
+            <div class="row g-4">
+                {% for area in japan_areas %}
+                    <div class="col-md-6 col-lg-4">
+                        <div class="location-info-card p-4 h-100">
+                            <p class="text-muted small mb-2">
+                                Japan
+                            </p>
+
+                            <h3 class="h4 mb-0">
+                                {{ area.name }}
+                            </h3>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-muted">
+                No areas have been added yet.
+            </p>
+        {% endif %}
+    </section>
+
+    <!-- LOCATIONS -->
+    <section>
+        <div class="border-bottom pb-3 mb-4">
+            <h2 class="mb-0">
+                Locations
+            </h2>
+        </div>
+
+        {% if japan_locations %}
+            <div class="row g-4">
+                {% for location in japan_locations %}
+                    <div class="col-md-6 col-lg-4">
+                        <a
+                            href="{% url 'location_detail' location.id %}"
+                            class="text-decoration-none text-dark"
+                        >
+                            <article class="location-info-card p-4 h-100">
+                                <p class="text-muted small mb-2">
+                                    {{ location.area.name }}
+                                </p>
+
+                                <h3 class="h5 mb-0">
+                                    {{ location.name }}
+                                </h3>
+                            </article>
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-muted">
+                Locations will be added slowly as new places are visited
+                and photographed.
+            </p>
+        {% endif %}
+    </section>
+
+</div>
+
+{{ japan_markers|json_script:"japan-location-data" }}
+
+<script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const mapElement = document.getElementById("japan-map");
+    const dataElement = document.getElementById("japan-location-data");
+
+    if (!mapElement || !dataElement) {
+        return;
+    }
+
+    const locations = JSON.parse(dataElement.textContent);
+
+    const map = L.map("japan-map", {
+        scrollWheelZoom: false
+    }).setView([36.2, 138.2], 5);
+
+    L.tileLayer(
+        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        {
+            maxZoom: 19,
+            attribution: "&copy; OpenStreetMap contributors"
+        }
+    ).addTo(map);
+
+    const markerGroup = L.featureGroup();
+
+    locations.forEach(function (location) {
+        const marker = L.marker([
+            location.latitude,
+            location.longitude
+        ]);
+
+        marker.bindPopup(`
+            <div>
+                <strong>${location.name}</strong>
+                <div>${location.area}</div>
+                <div style="margin-top: 8px;">
+                    <a href="${location.url}">
+                        View location
+                    </a>
+                </div>
+            </div>
+        `);
+
+        marker.addTo(markerGroup);
+    });
+
+    if (locations.length > 0) {
+        markerGroup.addTo(map);
+
+        if (locations.length === 1) {
+            map.setView(
+                [
+                    locations[0].latitude,
+                    locations[0].longitude
+                ],
+                10
+            );
+        } else {
+            map.fitBounds(markerGroup.getBounds(), {
+                padding: [40, 40]
+            });
+        }
+    }
+});
+</script>
+
+{% endblock %}
