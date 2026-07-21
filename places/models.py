@@ -137,7 +137,15 @@ class Location(models.Model):
         null=True
     )
 
-    description = models.TextField()
+    description = models.TextField(
+        verbose_name='Description (English)'
+    )
+
+    description_ja = models.TextField(
+        blank=True,
+        verbose_name='Description (Japanese)'
+    )
+    
     address = models.CharField(max_length=300)
     
     latitude = models.FloatField(blank=True, null=True)

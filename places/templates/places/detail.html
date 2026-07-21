@@ -205,9 +205,31 @@
         About This Location
     </h3>
 
-    <div class="location-description">
+    <div class="d-flex gap-2 mb-3">
+        <button type="button"
+                id="show-description-en"
+                class="btn btn-dark btn-sm">
+            English
+        </button>
+    
+        {% if location.description_ja %}
+        <button type="button"
+                id="show-description-ja"
+                class="btn btn-outline-dark btn-sm">
+            日本語版
+        </button>
+        {% endif %}
+    </div>
+    
+    <div id="description-en" lang="en">
         {{ location.description|linebreaks }}
     </div>
+    
+    {% if location.description_ja %}
+    <div id="description-ja" lang="ja" hidden>
+        {{ location.description_ja|linebreaks }}
+    </div>
+    {% endif %}
 
     <hr>
 
@@ -369,5 +391,37 @@
         gallery.addEventListener("keydown", stopAutoScroll);
     });
 </script>
+{% if location.description_ja %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const englishButton = document.getElementById('show-description-en');
+    const japaneseButton = document.getElementById('show-description-ja');
+    const englishDescription = document.getElementById('description-en');
+    const japaneseDescription = document.getElementById('description-ja');
+
+    englishButton.addEventListener('click', function () {
+        englishDescription.hidden = false;
+        japaneseDescription.hidden = true;
+
+        englishButton.classList.add('btn-dark');
+        englishButton.classList.remove('btn-outline-dark');
+
+        japaneseButton.classList.add('btn-outline-dark');
+        japaneseButton.classList.remove('btn-dark');
+    });
+
+    japaneseButton.addEventListener('click', function () {
+        englishDescription.hidden = true;
+        japaneseDescription.hidden = false;
+
+        japaneseButton.classList.add('btn-dark');
+        japaneseButton.classList.remove('btn-outline-dark');
+
+        englishButton.classList.add('btn-outline-dark');
+        englishButton.classList.remove('btn-dark');
+    });
+});
+</script>
+{% endif %}
 
 {% endblock %}
