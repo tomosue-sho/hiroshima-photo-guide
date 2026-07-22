@@ -1,0 +1,129 @@
+{% extends "places/base.html" %}
+
+{% block title %}
+{{ area.name }} | Travel Notes
+{% endblock %}
+
+{% block breadcrumb %}
+<nav class="breadcrumb-container mb-3">
+    <a href="{% url 'home' %}">Home</a>
+    <span>›</span>
+    <a href="{% url 'about' %}">About</a>
+    <span>›</span>
+    <a href="{% url 'japan' %}">Travel Notes</a>
+    <span>›</span>
+    <span class="current">{{ area.name }}</span>
+</nav>
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="mb-4">
+        <a
+            href="{% url 'japan' %}"
+            class="btn btn-outline-secondary btn-sm"
+        >
+            ← Back to Travel Notes
+        </a>
+    </div>
+
+    {% if area.image_large %}
+    <img
+        src="{{ area.image_large.url }}"
+        alt="{{ area.name }}"
+        class="img-fluid rounded mb-5"
+        style="
+            width:100%;
+            max-height:450px;
+            object-fit:cover;
+        "
+    >
+    {% endif %}
+
+    <header class="mb-5">
+
+        <p class="text-muted mb-2">
+            {{ area.country }}
+        </p>
+
+        <h1 class="display-5">
+            {{ area.name }}
+        </h1>
+
+        <p class="lead">
+            {{ locations|length }} place{{ locations|length|pluralize }} visited
+        </p>
+
+    </header>
+
+    <section>
+
+        <div class="border-bottom pb-3 mb-4">
+            <h2 class="mb-0">
+                Places
+            </h2>
+        </div>
+
+        <div class="row g-4">
+
+            {% for location in locations %}
+
+            <div class="col-md-6 col-lg-4">
+
+                <a
+                    href="{% url 'location_detail' location.id %}"
+                    class="text-decoration-none text-dark"
+                >
+
+                    <article class="location-info-card h-100">
+
+                        {% with photo=location.photos.first %}
+                            {% if photo %}
+                            <img
+                                src="{{ photo.image_thumb.url }}"
+                                class="img-fluid rounded-top"
+                                alt="{{ location.name }}"
+                                style="
+                                    width:100%;
+                                    height:220px;
+                                    object-fit:cover;
+                                "
+                            >
+                            {% endif %}
+                        {% endwith %}
+
+                        <div class="p-4">
+
+                            <p class="text-muted small mb-2">
+                                {{ area.country }}
+                            </p>
+
+                            <h3 class="h5 mb-0">
+                                {{ location.name }}
+                            </h3>
+
+                        </div>
+
+                    </article>
+
+                </a>
+
+            </div>
+
+            {% empty %}
+
+            <p class="text-muted">
+                No locations have been added yet.
+            </p>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+</div>
+
+{% endblock %}

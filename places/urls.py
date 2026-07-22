@@ -14,4 +14,5 @@ urlpatterns = [
     path("tag/<slug:slug>/", views.tag_detail, name="tag_detail"),
     path("updates/",views.update_list,name="update_list"),
     path("japan/", views.japan, name="japan"),
+    path("travel-area/<int:area_id>/",views.travel_area_detail,name="travel_area_detail",),
 ]

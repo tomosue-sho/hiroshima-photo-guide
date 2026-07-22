@@ -247,7 +247,6 @@ def japan(request):
         Location.objects
         .filter(area__collection="japan")
         .select_related("area")
-        .order_by("area__name", "name")
     )
 
     # 地図には緯度・経度のあるLocationだけを使用
@@ -284,4 +283,27 @@ def japan(request):
             "japan_markers": japan_markers,
             "japan_areas": japan_areas,
         }
+    )
+
+def travel_area_detail(request, area_id):
+    area = get_object_or_404(
+        Area,
+        id=area_id,
+        collection="japan",
+    )
+
+    locations = (
+        area.locations
+        .all()
+        .prefetch_related("photos")
+        .order_by("name")
+    )
+
+    return render(
+        request,
+        "places/travel_area_detail.html",
+        {
+            "area": area,
+            "locations": locations,
+        },
     )

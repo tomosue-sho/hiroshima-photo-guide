@@ -58,11 +58,7 @@ class Area(models.Model):
         blank=True,
         null=True
     )
-    visited_at = models.DateField(
-        blank=True,
-        null=True,
-        verbose_name="Visited",
-    )
+
     def save(self, *args, **kwargs):
         old_image_name = None
 
@@ -145,11 +141,7 @@ class Location(models.Model):
         blank=True,
         related_name="locations"
     )
-    visited_at = models.DateField(
-        blank=True,
-        null=True,
-        verbose_name="Visited",
-    )
+
     tags = models.ManyToManyField(
         Tag,
         blank=True,
