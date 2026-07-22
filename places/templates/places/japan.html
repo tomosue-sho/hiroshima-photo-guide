@@ -85,7 +85,12 @@ Just places I happened to visit.
     
             <div class="col-md-6 col-lg-4">
 
-                <div class="location-info-card h-100">
+                <a
+                    href="{% url 'travel_area_detail' area.id %}"
+                    class="text-decoration-none text-dark"
+                >
+            
+                    <article class="location-info-card h-100 overflow-hidden">
             
                     {% if area.image_thumb %}
                     <img
@@ -109,9 +114,13 @@ Just places I happened to visit.
                         <h3 class="h4 mb-0">
                             {{ area.name }}
                         </h3>
-            
+                        <p class="text-muted small mb-0">
+                            {{ area.location_set.count }}  places visited
+                        </p>
                     </div>
-            
+                </article>
+
+            </a>
                 </div>
             
             </div>
@@ -175,7 +184,14 @@ Just places I happened to visit.
                                 <h3 class="h5 mb-0">
                                     {{ location.name }}
                                 </h3>
-                        
+
+                                {% if location.visited_at %}
+                                <p class="small text-muted mb-0">
+                                    Visited
+                                    {{ location.visited_at|date:"M Y" }}
+                                </p>
+                                {% endif %}
+
                             </div>
                         
                         </article>

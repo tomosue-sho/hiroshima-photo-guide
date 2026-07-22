@@ -13,6 +13,7 @@ class LocationAdmin(admin.ModelAdmin):
         "name",
         "area",
         "get_collection",
+        "visited_at",
         "latitude",
         "longitude",
     )
@@ -26,6 +27,7 @@ class LocationAdmin(admin.ModelAdmin):
         "area__collection",
         "area",
         "tags",
+        "visited_at",
     )
 
     filter_horizontal = (
