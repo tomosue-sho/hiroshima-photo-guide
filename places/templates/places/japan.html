@@ -138,64 +138,7 @@ Just places I happened to visit.
     {% endif %}
     </section>
 
-    <!-- LOCATIONS -->
-    <section>
-        <div class="border-bottom pb-3 mb-4">
-            <h2 class="mb-0">
-                Locations
-            </h2>
-        </div>
-
-        {% if japan_locations %}
-            <div class="row g-4">
-                {% for location in japan_locations %}
-                    <div class="col-md-6 col-lg-4">
-                        <a
-                            href="{% url 'location_detail' location.id %}"
-                            class="text-decoration-none text-dark"
-                        >
-                        <article class="location-info-card h-100">
-
-                            {% with photo=location.photos.first %}
-                                {% if photo %}
-                                <img
-                                    src="{{ photo.image_thumb.url }}"
-                                    alt="{{ location.name }}"
-                                    class="img-fluid rounded-top"
-                                    style="
-                                        width:100%;
-                                        height:180px;
-                                        object-fit:cover;
-                                    "
-                                >
-                                {% endif %}
-                            {% endwith %}
-                        
-                            <div class="p-4">
-                        
-                                <p class="text-muted small mb-2">
-                                    {{ location.area.country }}
-                                    ·
-                                    {{ location.area.name }}
-                                </p>
-                        
-                                <h3 class="h5 mb-0">
-                                    {{ location.name }}
-                                </h3>
-
-                            </div>
-                        
-                        </article>
-                        </a>
-                    </div>
-                {% endfor %}
-            </div>
-        {% else %}
-            <p class="text-muted">
-                Locations will be added slowly as new places are visited
-                and photographed.
-            </p>
-        {% endif %}
+ 
     </section>
 
 </div>
