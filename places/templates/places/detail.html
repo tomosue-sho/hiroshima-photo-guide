@@ -9,7 +9,7 @@
     <a href="{% url 'home' %}">Home</a>
     <span>›</span>
 
-    <a href="{% url 'area_detail' location.area.id %}">
+    <a href="{{ area_url }}">
         {{ location.area.name }}
     </a>
 

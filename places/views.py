@@ -52,14 +52,25 @@ def location_detail(request, location_id):
         id=location_id,
     )
 
+    if location.area.collection == "japan":
+        area_url = reverse(
+            "travel_area_detail",
+            args=[location.area.id],
+        )
+    else:
+        area_url = reverse(
+            "area_detail",
+            args=[location.area.id],
+        )
+
     return render(
         request,
         "places/detail.html",
         {
             "location": location,
+            "area_url": area_url,
         }
     )
-
 
 def area_detail(request, area_id):
     # 広島版のArea詳細ページなので、
