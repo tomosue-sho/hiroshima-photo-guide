@@ -102,3 +102,9 @@ class TagAdmin(admin.ModelAdmin):
     list_display = ("name", "name_ja", "slug")
     search_fields = ("name", "name_ja", "slug")
     prepopulated_fields = {"slug": ("name",)}
+    
+@admin.register(Area)
+class AreaAdmin(admin.ModelAdmin):
+    list_display = ("name", "country", "collection")
+    list_filter = ("collection", "country")
+    search_fields = ("name", "country")

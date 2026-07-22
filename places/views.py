@@ -273,7 +273,7 @@ def japan(request):
     japan_areas = (
         Area.objects
         .filter(collection="japan")
-        .order_by("name")
+        .order_by("country", "name")
     )
 
     return render(

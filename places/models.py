@@ -29,6 +29,12 @@ class Area(models.Model):
         db_index=True,
     )
     
+    country = models.CharField(
+        max_length=100,
+        default="Japan",
+        db_index=True,
+    )
+
     name = models.CharField(max_length=100)
 
     image = models.ImageField(
