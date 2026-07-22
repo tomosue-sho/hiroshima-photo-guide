@@ -7,22 +7,6 @@ class PhotoInline(admin.TabularInline):
     model = Photo
     extra = 0
 
-
-@admin.register(Area)
-class AreaAdmin(admin.ModelAdmin):
-    list_display = (
-        "name",
-        "collection",
-    )
-
-    list_filter = (
-        "collection",
-    )
-
-    search_fields = (
-        "name",
-    )
-
 @admin.register(Location)
 class LocationAdmin(admin.ModelAdmin):
     list_display = (
