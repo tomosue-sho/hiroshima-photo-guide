@@ -115,7 +115,7 @@ Just places I happened to visit.
                             {{ area.name }}
                         </h3>
                         <p class="text-muted small mb-0">
-                            {{ area.location_set.count }}  places visited
+                            {{ area.locations.count }} places visited
                         </p>
                     </div>
                 </article>
@@ -123,10 +123,8 @@ Just places I happened to visit.
             </a>
                 </div>
             
-            </div>
-    
             {% if forloop.last %}
-                </div>
+               </div>
             {% endif %}
     
         {% endfor %}
