@@ -77,37 +77,36 @@
                     class="text-decoration-none text-dark"
                 >
 
-                    <article class="location-info-card h-100">
+                    <article class="location-info-card h-100 overflow-hidden">
 
-                        {% with photo=location.photos.first %}
-                        {% if photo %}
-                    
-                            {% if photo.image_medium %}
-                                <img
-                                    src="{{ photo.image_medium.url }}"
-                                    alt="{{ location.name }}"
-                                    class="img-fluid rounded-top"
-                                    style="
-                                        width:100%;
-                                        height:220px;
-                                        object-fit:cover;
-                                    "
-                                >
-                            {% else %}
-                                <img
-                                    src="{{ photo.image.url }}"
-                                    alt="{{ location.name }}"
-                                    class="img-fluid rounded-top"
-                                    style="
-                                        width:100%;
-                                        height:220px;
-                                        object-fit:cover;
-                                    "
-                                >
-                            {% endif %}
-                    
+                        {% if location.image_thumb %}
+
+                        <img
+                            src="{{ location.image_thumb.url }}"
+                            alt="{{ location.name }}"
+                            class="img-fluid rounded-top"
+                            style="
+                                width:100%;
+                                height:220px;
+                                object-fit:cover;
+                            "
+                        >
+
+                        {% elif location.image %}
+
+                        <img
+                            src="{{ location.image.url }}"
+                            alt="{{ location.name }}"
+                            class="img-fluid rounded-top"
+                            style="
+                                width:100%;
+                                height:220px;
+                                object-fit:cover;
+                            "
+                        >
+
                         {% endif %}
-                    {% endwith %}
+
 
                         <div class="p-4">
 
