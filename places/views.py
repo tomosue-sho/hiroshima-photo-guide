@@ -10,6 +10,7 @@ from .models import (
     Gear,
     Location,
     Tag,
+    CarpPageSettings,
 )
 
 
@@ -328,7 +329,6 @@ def travel_area_detail(request, area_id):
             "locations": locations,
         },
     )
-    
 def carp_today(request):
 
     news_list = (
@@ -341,14 +341,21 @@ def carp_today(request):
         )
     )
 
+
+    page_settings = (
+        CarpPageSettings.objects
+        .first()
+    )
+
+
     return render(
         request,
         "places/carp_today.html",
         {
             "news_list": news_list,
+            "page_settings": page_settings,
         },
     )
-
 
 def carp_news_detail(
     request,

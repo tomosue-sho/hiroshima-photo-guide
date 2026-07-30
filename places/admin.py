@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import Area, Location, Photo, Tag
 from .models import About, AboutImage, Collaborator
 from .models import Gear, Message
-from .models import CarpNews
+from .models import CarpNews, CarpPageSettings
 
 class PhotoInline(admin.TabularInline):
     model = Photo
@@ -119,3 +119,11 @@ class CarpNewsAdmin(admin.ModelAdmin):
     ordering = (
         "-published_at",
     )
+    
+@admin.register(CarpPageSettings)
+class CarpPageSettingsAdmin(admin.ModelAdmin):
+
+    list_display = [
+        "title",
+        "updated_at",
+    ]

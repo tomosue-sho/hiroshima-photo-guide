@@ -1,60 +1,128 @@
 {% extends "places/base.html" %}
 
+
 {% block title %}
 Carp Today | Hiroshima Through Film
 {% endblock %}
 
+
 {% block content %}
 
+{% if page_settings.hero_image %}
+
+<div class="carp-hero mb-5">
+
+    <img src="{{ page_settings.hero_image.url }}"
+         alt="{{ page_settings.title }}">
+
+</div>
+
+{% endif %}
 <h1 class="display-5 mb-4">
     ⚾ Carp Today
 </h1>
+
 
 <p class="lead text-muted mb-5">
     Latest Hiroshima Carp news for visitors and baseball fans.
 </p>
 
+
 {% if news_list %}
 
-<div class="list-group">
+
+<div class="row g-4">
+
 
     {% for news in news_list %}
 
-    <a href="{% url 'carp_news_detail' news.slug %}"
-       class="list-group-item list-group-item-action py-3">
 
-        <div class="d-flex justify-content-between">
+    <div class="col-12">
 
-            <div>
 
-                <h5 class="mb-1">
-                    {{ news.title }}
-                </h5>
+        <a href="{% url 'carp_news_detail' news.slug %}"
+           class="text-decoration-none text-dark">
 
-                <p class="mb-1 text-muted">
-                    {{ news.summary|truncatewords:25 }}
-                </p>
+
+            <div class="card shadow-sm">
+
+
+                <div class="row g-0">
+
+
+                    {% if news.image %}
+
+                    <div class="col-md-4">
+
+
+                        <img src="{{ news.image.url }}"
+                             class="img-fluid rounded-start"
+                             alt="{{ news.title }}"
+                             style="height:200px; width:100%; object-fit:cover;">
+
+
+                    </div>
+
+                    {% endif %}
+
+
+
+                    <div class="{% if news.image %}col-md-8{% else %}col-md-12{% endif %}">
+
+
+                        <div class="card-body">
+
+
+                            <h5 class="card-title mb-2">
+                                {{ news.title }}
+                            </h5>
+
+
+                            <p class="card-text text-muted">
+                                {{ news.summary|truncatewords:30 }}
+                            </p>
+
+
+                            <small class="text-muted">
+                                {{ news.published_at|date:"Y.m.d" }}
+                            </small>
+
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
 
             </div>
 
-            <small class="text-muted">
-                {{ news.published_at|date:"Y.m.d" }}
-            </small>
 
-        </div>
+        </a>
 
-    </a>
+
+    </div>
+
 
     {% endfor %}
 
+
 </div>
+
 
 {% else %}
 
+
 <div class="alert alert-light border">
+
     No news has been published yet.
+
 </div>
 
+
 {% endif %}
+
 
 {% endblock %}
