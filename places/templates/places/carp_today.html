@@ -52,24 +52,42 @@ Carp Today | Hiroshima Through Film
                 <div class="row g-0">
 
 
-                    {% if news.image %}
+                    {% if news.image_webp %}
 
                     <div class="col-md-4">
-
-
+                    
+                    
+                        <img src="{{ news.image_webp.url }}"
+                             class="img-fluid rounded-start"
+                             alt="{{ news.title }}"
+                             style="height:200px; width:100%; object-fit:cover;"
+                             loading="lazy"
+                             decoding="async">
+                    
+                    
+                    </div>
+                    
+                    
+                    {% elif news.image %}
+                    
+                    <div class="col-md-4">
+                    
+                    
                         <img src="{{ news.image.url }}"
                              class="img-fluid rounded-start"
                              alt="{{ news.title }}"
-                             style="height:200px; width:100%; object-fit:cover;">
-
-
+                             style="height:200px; width:100%; object-fit:cover;"
+                             loading="lazy"
+                             decoding="async">
+                    
+                    
                     </div>
-
+                    
+                    
                     {% endif %}
 
 
-
-                    <div class="{% if news.image %}col-md-8{% else %}col-md-12{% endif %}">
+                    <div class="{% if news.image_webp or news.image %}col-md-8{% else %}col-md-12{% endif %}">
 
 
                         <div class="card-body">
