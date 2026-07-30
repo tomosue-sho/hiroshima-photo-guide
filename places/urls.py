@@ -15,4 +15,6 @@ urlpatterns = [
     path("updates/",views.update_list,name="update_list"),
     path("japan/", views.japan, name="japan"),
     path("travel-area/<int:area_id>/",views.travel_area_detail,name="travel_area_detail",),
+    path( "carp/",views.carp_today,name="carp_today",),
+    path("carp/news/<slug:slug>/",views.carp_news_detail,name="carp_news_detail",),
 ]

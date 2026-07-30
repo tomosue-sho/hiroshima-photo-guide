@@ -1,0 +1,68 @@
+{% extends "places/base.html" %}
+
+{% block title %}
+{{ news.title }} | Hiroshima Through Film
+{% endblock %}
+
+{% block content %}
+
+<a href="{% url 'carp_today' %}"
+   class="btn btn-outline-secondary btn-sm mb-4">
+
+    ← Back to Carp Today
+
+</a>
+
+<h1 class="display-5">
+
+    {{ news.title }}
+
+</h1>
+
+<p class="text-muted">
+
+    {{ news.published_at|date:"F j, Y" }}
+
+</p>
+
+{% if news.image %}
+
+<img src="{{ news.image.url }}"
+     class="img-fluid rounded mb-4"
+     alt="{{ news.title }}">
+
+{% endif %}
+
+<p class="lead">
+
+    {{ news.summary }}
+
+</p>
+
+<hr>
+
+<div>
+
+    {{ news.body|linebreaks }}
+
+</div>
+
+{% if news.source_url %}
+
+<hr>
+
+<p>
+
+    <a href="{{ news.source_url }}"
+       target="_blank"
+       rel="noopener">
+
+        Official Source →
+
+    </a>
+
+</p>
+
+{% endif %}
+
+{% endblock %}

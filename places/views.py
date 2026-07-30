@@ -5,6 +5,7 @@ from .forms import MessageForm
 from .models import (
     About,
     Area,
+    CarpNews,
     Collaborator,
     Gear,
     Location,
@@ -35,6 +36,14 @@ def home(request):
         .order_by("-added_at", "-id")[:3]
     )
 
+    latest_carp_news = (
+        CarpNews.objects
+        .filter(
+            is_published=True,
+        )
+        .order_by("-published_at")[:3]
+    )
+
     return render(
         request,
         "places/home.html",
@@ -42,6 +51,7 @@ def home(request):
             "locations": locations,
             "areas": areas,
             "latest_locations": latest_locations,
+            "latest_carp_news": latest_carp_news,
         }
     )
 
@@ -318,3 +328,44 @@ def travel_area_detail(request, area_id):
             "locations": locations,
         },
     )
+    
+def carp_today(request):
+
+    news_list = (
+        CarpNews.objects
+        .filter(
+            is_published=True
+        )
+        .order_by(
+            "-published_at"
+        )
+    )
+
+    return render(
+        request,
+        "places/carp_today.html",
+        {
+            "news_list": news_list,
+        },
+    )
+
+
+def carp_news_detail(
+    request,
+    slug,
+):
+
+    news = get_object_or_404(
+        CarpNews,
+        slug=slug,
+        is_published=True,
+    )
+
+    return render(
+        request,
+        "places/carp_detail.html",
+        {
+            "news": news,
+        },
+    )
+    

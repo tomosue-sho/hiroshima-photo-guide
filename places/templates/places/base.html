@@ -65,6 +65,15 @@
                         About
                     </a>
                 </li>
+                <a class="nav-link
+{% if request.resolver_match.url_name == 'carp_today' %}
+active
+{% endif %}"
+href="{% url 'carp_today' %}">
+
+    Carp Today
+
+</a>
                 <a class="nav-link" href="{% url 'gear_list' %}">Gear</a>
                 <a class="nav-link" href="{% url 'location_map' %}">Map</a>
                 <a class="nav-link" href="{% url 'tag_list' %}">Tags</a>

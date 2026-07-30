@@ -1,0 +1,60 @@
+{% extends "places/base.html" %}
+
+{% block title %}
+Carp Today | Hiroshima Through Film
+{% endblock %}
+
+{% block content %}
+
+<h1 class="display-5 mb-4">
+    ⚾ Carp Today
+</h1>
+
+<p class="lead text-muted mb-5">
+    Latest Hiroshima Carp news for visitors and baseball fans.
+</p>
+
+{% if news_list %}
+
+<div class="list-group">
+
+    {% for news in news_list %}
+
+    <a href="{% url 'carp_news_detail' news.slug %}"
+       class="list-group-item list-group-item-action py-3">
+
+        <div class="d-flex justify-content-between">
+
+            <div>
+
+                <h5 class="mb-1">
+                    {{ news.title }}
+                </h5>
+
+                <p class="mb-1 text-muted">
+                    {{ news.summary|truncatewords:25 }}
+                </p>
+
+            </div>
+
+            <small class="text-muted">
+                {{ news.published_at|date:"Y.m.d" }}
+            </small>
+
+        </div>
+
+    </a>
+
+    {% endfor %}
+
+</div>
+
+{% else %}
+
+<div class="alert alert-light border">
+    No news has been published yet.
+</div>
+
+{% endif %}
+
+{% endblock %}

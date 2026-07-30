@@ -731,3 +731,42 @@ class Collaborator(models.Model):
 
     def __str__(self):
         return self.name
+    
+class CarpNews(models.Model):
+    title = models.CharField(
+        max_length=200
+    )
+
+    slug = models.SlugField(
+        unique=True
+    )
+
+    summary = models.TextField()
+
+    body = models.TextField()
+
+    image = models.ImageField(
+        upload_to="carp/",
+        blank=True,
+        null=True,
+    )
+
+    published_at = models.DateTimeField(
+        default=timezone.now
+    )
+
+    source_url = models.URLField(
+        blank=True
+    )
+
+    is_published = models.BooleanField(
+        default=True
+    )
+
+    class Meta:
+        ordering = [
+            "-published_at"
+        ]
+
+    def __str__(self):
+        return self.title
