@@ -8,12 +8,14 @@ Carp Today | Hiroshima Through Film
 
 {% block content %}
 
-{% if page_settings.hero_image %}
+{% if page_settings.hero_image_webp %}
 
 <div class="carp-hero mb-5">
 
-    <img src="{{ page_settings.hero_image.url }}"
-         alt="{{ page_settings.title }}">
+    <img src="{{ page_settings.hero_image_webp.url }}"
+         alt="{{ page_settings.title }}"
+         loading="eager"
+         decoding="async">
 
 </div>
 

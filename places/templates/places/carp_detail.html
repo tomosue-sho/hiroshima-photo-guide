@@ -25,11 +25,13 @@
 
 </p>
 
-{% if news.image %}
+{% if news.image_webp %}
 
-<img src="{{ news.image.url }}"
-     class="img-fluid rounded mb-4"
-     alt="{{ news.title }}">
+<img src="{{ news.image_webp.url }}">
+
+{% elif news.image %}
+
+<img src="{{ news.image.url }}">
 
 {% endif %}
 

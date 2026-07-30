@@ -733,6 +733,7 @@ class Collaborator(models.Model):
         return self.name
     
 class CarpNews(models.Model):
+
     title = models.CharField(
         max_length=200
     )
@@ -745,28 +746,98 @@ class CarpNews(models.Model):
 
     body = models.TextField()
 
+
     image = models.ImageField(
         upload_to="carp/",
         blank=True,
         null=True,
     )
 
+
+    image_webp = models.ImageField(
+        upload_to="carp/webp/",
+        blank=True,
+        null=True,
+    )
+
+
     published_at = models.DateTimeField(
         default=timezone.now
     )
+
 
     source_url = models.URLField(
         blank=True
     )
 
+
     is_published = models.BooleanField(
         default=True
     )
+
 
     class Meta:
         ordering = [
             "-published_at"
         ]
+
+
+    def save(self, *args, **kwargs):
+
+        old_image_name = None
+
+        if self.pk:
+            old = CarpNews.objects.get(pk=self.pk)
+            old_image_name = old.image.name
+
+
+        super().save(*args, **kwargs)
+
+
+        if not self.image:
+            return
+
+
+        image_changed = (
+            old_image_name != self.image.name
+        )
+
+
+        if image_changed or not self.image_webp:
+
+            try:
+
+                webp = create_webp_variant(
+                    self.image,
+                    max_width=1600,
+                    quality=82
+                )
+
+
+                self.image_webp.save(
+                    build_variant_filename(
+                        self.image.name,
+                        "news"
+                    ),
+                    webp,
+                    save=False
+                )
+
+
+                super().save(
+                    update_fields=[
+                        "image_webp"
+                    ]
+                )
+
+
+            except Exception as e:
+
+                print(
+                    "CARP NEWS IMAGE SKIPPED:",
+                    e
+                )
+
 
     def __str__(self):
         return self.title
@@ -775,6 +846,12 @@ class CarpPageSettings(models.Model):
 
     hero_image = models.ImageField(
         upload_to="carp/header/",
+        blank=True,
+        null=True,
+    )
+
+    hero_image_webp = models.ImageField(
+        upload_to="carp/header/webp/",
         blank=True,
         null=True,
     )
@@ -791,6 +868,63 @@ class CarpPageSettings(models.Model):
     updated_at = models.DateTimeField(
         auto_now=True
     )
+
+
+    def save(self, *args, **kwargs):
+
+        old_image_name = None
+
+        if self.pk:
+            old = CarpPageSettings.objects.get(pk=self.pk)
+            old_image_name = old.hero_image.name
+
+
+        super().save(*args, **kwargs)
+
+
+        if not self.hero_image:
+            return
+
+
+        image_changed = (
+            old_image_name != self.hero_image.name
+        )
+
+
+        if image_changed or not self.hero_image_webp:
+
+            try:
+
+                webp = create_webp_variant(
+                    self.hero_image,
+                    max_width=1600,
+                    quality=82
+                )
+
+
+                self.hero_image_webp.save(
+                    build_variant_filename(
+                        self.hero_image.name,
+                        "hero"
+                    ),
+                    webp,
+                    save=False
+                )
+
+
+                super().save(
+                    update_fields=[
+                        "hero_image_webp"
+                    ]
+                )
+
+
+            except Exception as e:
+
+                print(
+                    "CARP HERO IMAGE SKIPPED:",
+                    e
+                )
 
 
     def __str__(self):
