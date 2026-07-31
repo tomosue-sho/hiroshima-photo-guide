@@ -27,11 +27,19 @@
 
 {% if news.image_webp %}
 
-<img src="{{ news.image_webp.url }}">
+<div class="text-center mb-4">
+    <img src="{{ news.image_webp.url }}"
+         class="carp-news-image"
+         alt="{{ news.title }}">
+</div>
 
 {% elif news.image %}
 
-<img src="{{ news.image.url }}">
+<div class="text-center mb-4">
+    <img src="{{ news.image.url }}"
+         class="carp-news-image"
+         alt="{{ news.title }}">
+</div>
 
 {% endif %}
 
