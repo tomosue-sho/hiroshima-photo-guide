@@ -8,6 +8,21 @@ class PhotoInline(admin.TabularInline):
     model = Photo
     extra = 0
 
+    def save_formset(self, request, form, formset, change):
+        instances = formset.save()
+
+        for instance in instances:
+            if instance.image:
+                instance.processing_status = "pending"
+                instance.processing_error = None
+
+                instance.save(
+                    update_fields=[
+                        "processing_status",
+                        "processing_error",
+                    ]
+                )
+                
 @admin.register(Location)
 class LocationAdmin(admin.ModelAdmin):
     list_display = (
@@ -51,15 +66,20 @@ class PhotoAdmin(admin.ModelAdmin):
         "camera",
         "lens",
         "iso",
-        "aperture"
+        "aperture",
+        "processing_status",
+    )
+
+    list_filter = (
+        "processing_status",
     )
 
     search_fields = (
-        'location__name',
-        'camera',
-        'lens'
+        "location__name",
+        "camera",
+        "lens",
     )
-
+    
 admin.site.register(About)
 admin.site.register(AboutImage)
 
