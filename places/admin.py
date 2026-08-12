@@ -3,6 +3,7 @@ from .models import Area, Location, Photo, Tag
 from .models import About, AboutImage, Collaborator
 from .models import Gear, Message
 from .models import CarpNews, CarpPageSettings
+from .image_utils import process_photo_image
 
 class PhotoInline(admin.TabularInline):
     model = Photo
@@ -22,6 +23,8 @@ class PhotoInline(admin.TabularInline):
                         "processing_error",
                     ]
                 )
+
+                process_photo_image(instance)
                 
 @admin.register(Location)
 class LocationAdmin(admin.ModelAdmin):
@@ -79,9 +82,20 @@ class PhotoAdmin(admin.ModelAdmin):
         "camera",
         "lens",
     )
-    
-admin.site.register(About)
-admin.site.register(AboutImage)
+
+    def save_model(self, request, obj, form, change):
+        """
+        Photo保存後、Pendingなら自動的に画像処理を実行する。
+        """
+
+        if obj.image:
+            obj.processing_status = "pending"
+            obj.processing_error = None
+
+        super().save_model(request, obj, form, change)
+
+        if obj.image and obj.processing_status == "pending":
+            process_photo_image(obj)
 
 @admin.register(Gear)
 class GearAdmin(admin.ModelAdmin):
