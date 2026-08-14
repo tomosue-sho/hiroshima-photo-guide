@@ -672,3 +672,24 @@ iframe {
     display:block;
     margin:auto;
 }
+
+/* About - Photography Gear */
+
+.about-gear-section {
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    padding-bottom: 2rem;
+}
+
+.about-gear-section h3 {
+    font-weight: 400;
+}
+
+.about-gear-section a {
+    font-size: 0.95rem;
+    transition: opacity 0.2s ease;
+}
+
+.about-gear-section a:hover {
+    opacity: 0.6;
+}
