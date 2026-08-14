@@ -1,0 +1,184 @@
+{% extends "places/base.html" %}
+
+{% block title %}
+{{ post.title }} | Diary | Hiroshima Through Film
+{% endblock %}
+
+{% block breadcrumb %}
+
+<nav class="breadcrumb-container mb-3">
+
+    <a href="{% url 'home' %}">
+        Home
+    </a>
+
+    <span>›</span>
+
+    <a href="{% url 'about' %}">
+        About
+    </a>
+
+    <span>›</span>
+
+    <a href="{% url 'japan' %}">
+        Beyond Hiroshima
+    </a>
+
+    <span>›</span>
+
+    <a href="{% url 'diary_list' %}">
+        Diary
+    </a>
+
+    <span>›</span>
+
+    <span class="current">
+        {{ post.title }}
+    </span>
+
+</nav>
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="diary-detail">
+
+    <!-- HEADER -->
+
+    <header class="diary-detail-header">
+
+        <p class="diary-date">
+            {{ post.published_at|date:"F j, Y" }}
+        </p>
+
+        <h1>
+            {{ post.title }}
+        </h1>
+
+        {% if post.excerpt %}
+
+            <p class="diary-detail-excerpt">
+                {{ post.excerpt }}
+            </p>
+
+        {% endif %}
+
+    </header>
+
+
+    <!-- LEAD IMAGE -->
+
+{% if post.image_large %}
+
+<div class="diary-detail-lead-image">
+
+    <img
+        src="{{ post.image_large.url }}"
+        alt="{{ post.title }}"
+        loading="eager"
+        decoding="async"
+    >
+
+</div>
+
+{% elif post.image %}
+
+<div class="diary-detail-lead-image">
+
+    <img
+        src="{{ post.image.url }}"
+        alt="{{ post.title }}"
+        loading="eager"
+        decoding="async"
+    >
+
+</div>
+
+{% endif %}
+
+
+<!-- DIARY PHOTOS -->
+
+<section class="diary-photo-story">
+
+{% for photo in post.photos.all %}
+
+    <figure
+        class="
+            diary-story-item
+            {% if forloop.counter|divisibleby:2 %}
+                diary-story-reverse
+            {% endif %}
+        "
+    >
+
+        <div class="diary-story-image">
+
+            {% if photo.image_large %}
+
+                <img
+                    src="{{ photo.image_large.url }}"
+                    alt="{{ photo.caption|default:post.title }}"
+                    loading="lazy"
+                    decoding="async"
+                >
+
+            {% elif photo.image %}
+
+                <img
+                    src="{{ photo.image.url }}"
+                    alt="{{ photo.caption|default:post.title }}"
+                    loading="lazy"
+                    decoding="async"
+                >
+
+            {% endif %}
+
+        </div>
+
+
+        {% if photo.caption %}
+
+            <figcaption class="diary-story-caption">
+
+                {{ photo.caption|linebreaks }}
+
+            </figcaption>
+
+        {% endif %}
+
+    </figure>
+
+{% endfor %}
+
+</section>
+
+
+    <!-- BODY -->
+
+    {% if post.body %}
+
+        <article class="diary-detail-body">
+
+            {{ post.body|linebreaks }}
+
+        </article>
+
+    {% endif %}
+
+
+    <!-- BACK -->
+
+    <div class="diary-detail-back">
+
+        <a href="{% url 'diary_list' %}">
+            ← Back to Diary
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}

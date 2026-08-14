@@ -3,7 +3,7 @@ from django.urls import reverse
 
 from .forms import MessageForm
 from .models import (
-    About,Area,CarpNews,Collaborator,Gear,Location,Tag,CarpPageSettings,Photo,
+    About,Area,CarpNews,Collaborator,Gear,Location,Tag,CarpPageSettings,Photo,DiaryPost,
 )
 
 
@@ -391,3 +391,33 @@ def carp_news_detail(
         },
     )
     
+def diary_list(request):
+
+    posts = (
+        DiaryPost.objects
+        .filter(is_published=True)
+        .order_by("-published_at")
+    )
+
+    return render(
+        request,
+        "places/diary_list.html",
+        {
+            "posts": posts,
+        }
+    )
+
+def diary_detail(request, slug):
+    post = get_object_or_404(
+        DiaryPost,
+        slug=slug,
+        is_published=True,
+    )
+
+    return render(
+        request,
+        "places/diary_detail.html",
+        {
+            "post": post,
+        }
+    )

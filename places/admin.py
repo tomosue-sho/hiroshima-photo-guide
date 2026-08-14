@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import Area, Location, Photo, Tag
 from .models import About, AboutImage, Collaborator
 from .models import Gear, Message
-from .models import CarpNews, CarpPageSettings
+from .models import CarpNews, CarpPageSettings, DiaryPost, DiaryPhoto
 from .image_utils import process_photo_image
 from django.utils.html import format_html
 
@@ -188,4 +188,53 @@ class CarpPageSettingsAdmin(admin.ModelAdmin):
     list_display = [
         "title",
         "updated_at",
+    ]
+
+class DiaryPhotoInline(admin.TabularInline):
+
+    model = DiaryPhoto
+
+    extra = 1
+
+    fields = (
+        "image",
+        "caption",
+        "order",
+    )
+
+    ordering = (
+        "order",
+        "id",
+    )
+
+@admin.register(DiaryPost)
+class DiaryPostAdmin(admin.ModelAdmin):
+
+    list_display = (
+        "title",
+        "published_at",
+        "is_published",
+    )
+
+    list_filter = (
+        "is_published",
+        "published_at",
+    )
+
+    search_fields = (
+        "title",
+        "excerpt",
+        "body",
+    )
+
+    prepopulated_fields = {
+        "slug": ("title",)
+    }
+
+    ordering = (
+        "-published_at",
+    )
+
+    inlines = [
+        DiaryPhotoInline,
     ]

@@ -722,3 +722,393 @@ class CarpPageSettings(models.Model):
 
     def __str__(self):
         return self.title
+
+class JournalArticle(models.Model):
+    title = models.CharField(
+        max_length=200
+    )
+
+    slug = models.SlugField(
+        unique=True
+    )
+
+    date = models.DateField(
+        default=timezone.now
+    )
+
+    body = models.TextField()
+
+    image = models.ImageField(
+        upload_to="journal/",
+        blank=True,
+        null=True,
+    )
+
+    image_large = models.ImageField(
+        upload_to="journal/large/",
+        blank=True,
+        null=True,
+    )
+
+    image_medium = models.ImageField(
+        upload_to="journal/medium/",
+        blank=True,
+        null=True,
+    )
+
+    image_thumb = models.ImageField(
+        upload_to="journal/thumb/",
+        blank=True,
+        null=True,
+    )
+
+    is_published = models.BooleanField(
+        default=True
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    class Meta:
+        ordering = [
+            "-date",
+            "-id",
+        ]
+
+    def __str__(self):
+        return self.title
+
+
+class JournalImage(models.Model):
+    article = models.ForeignKey(
+        JournalArticle,
+        on_delete=models.CASCADE,
+        related_name="images"
+    )
+
+    image = models.ImageField(
+        upload_to="journal/",
+    )
+
+    image_large = models.ImageField(
+        upload_to="journal/large/",
+        blank=True,
+        null=True,
+    )
+
+    image_medium = models.ImageField(
+        upload_to="journal/medium/",
+        blank=True,
+        null=True,
+    )
+
+    image_thumb = models.ImageField(
+        upload_to="journal/thumb/",
+        blank=True,
+        null=True,
+    )
+
+    caption = models.CharField(
+        max_length=200,
+        blank=True,
+    )
+
+    order = models.PositiveIntegerField(
+        default=0,
+    )
+
+    class Meta:
+        ordering = [
+            "order",
+            "id",
+        ]
+
+    def __str__(self):
+        return f"{self.article.title} - Image {self.id}"
+
+class DiaryPost(models.Model):
+
+    title = models.CharField(
+        max_length=200
+    )
+
+    slug = models.SlugField(
+        unique=True
+    )
+
+    excerpt = models.TextField(
+        blank=True
+    )
+
+    body = models.TextField()
+
+    image = models.ImageField(
+        upload_to="diary/",
+        blank=True,
+        null=True,
+    )
+
+    image_large = models.ImageField(
+        upload_to="diary/large/",
+        blank=True,
+        null=True,
+    )
+
+    image_medium = models.ImageField(
+        upload_to="diary/medium/",
+        blank=True,
+        null=True,
+    )
+
+    image_thumb = models.ImageField(
+        upload_to="diary/thumb/",
+        blank=True,
+        null=True,
+    )
+
+    published_at = models.DateTimeField(
+        default=timezone.now
+    )
+
+    is_published = models.BooleanField(
+        default=True
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True
+    )
+
+    class Meta:
+        ordering = ["-published_at"]
+
+    def save(self, *args, **kwargs):
+
+        old_image_name = None
+
+        if self.pk:
+            try:
+                old = DiaryPost.objects.get(pk=self.pk)
+                old_image_name = old.image.name
+            except DiaryPost.DoesNotExist:
+                pass
+
+        super().save(*args, **kwargs)
+
+        if not self.image:
+            return
+
+        image_changed = old_image_name != self.image.name
+
+        should_generate = (
+            image_changed
+            or not self.image_large
+            or not self.image_medium
+            or not self.image_thumb
+        )
+
+        if not should_generate:
+            return
+
+        try:
+
+            large = create_webp_variant(
+                self.image,
+                max_width=1800,
+                quality=82
+            )
+
+            medium = create_webp_variant(
+                self.image,
+                max_width=1200,
+                quality=78
+            )
+
+            thumb = create_webp_variant(
+                self.image,
+                max_width=600,
+                quality=75
+            )
+
+            self.image_large.save(
+                build_variant_filename(
+                    self.image.name,
+                    "large"
+                ),
+                large,
+                save=False
+            )
+
+            self.image_medium.save(
+                build_variant_filename(
+                    self.image.name,
+                    "medium"
+                ),
+                medium,
+                save=False
+            )
+
+            self.image_thumb.save(
+                build_variant_filename(
+                    self.image.name,
+                    "thumb"
+                ),
+                thumb,
+                save=False
+            )
+
+            super().save(
+                update_fields=[
+                    "image_large",
+                    "image_medium",
+                    "image_thumb",
+                ]
+            )
+
+        except Exception as e:
+
+            print(
+                "DIARY IMAGE VARIANT SKIPPED:",
+                e
+            )
+
+    def __str__(self):
+        return self.title
+    
+class DiaryPhoto(models.Model):
+
+    post = models.ForeignKey(
+        DiaryPost,
+        on_delete=models.CASCADE,
+        related_name="photos",
+    )
+
+    image = models.ImageField(
+        upload_to="diary/photos/",
+    )
+
+    image_large = models.ImageField(
+        upload_to="diary/photos/large/",
+        blank=True,
+        null=True,
+    )
+
+    image_medium = models.ImageField(
+        upload_to="diary/photos/medium/",
+        blank=True,
+        null=True,
+    )
+
+    image_thumb = models.ImageField(
+        upload_to="diary/photos/thumb/",
+        blank=True,
+        null=True,
+    )
+
+    caption = models.TextField(
+        blank=True
+    )
+
+    order = models.PositiveIntegerField(
+        default=0
+    )
+
+    class Meta:
+        ordering = ["order", "id"]
+
+    def save(self, *args, **kwargs):
+
+        old_image_name = None
+
+        if self.pk:
+            try:
+                old = DiaryPhoto.objects.get(pk=self.pk)
+                old_image_name = old.image.name
+            except DiaryPhoto.DoesNotExist:
+                pass
+
+        super().save(*args, **kwargs)
+
+        if not self.image:
+            return
+
+        image_changed = old_image_name != self.image.name
+
+        should_generate = (
+            image_changed
+            or not self.image_large
+            or not self.image_medium
+            or not self.image_thumb
+        )
+
+        if not should_generate:
+            return
+
+        try:
+
+            large = create_webp_variant(
+                self.image,
+                max_width=1800,
+                quality=82
+            )
+
+            medium = create_webp_variant(
+                self.image,
+                max_width=1200,
+                quality=78
+            )
+
+            thumb = create_webp_variant(
+                self.image,
+                max_width=600,
+                quality=75
+            )
+
+            self.image_large.save(
+                build_variant_filename(
+                    self.image.name,
+                    "large"
+                ),
+                large,
+                save=False
+            )
+
+            self.image_medium.save(
+                build_variant_filename(
+                    self.image.name,
+                    "medium"
+                ),
+                medium,
+                save=False
+            )
+
+            self.image_thumb.save(
+                build_variant_filename(
+                    self.image.name,
+                    "thumb"
+                ),
+                thumb,
+                save=False
+            )
+
+            super().save(
+                update_fields=[
+                    "image_large",
+                    "image_medium",
+                    "image_thumb",
+                ]
+            )
+
+        except Exception as e:
+
+            print(
+                "DIARY PHOTO VARIANT SKIPPED:",
+                e
+            )
+
+    def __str__(self):
+        return f"{self.post.title} - Photo {self.order}"
