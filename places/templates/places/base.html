@@ -76,7 +76,13 @@
                         About
                     </a>
                 </li>
-
+<!-- Photo Exhibition -->
+<li class="nav-item">
+    <a class="nav-link {% if request.resolver_match.url_name == 'photo_exhibition' %}active{% endif %}"
+       href="{% url 'photo_exhibition' %}">
+        Photo Exhibition
+    </a>
+</li>
                 <!-- Carp Today -->
                 <li class="nav-item">
                     <a class="nav-link {% if request.resolver_match.url_name == 'carp_today' %}active{% endif %}"

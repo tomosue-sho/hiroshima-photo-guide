@@ -3,14 +3,7 @@ from django.urls import reverse
 
 from .forms import MessageForm
 from .models import (
-    About,
-    Area,
-    CarpNews,
-    Collaborator,
-    Gear,
-    Location,
-    Tag,
-    CarpPageSettings,
+    About,Area,CarpNews,Collaborator,Gear,Location,Tag,CarpPageSettings,Photo,
 )
 
 
@@ -166,6 +159,28 @@ def location_photos(request, location_id):
         }
     )
 
+def photo_exhibition(request):
+    photos = (
+        Photo.objects
+        .filter(
+            is_featured=True,
+            processing_status="completed",
+            location__area__collection="hiroshima",
+        )
+        .select_related(
+            "location",
+            "location__area",
+        )
+        .order_by("exhibition_order", "-id")
+    )
+
+    return render(
+        request,
+        "places/photo_exhibition.html",
+        {
+            "photos": photos,
+        }
+    )
 
 def gear_list(request):
     gears = Gear.objects.all()

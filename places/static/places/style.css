@@ -693,3 +693,279 @@ iframe {
 .about-gear-section a:hover {
     opacity: 0.6;
 }
+
+/* ===== Photo Exhibition ===== */
+
+.photo-exhibition-header {
+    max-width: 800px;
+}
+
+.photo-exhibition-header h1 {
+    margin-bottom: 0.75rem;
+}
+
+.photo-exhibition-header p {
+    font-size: 1rem;
+    letter-spacing: 0.02em;
+}
+
+
+/* Exhibition gallery */
+
+.photo-exhibition-gallery {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 60px 40px;
+    padding-bottom: 80px;
+}
+
+
+/* Individual artwork */
+
+.exhibition-photo-item {
+    min-width: 0;
+}
+
+.exhibition-photo-link {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+}
+
+
+/* Frame */
+
+.exhibition-frame {
+    background: #ffffff;
+    padding: 18px;
+
+    border: 1px solid #eae6df;
+
+    box-shadow:
+        0 2px 6px rgba(0, 0, 0, 0.05),
+        0 10px 30px rgba(0, 0, 0, 0.07);
+
+    transition:
+        transform 0.35s ease,
+        box-shadow 0.35s ease;
+}
+
+
+/* Inner frame */
+
+.exhibition-frame::before {
+    content: "";
+    display: block;
+
+    position: absolute;
+}
+
+
+/* Photo */
+
+.exhibition-img {
+    width: 100%;
+    height: auto;
+
+    display: block;
+
+    filter:
+        contrast(1.02)
+        saturate(0.98);
+}
+
+
+/* Hover */
+
+.exhibition-photo-link:hover .exhibition-frame {
+    transform: translateY(-6px);
+
+    box-shadow:
+        0 12px 30px rgba(0, 0, 0, 0.12),
+        0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+
+/* Information */
+
+.exhibition-info {
+    padding: 16px 4px 0;
+    text-align: center;
+}
+
+.exhibition-caption {
+    margin: 0 0 8px;
+
+    color: #6f6a63;
+
+    font-size: 0.85rem;
+    font-style: italic;
+
+    letter-spacing: 0.03em;
+
+    line-height: 1.6;
+}
+
+.exhibition-location {
+    margin: 0;
+
+    font-family: "Cormorant Garamond", serif;
+
+    font-size: 1.45rem;
+    font-weight: 500;
+
+    letter-spacing: 0.03em;
+
+    color: #2f2d2a;
+}
+
+.exhibition-area {
+    margin: 5px 0 0;
+
+    color: #9a948b;
+
+    font-size: 0.75rem;
+
+    letter-spacing: 0.05em;
+}
+
+
+/* Tablet */
+
+@media (max-width: 992px) {
+
+    .photo-exhibition-gallery {
+        gap: 45px 25px;
+    }
+
+}
+
+
+/* Mobile */
+
+@media (max-width: 768px) {
+
+    .photo-exhibition-gallery {
+        grid-template-columns: 1fr;
+
+        gap: 45px;
+
+        padding-bottom: 50px;
+    }
+
+    .exhibition-frame {
+        padding: 12px;
+    }
+
+    .exhibition-info {
+        padding-top: 12px;
+    }
+
+    .exhibition-location {
+        font-size: 1.3rem;
+    }
+
+    .exhibition-caption {
+        font-size: 0.8rem;
+    }
+
+}
+
+
+/* Small mobile */
+
+@media (max-width: 480px) {
+
+    .photo-exhibition-gallery {
+        gap: 40px;
+    }
+
+    .exhibition-frame {
+        padding: 10px;
+    }
+
+    .exhibition-location {
+        font-size: 1.2rem;
+    }
+
+}
+
+/* ===== Photo Exhibition Metadata ===== */
+
+.exhibition-meta {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 6px 14px;
+
+    margin-top: 12px;
+
+    color: #7d776f;
+
+    font-size: 0.72rem;
+    line-height: 1.6;
+}
+
+.exhibition-settings {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 6px 12px;
+
+    margin-top: 4px;
+
+    color: #aaa49b;
+
+    font-size: 0.68rem;
+    line-height: 1.5;
+}
+
+.exhibition-meta span + span::before,
+.exhibition-settings span + span::before {
+    content: "·";
+    margin-right: 10px;
+    color: #c0bab1;
+}
+
+
+/* ===== Photo Exhibition Hover Overlay ===== */
+
+.exhibition-frame {
+    position: relative;
+}
+
+.exhibition-overlay {
+    position: absolute;
+    inset: 18px;
+
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+
+    padding-bottom: 22px;
+
+    background: rgba(0, 0, 0, 0.28);
+
+    opacity: 0;
+
+    transition: opacity 0.3s ease;
+
+    pointer-events: none;
+}
+
+.exhibition-overlay span {
+    padding: 8px 16px;
+
+    background: rgba(255, 255, 255, 0.92);
+
+    color: #2f2d2a;
+
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+
+    text-transform: uppercase;
+}
+
+.exhibition-photo-link:hover .exhibition-overlay {
+    opacity: 1;
+}

@@ -179,6 +179,16 @@ class Photo(models.Model):
         related_name='photos'
     )
 
+    # Photo Exhibition
+    is_featured = models.BooleanField(
+        default=False,
+        db_index=True,
+    )
+
+    exhibition_order = models.PositiveIntegerField(
+        default=0,
+    )
+
     image = models.ImageField(upload_to='locations/')
 
     image_large = models.ImageField(

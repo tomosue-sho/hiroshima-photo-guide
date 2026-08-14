@@ -66,6 +66,8 @@ class LocationAdmin(admin.ModelAdmin):
 class PhotoAdmin(admin.ModelAdmin):
     list_display = (
         "location",
+        "is_featured",
+        "exhibition_order",
         "camera",
         "lens",
         "iso",
@@ -74,7 +76,13 @@ class PhotoAdmin(admin.ModelAdmin):
     )
 
     list_filter = (
+        "is_featured",
         "processing_status",
+    )
+
+    list_editable = (
+        "is_featured",
+        "exhibition_order",
     )
 
     search_fields = (

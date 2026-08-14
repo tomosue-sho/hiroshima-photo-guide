@@ -1,0 +1,142 @@
+{% extends 'places/base.html' %}
+
+{% block title %}Photo Exhibition | Hiroshima Through Film{% endblock %}
+
+{% block content %}
+
+<nav class="breadcrumb-container mb-3">
+    <a href="{% url 'home' %}">Home</a>
+    <span>›</span>
+    <span class="current">Photo Exhibition</span>
+</nav>
+
+<div class="photo-exhibition-header mb-5">
+    <h1 class="display-4">Photo Exhibition</h1>
+
+    <p class="text-muted">
+        A collection of my favorite photographs from Hiroshima.
+    </p>
+</div>
+
+<div class="photo-exhibition-gallery">
+
+    {% for photo in photos %}
+
+        <article class="exhibition-photo-item">
+
+            <a
+                href="{% url 'location_detail' photo.location.id %}"
+                class="exhibition-photo-link"
+            >
+
+            <div class="exhibition-frame">
+
+                {% if photo.image_large %}
+                    <img
+                        src="{{ photo.image_large.url }}"
+                        alt="{{ photo.caption|default:photo.location.name }}"
+                        class="exhibition-img"
+                        loading="lazy"
+                        decoding="async"
+                    >
+                {% elif photo.image_medium %}
+                    <img
+                        src="{{ photo.image_medium.url }}"
+                        alt="{{ photo.caption|default:photo.location.name }}"
+                        class="exhibition-img"
+                        loading="lazy"
+                        decoding="async"
+                    >
+                {% elif photo.image %}
+                    <img
+                        src="{{ photo.image.url }}"
+                        alt="{{ photo.caption|default:photo.location.name }}"
+                        class="exhibition-img"
+                        loading="lazy"
+                        decoding="async"
+                    >
+                {% endif %}
+            
+                <div class="exhibition-overlay">
+                    <span>View Location →</span>
+                </div>
+            
+            </div>
+
+                <div class="exhibition-info">
+
+                    {% if photo.caption %}
+                        <p class="exhibition-caption">
+                            {{ photo.caption }}
+                        </p>
+                    {% endif %}
+                
+                    <h2 class="exhibition-location">
+                        {{ photo.location.name }}
+                    </h2>
+                
+                    {% if photo.location.area %}
+                        <p class="exhibition-area">
+                            {{ photo.location.area.name }}
+                        </p>
+                    {% endif %}
+                
+                    <div class="exhibition-meta">
+                
+                        {% if photo.camera %}
+                            <span>📷 {{ photo.camera }}</span>
+                        {% endif %}
+                
+                        {% if photo.lens %}
+                            <span>🔍 {{ photo.lens }}</span>
+                        {% endif %}
+                
+                        {% if photo.film %}
+                            <span>🎞 {{ photo.film }}</span>
+                        {% endif %}
+                
+                    </div>
+                
+                    {% if photo.iso or photo.aperture or photo.shutter_speed or photo.focal_length %}
+                        <div class="exhibition-settings">
+                
+                            {% if photo.iso %}
+                                <span>ISO {{ photo.iso }}</span>
+                            {% endif %}
+                
+                            {% if photo.aperture %}
+                                <span>F{{ photo.formatted_aperture }}</span>
+                            {% endif %}
+                
+                            {% if photo.shutter_speed %}
+                                <span>{{ photo.shutter_speed }}s</span>
+                            {% endif %}
+                
+                            {% if photo.focal_length %}
+                                <span>{{ photo.formatted_focal_length }}mm</span>
+                            {% endif %}
+                
+                        </div>
+                    {% endif %}
+                
+                </div>
+
+            </a>
+
+        </article>
+
+    {% empty %}
+
+        <div class="text-center py-5">
+
+            <p class="text-muted">
+                No featured photographs have been added yet.
+            </p>
+
+        </div>
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}
