@@ -4,6 +4,7 @@ from .models import About, AboutImage, Collaborator
 from .models import Gear, Message
 from .models import CarpNews, CarpPageSettings
 from .image_utils import process_photo_image
+from django.utils.html import format_html
 
 class PhotoInline(admin.TabularInline):
     model = Photo
@@ -65,6 +66,7 @@ class LocationAdmin(admin.ModelAdmin):
 @admin.register(Photo)
 class PhotoAdmin(admin.ModelAdmin):
     list_display = (
+        "thumbnail_preview",
         "location",
         "is_featured",
         "exhibition_order",
@@ -85,11 +87,29 @@ class PhotoAdmin(admin.ModelAdmin):
         "exhibition_order",
     )
 
-    search_fields = (
-        "location__name",
-        "camera",
-        "lens",
+    @admin.display(
+        description="Preview",
     )
+    def thumbnail_preview(self, obj):
+        if obj.image_thumb:
+            return format_html(
+                '<img src="{}" style="width:80px;height:60px;object-fit:cover;border-radius:4px;">',
+                obj.image_thumb.url,
+            )
+
+        if obj.image_medium:
+            return format_html(
+                '<img src="{}" style="width:80px;height:60px;object-fit:cover;border-radius:4px;">',
+                obj.image_medium.url,
+            )
+
+        if obj.image:
+            return format_html(
+                '<img src="{}" style="width:80px;height:60px;object-fit:cover;border-radius:4px;">',
+                obj.image.url,
+            )
+
+        return "-"
 
     def save_model(self, request, obj, form, change):
         """
