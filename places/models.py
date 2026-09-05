@@ -999,20 +999,8 @@ class DiaryPhoto(models.Model):
         upload_to="diary/photos/",
     )
 
-    image_large = models.ImageField(
-        upload_to="diary/photos/large/",
-        blank=True,
-        null=True,
-    )
-
     image_medium = models.ImageField(
         upload_to="diary/photos/medium/",
-        blank=True,
-        null=True,
-    )
-
-    image_thumb = models.ImageField(
-        upload_to="diary/photos/thumb/",
         blank=True,
         null=True,
     )
@@ -1048,9 +1036,7 @@ class DiaryPhoto(models.Model):
 
         should_generate = (
             image_changed
-            or not self.image_large
             or not self.image_medium
-            or not self.image_thumb
         )
 
         if not should_generate:
@@ -1058,64 +1044,32 @@ class DiaryPhoto(models.Model):
 
         try:
 
-            large = create_webp_variant(
-                self.image,
-                max_width=1800,
-                quality=82
-            )
-
             medium = create_webp_variant(
                 self.image,
                 max_width=1200,
-                quality=78
-            )
-
-            thumb = create_webp_variant(
-                self.image,
-                max_width=600,
-                quality=75
-            )
-
-            self.image_large.save(
-                build_variant_filename(
-                    self.image.name,
-                    "large"
-                ),
-                large,
-                save=False
+                quality=78,
             )
 
             self.image_medium.save(
                 build_variant_filename(
                     self.image.name,
-                    "medium"
+                    "medium",
                 ),
                 medium,
-                save=False
-            )
-
-            self.image_thumb.save(
-                build_variant_filename(
-                    self.image.name,
-                    "thumb"
-                ),
-                thumb,
-                save=False
+                save=False,
             )
 
             super().save(
                 update_fields=[
-                    "image_large",
                     "image_medium",
-                    "image_thumb",
                 ]
             )
 
         except Exception as e:
 
             print(
-                "DIARY PHOTO VARIANT SKIPPED:",
-                e
+                "DIARY PHOTO IMAGE VARIANT SKIPPED:",
+                e,
             )
 
     def __str__(self):
@@ -1355,7 +1309,8 @@ class DamLake(models.Model):
                 "DAM LAKE IMAGE VARIANT SKIPPED:",
                 e,
             )
-
+            
+            
 class DamLakePhoto(models.Model):
     lake = models.ForeignKey(
         DamLake,
@@ -1377,6 +1332,7 @@ class DamLakePhoto(models.Model):
     # WebP variants
     # ---------------------------------
 
+    # 既存データとの互換性のため、フィールド自体は残す
     image_large = models.ImageField(
         upload_to="dam_lakes/photos/large/",
         blank=True,
@@ -1391,6 +1347,7 @@ class DamLakePhoto(models.Model):
         verbose_name="Medium",
     )
 
+    # 既存データとの互換性のため、フィールド自体は残す
     image_thumb = models.ImageField(
         upload_to="dam_lakes/photos/thumb/",
         blank=True,
@@ -1449,6 +1406,7 @@ class DamLakePhoto(models.Model):
             except DamLakePhoto.DoesNotExist:
                 pass
 
+        # まず元画像を保存
         super().save(*args, **kwargs)
 
         if not self.image:
@@ -1456,27 +1414,16 @@ class DamLakePhoto(models.Model):
 
         image_changed = old_image_name != self.image.name
 
+        # Mediumだけを生成する
         should_generate = (
             image_changed
-            or not self.image_large
             or not self.image_medium
-            or not self.image_thumb
         )
 
         if not should_generate:
             return
 
         try:
-
-            # ---------------------------------
-            # Large
-            # ---------------------------------
-
-            large = create_webp_variant(
-                self.image,
-                max_width=1800,
-                quality=82,
-            )
 
             # ---------------------------------
             # Medium
@@ -1489,27 +1436,8 @@ class DamLakePhoto(models.Model):
             )
 
             # ---------------------------------
-            # Thumb
+            # Save Medium variant
             # ---------------------------------
-
-            thumb = create_webp_variant(
-                self.image,
-                max_width=600,
-                quality=75,
-            )
-
-            # ---------------------------------
-            # Save variants
-            # ---------------------------------
-
-            self.image_large.save(
-                build_variant_filename(
-                    self.image.name,
-                    "large",
-                ),
-                large,
-                save=False,
-            )
 
             self.image_medium.save(
                 build_variant_filename(
@@ -1520,20 +1448,10 @@ class DamLakePhoto(models.Model):
                 save=False,
             )
 
-            self.image_thumb.save(
-                build_variant_filename(
-                    self.image.name,
-                    "thumb",
-                ),
-                thumb,
-                save=False,
-            )
-
+            # MediumだけDBに保存
             super().save(
                 update_fields=[
-                    "image_large",
                     "image_medium",
-                    "image_thumb",
                 ]
             )
 

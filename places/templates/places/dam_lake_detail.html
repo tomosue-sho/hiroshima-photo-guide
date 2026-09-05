@@ -237,29 +237,27 @@
     <figure class="dam-lake-detail-gallery-item">
 
         <button
-            type="button"
-            class="dam-lake-detail-gallery-button"
-            data-gallery-index="{{ forloop.counter0 }}"
-            data-large-image="{% if photo.image_large %}{{ photo.image_large.url }}{% elif photo.image %}{{ photo.image.url }}{% endif %}"
-            data-caption="{{ photo.caption|escape }}"
-            aria-label="Open photograph"
+    type="button"
+    class="dam-lake-detail-gallery-button"
+    data-gallery-index="{{ forloop.counter0 }}"
+    data-large-image="{% if photo.image_medium %}{{ photo.image_medium.url }}{% elif photo.image %}{{ photo.image.url }}{% endif %}"
+    data-caption="{{ photo.caption|escape }}"
+    aria-label="Open photograph"
+>
+    {% if photo.image_medium %}
+        <img
+            src="{{ photo.image_medium.url }}"
+            alt="{% if photo.caption %}{{ photo.caption }}{% else %}{{ lake.name }}{% endif %}"
+            loading="lazy"
         >
-
-            {% if photo.image_medium %}
-                <img
-                    src="{{ photo.image_medium.url }}"
-                    alt="{% if photo.caption %}{{ photo.caption }}{% else %}{{ lake.name }}{% endif %}"
-                    loading="lazy"
-                >
-            {% elif photo.image %}
-                <img
-                    src="{{ photo.image.url }}"
-                    alt="{% if photo.caption %}{{ photo.caption }}{% else %}{{ lake.name }}{% endif %}"
-                    loading="lazy"
-                >
-            {% endif %}
-
-        </button>
+    {% elif photo.image %}
+        <img
+            src="{{ photo.image.url }}"
+            alt="{% if photo.caption %}{{ photo.caption }}{% else %}{{ lake.name }}{% endif %}"
+            loading="lazy"
+        >
+    {% endif %}
+</button>
 
         {% if photo.caption %}
             <figcaption>
