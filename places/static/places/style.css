@@ -1663,3 +1663,1399 @@ iframe {
     box-shadow:
         0 4px 12px rgba(0, 0, 0, 0.08);
 }
+/* =========================================================
+   Dam Lakes
+   ========================================================= */
+
+   .dam-lakes-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 100px 30px 120px;
+}
+
+
+/* ---------------------------------------------------------
+   Header
+   --------------------------------------------------------- */
+
+.dam-lakes-header {
+    max-width: 760px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.dam-lakes-label {
+    margin: 0 0 18px;
+
+    font-family: "Cormorant Garamond", serif;
+    font-size: 0.9rem;
+    letter-spacing: 0.28em;
+
+    color: #77716a;
+}
+
+.dam-lakes-header h1 {
+    margin: 0;
+
+    font-family: "Cormorant Garamond", serif;
+    font-size: clamp(2.6rem, 6vw, 4.5rem);
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    line-height: 1.2;
+
+    color: #302e2b;
+}
+
+.dam-lakes-lead {
+    max-width: 620px;
+    margin: 30px auto 0;
+
+    font-size: 0.95rem;
+    line-height: 2;
+
+    color: #6f6a64;
+}
+
+
+/* ---------------------------------------------------------
+   Progress
+   --------------------------------------------------------- */
+
+.dam-lakes-progress {
+    margin: 55px auto 0;
+    padding: 30px 20px;
+
+    border-top: 1px solid #d9d3ca;
+    border-bottom: 1px solid #d9d3ca;
+
+    text-align: center;
+}
+
+.dam-lakes-progress-number {
+    font-family: "Cormorant Garamond", serif;
+    font-size: 3.5rem;
+    font-weight: 500;
+    line-height: 1;
+
+    color: #302e2b;
+}
+
+.dam-lakes-progress-label {
+    margin-top: 12px;
+
+    font-size: 0.8rem;
+    letter-spacing: 0.18em;
+
+    color: #77716a;
+}
+
+.dam-lakes-progress-count {
+    margin-top: 8px;
+
+    font-size: 0.85rem;
+
+    color: #8a847d;
+}
+
+
+/* ---------------------------------------------------------
+   Sections
+   --------------------------------------------------------- */
+
+.dam-lakes-map,
+.dam-lakes-introduction,
+.dam-lakes-list {
+    margin-top: 110px;
+}
+
+.dam-lakes-map h2,
+.dam-lakes-introduction h2,
+.dam-lakes-list h2 {
+    margin: 0;
+
+    font-family: "Cormorant Garamond", serif;
+    font-size: 2rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+
+    color: #302e2b;
+}
+
+.section-label {
+    margin: 0 0 12px;
+
+    font-family: "Cormorant Garamond", serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.25em;
+
+    color: #8a847d;
+}
+
+
+/* ---------------------------------------------------------
+   Map
+   --------------------------------------------------------- */
+
+#dam-lakes-map {
+    width: 100%;
+    height: 600px;
+
+    margin-top: 35px;
+
+    border: 1px solid #ddd8d0;
+    border-radius: 4px;
+
+    overflow: hidden;
+}
+/* ---------------------------------------------------------
+   Map Marker
+   --------------------------------------------------------- */
+
+   .dam-lake-marker-wrapper {
+    background: transparent;
+    border: none;
+}
+
+.dam-lake-marker {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 20px;
+    height: 20px;
+
+    border-radius: 50%;
+
+    font-family: "Cormorant Garamond", serif;
+    font-size: 0.62rem;
+    font-weight: 600;
+
+    box-sizing: border-box;
+
+    transition:
+        width 0.2s ease,
+        height 0.2s ease,
+        font-size 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+/* ---------------------------------------------------------
+   Unvisited
+   --------------------------------------------------------- */
+
+.dam-lake-marker.is-unvisited {
+    background: rgba(255, 255, 255, 0.95);
+
+    border: 1px solid #8f8981;
+
+    color: #625d57;
+
+    box-shadow:
+        0 1px 5px rgba(0, 0, 0, 0.18);
+}
+
+
+/* ---------------------------------------------------------
+   Visited
+   --------------------------------------------------------- */
+
+.dam-lake-marker.is-visited {
+    background: #77716a;
+
+    border: 1.5px solid #ffffff;
+
+    color: #ffffff;
+
+    box-shadow:
+        0 1px 5px rgba(0, 0, 0, 0.22);
+}
+
+
+/* ---------------------------------------------------------
+   Photographed
+   --------------------------------------------------------- */
+
+.dam-lake-marker.is-photographed {
+    background: #302e2b;
+
+    border: 1.5px solid #ffffff;
+
+    color: #ffffff;
+
+    box-shadow:
+        0 0 0 1.5px #302e2b,
+        0 2px 7px rgba(0, 0, 0, 0.25);
+}
+
+
+/* ---------------------------------------------------------
+   Hover
+   --------------------------------------------------------- */
+
+.dam-lake-marker:hover {
+    transform: scale(1.2);
+}
+
+
+/* ---------------------------------------------------------
+   Map Marker Zoom Levels
+   --------------------------------------------------------- */
+
+/* 日本全体 */
+.dam-lake-marker.zoom-small {
+    width: 18px;
+    height: 18px;
+
+    font-size: 0.55rem;
+}
+
+
+/* 少し拡大 */
+.dam-lake-marker.zoom-medium {
+    width: 22px;
+    height: 22px;
+
+    font-size: 0.65rem;
+}
+
+
+/* かなり拡大 */
+.dam-lake-marker.zoom-large {
+    width: 27px;
+    height: 27px;
+
+    font-size: 0.78rem;
+}
+
+
+/* ---------------------------------------------------------
+   Popup Status
+   --------------------------------------------------------- */
+
+.dam-lake-popup-status {
+    display: inline-block;
+
+    margin-top: 10px;
+    padding: 4px 8px;
+
+    background: #302e2b;
+
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+
+    color: #ffffff;
+}
+
+.dam-lake-popup-status.is-unvisited {
+    background: #efede9;
+
+    color: #625d57;
+}
+
+/* ---------------------------------------------------------
+   Map Popup
+   --------------------------------------------------------- */
+
+.dam-lake-popup {
+    min-width: 180px;
+
+    font-size: 0.85rem;
+    line-height: 1.7;
+
+    color: #4a4641;
+}
+
+.dam-lake-popup-number {
+    margin-bottom: 4px;
+
+    font-family: "Cormorant Garamond", serif;
+    font-size: 1.1rem;
+    letter-spacing: 0.08em;
+
+    color: #8a847d;
+}
+
+.dam-lake-popup strong {
+    display: block;
+
+    margin-bottom: 4px;
+
+    font-size: 1rem;
+    font-weight: 500;
+
+    color: #302e2b;
+}
+
+
+/* ---------------------------------------------------------
+   Introduction
+   --------------------------------------------------------- */
+
+.dam-lakes-introduction {
+    max-width: 760px;
+}
+
+.dam-lakes-introduction > p:last-child {
+    margin-top: 25px;
+
+    font-size: 0.95rem;
+    line-height: 2;
+
+    color: #6f6a64;
+}
+
+
+/* ---------------------------------------------------------
+   Lake List
+   --------------------------------------------------------- */
+
+.dam-lakes-grid {
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 20px;
+
+    margin-top: 40px;
+}
+
+.dam-lake-card {
+    display: flex;
+
+    min-height: 180px;
+
+    padding: 24px;
+
+    background: #faf9f7;
+
+    border: 1px solid #e1ddd6;
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        border-color 0.25s ease;
+}
+
+.dam-lake-card:hover {
+    transform: translateY(-3px);
+
+    border-color: #c8c1b7;
+
+    box-shadow:
+        0 8px 24px rgba(0, 0, 0, 0.06);
+}
+
+.dam-lake-number {
+    flex: 0 0 48px;
+
+    font-family: "Cormorant Garamond", serif;
+    font-size: 1.5rem;
+
+    color: #aaa49c;
+}
+
+.dam-lake-content {
+    min-width: 0;
+}
+
+.dam-lake-content h3 {
+    margin: 0;
+
+    font-size: 1.05rem;
+    font-weight: 500;
+
+    color: #302e2b;
+}
+
+.dam-lake-content p {
+    margin: 7px 0 0;
+
+    font-size: 0.82rem;
+    line-height: 1.6;
+
+    color: #77716a;
+}
+
+
+/* ---------------------------------------------------------
+   Status
+   --------------------------------------------------------- */
+
+.dam-lake-status {
+    display: flex;
+    flex-wrap: wrap;
+
+    gap: 6px;
+
+    margin-top: 18px;
+}
+
+.dam-lake-status span {
+    display: inline-block;
+
+    padding: 4px 8px;
+
+    background: #efede9;
+
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+
+    color: #625d57;
+}
+
+
+/* ---------------------------------------------------------
+   Responsive
+   --------------------------------------------------------- */
+
+@media (max-width: 900px) {
+
+    .dam-lakes-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .dam-lakes-page {
+        padding: 70px 20px 90px;
+    }
+
+    .dam-lakes-header h1 {
+        font-size: 2.7rem;
+    }
+
+    .dam-lakes-map,
+    .dam-lakes-introduction,
+    .dam-lakes-list {
+        margin-top: 80px;
+    }
+
+    #dam-lakes-map {
+        height: 450px;
+    }
+
+    .dam-lakes-grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+
+    .dam-lake-card {
+        min-height: auto;
+    }
+
+}
+.dam-lake-card-link {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+}
+
+.dam-lake-card-link:hover {
+    color: inherit;
+    text-decoration: none;
+}
+
+/* =========================================================
+   Dam Lake Detail
+========================================================= */
+
+.dam-lake-detail {
+    padding: 80px 30px 100px;
+}
+
+
+/* =========================================================
+   Back
+========================================================= */
+
+.dam-lake-detail-top-back {
+    max-width: 1100px;
+    margin: 0 auto 60px;
+}
+
+.dam-lake-detail-top-back a {
+    display: inline-block;
+    color: #2f2d2a;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+}
+
+.dam-lake-detail-top-back a:hover {
+    opacity: 0.55;
+}
+
+
+/* =========================================================
+   Header
+========================================================= */
+
+.dam-lake-detail-header {
+    max-width: 900px;
+    margin: 0 auto 55px;
+    text-align: center;
+}
+
+.dam-lake-detail-number {
+    margin: 0 0 5px;
+    font-family: "Cormorant Garamond", serif;
+    font-size: 1.7rem;
+    line-height: 1;
+    letter-spacing: 0.08em;
+    color: #aaa49c;
+}
+
+.dam-lake-detail-label {
+    margin: 0 0 22px;
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    color: #8a847d;
+}
+
+.dam-lake-detail-header h1 {
+    margin: 0;
+    font-size: clamp(2.4rem, 5vw, 4rem);
+    font-weight: 400;
+    line-height: 1.2;
+    letter-spacing: 0.03em;
+    color: #302e2b;
+}
+
+.dam-lake-detail-dam {
+    margin: 15px 0 0;
+    font-size: 0.82rem;
+    letter-spacing: 0.06em;
+    color: #77716a;
+}
+
+
+/* =========================================================
+   Main Image
+========================================================= */
+
+.dam-lake-detail-image {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.dam-lake-detail-image img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+
+/* =========================================================
+   Information
+========================================================= */
+
+.dam-lake-detail-info {
+    max-width: 900px;
+    margin: 70px auto 0;
+}
+
+
+/* =========================================================
+   Status
+========================================================= */
+
+.dam-lake-detail-status {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border-top: 1px solid #d8d3ca;
+    border-bottom: 1px solid #d8d3ca;
+}
+
+.dam-lake-detail-status-item {
+    padding: 22px 25px;
+    text-align: center;
+}
+
+.dam-lake-detail-status-item + .dam-lake-detail-status-item {
+    border-left: 1px solid #d8d3ca;
+}
+
+.dam-lake-detail-status-label {
+    display: block;
+    margin-bottom: 8px;
+    font-family: "Cormorant Garamond", serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    color: #8a847d;
+}
+
+.dam-lake-detail-status-value {
+    display: block;
+    font-size: 0.82rem;
+    color: #77716a;
+}
+
+.dam-lake-detail-status-value.is-active {
+    color: #302e2b;
+    font-weight: 500;
+}
+
+
+/* =========================================================
+   Description
+========================================================= */
+
+.dam-lake-detail-text {
+    max-width: 760px;
+    margin: 55px auto 0;
+}
+
+.dam-lake-detail-excerpt {
+    margin: 0 0 25px;
+    font-size: 1.05rem;
+    line-height: 2;
+    color: #403d38;
+}
+
+.dam-lake-detail-description {
+    font-size: 0.88rem;
+    line-height: 2;
+    color: #77716a;
+}
+
+.dam-lake-detail-description p {
+    margin: 0 0 1.4em;
+}
+
+.dam-lake-detail-description p:last-child {
+    margin-bottom: 0;
+}
+
+
+/* =========================================================
+   Photo Gallery
+========================================================= */
+
+.dam-lake-detail-gallery {
+    max-width: 1100px;
+    margin: 100px auto 0;
+}
+
+.dam-lake-detail-section-label {
+    margin: 0 0 28px;
+    font-family: "Cormorant Garamond", serif;
+    font-size: 0.82rem;
+    letter-spacing: 0.16em;
+    color: #8a847d;
+}
+
+.dam-lake-detail-gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 35px 25px;
+}
+
+.dam-lake-detail-gallery-item {
+    margin: 0;
+}
+
+.dam-lake-detail-gallery-item img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+}
+
+.dam-lake-detail-gallery-item figcaption {
+    margin-top: 10px;
+    font-size: 0.75rem;
+    line-height: 1.6;
+    color: #8a847d;
+}
+
+
+/* =========================================================
+   Location
+========================================================= */
+
+.dam-lake-detail-location {
+    max-width: 1100px;
+    margin: 110px auto 0;
+}
+
+.dam-lake-detail-location > p:not(.dam-lake-detail-section-label):not(
+    .dam-lake-detail-coordinates
+) {
+    margin: -12px 0 25px;
+    font-size: 0.82rem;
+    color: #77716a;
+}
+
+#dam-lake-detail-map {
+    width: 100%;
+    height: 360px;
+    margin-top: 0;
+    border: 1px solid #e1ddd6;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.dam-lake-detail-coordinates {
+    margin: 10px 0 0;
+    font-family: "Cormorant Garamond", serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+    color: #9a948c;
+}
+
+
+/* =========================================================
+   Previous / Next
+========================================================= */
+
+.dam-lake-detail-navigation {
+    max-width: 1100px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin: 110px auto 0;
+    padding-top: 30px;
+    border-top: 1px solid #d8d3ca;
+}
+
+.dam-lake-detail-navigation-item a {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    color: #2f2d2a;
+    text-decoration: none;
+}
+
+.dam-lake-detail-navigation-item span {
+    font-family: "Cormorant Garamond", serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    color: #8a847d;
+}
+
+.dam-lake-detail-navigation-item strong {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #403d38;
+}
+
+.dam-lake-detail-navigation-item.next {
+    text-align: right;
+}
+
+.dam-lake-detail-navigation-item a:hover strong {
+    opacity: 0.6;
+}
+
+
+/* =========================================================
+   Mobile
+========================================================= */
+
+@media (max-width: 768px) {
+
+    .dam-lake-detail {
+        padding: 65px 20px 80px;
+    }
+
+    .dam-lake-detail-top-back {
+        margin-bottom: 45px;
+    }
+
+    .dam-lake-detail-header {
+        margin-bottom: 40px;
+    }
+
+    .dam-lake-detail-number {
+        font-size: 1.5rem;
+    }
+
+    .dam-lake-detail-label {
+        margin-bottom: 18px;
+    }
+
+    .dam-lake-detail-header h1 {
+        font-size: 2.6rem;
+    }
+
+    .dam-lake-detail-dam {
+        line-height: 1.7;
+    }
+
+    .dam-lake-detail-info {
+        margin-top: 50px;
+    }
+
+    .dam-lake-detail-status-item {
+        padding: 18px 10px;
+    }
+
+    .dam-lake-detail-status-label {
+        font-size: 0.7rem;
+    }
+
+    .dam-lake-detail-status-value {
+        font-size: 0.76rem;
+    }
+
+    .dam-lake-detail-text {
+        margin-top: 45px;
+    }
+
+    .dam-lake-detail-excerpt {
+        font-size: 0.98rem;
+    }
+
+    .dam-lake-detail-description {
+        font-size: 0.84rem;
+    }
+
+    .dam-lake-detail-gallery {
+        margin-top: 70px;
+    }
+
+    .dam-lake-detail-gallery-grid {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+
+    .dam-lake-detail-location {
+        margin-top: 80px;
+    }
+
+    #dam-lake-detail-map {
+        height: 400px;
+    }
+
+    .dam-lake-detail-navigation {
+        grid-template-columns: 1fr;
+        gap: 25px;
+        margin-top: 75px;
+    }
+
+    .dam-lake-detail-navigation-item.next {
+        text-align: left;
+    }
+
+}
+
+
+@media (max-width: 480px) {
+
+    .dam-lake-detail {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    .dam-lake-detail-header h1 {
+        font-size: 2.25rem;
+    }
+
+    .dam-lake-detail-status-item {
+        padding: 16px 6px;
+    }
+
+    .dam-lake-detail-status-label {
+        letter-spacing: 0.08em;
+    }
+
+}
+
+/* ---------------------------------------------------------
+Top Back
+--------------------------------------------------------- */
+
+.dam-lake-detail-top-back {
+    max-width: 760px;
+    margin: 0 auto 55px;
+    }
+    
+    .dam-lake-detail-top-back a {
+    color: #2f2d2a;
+    
+  
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    
+    text-decoration: none;
+   
+    
+    }
+    
+    .dam-lake-detail-top-back a:hover {
+    opacity: 0.6;
+    }
+    
+    /* ---------------------------------------------------------
+    Previous / Next
+    --------------------------------------------------------- */
+    
+    .dam-lake-detail-navigation {
+    max-width: 900px;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    
+    gap: 30px;
+    
+    margin: 110px auto 0;
+    
+    padding-top: 30px;
+    
+    border-top: 1px solid #d8d3ca;
+
+    
+    }
+    
+    .dam-lake-detail-navigation-item a {
+    display: flex;
+    flex-direction: column;
+
+    gap: 8px;
+    
+    color: #2f2d2a;
+    
+    text-decoration: none;
+  
+    
+    }
+    
+    .dam-lake-detail-navigation-item span {
+    font-family: "Cormorant Garamond", serif;
+    
+
+    font-size: 0.78rem;
+    
+    letter-spacing: 0.12em;
+    
+    color: #8a847d;
+ 
+    
+    }
+    
+    .dam-lake-detail-navigation-item strong {
+    font-size: 0.9rem;
+  
+    font-weight: 500;
+    
+    color: #403d38;
+   
+    
+    }
+    
+    .dam-lake-detail-navigation-item.next {
+    text-align: right;
+    }
+    
+    .dam-lake-detail-navigation-item a:hover strong {
+    opacity: 0.6;
+    }
+    
+    /* ---------------------------------------------------------
+    Mobile
+    --------------------------------------------------------- */
+    
+    @media (max-width: 768px) {
+    
+
+    .dam-lake-detail-top-back {
+        margin-bottom: 45px;
+    }
+    
+    .dam-lake-detail-navigation {
+        grid-template-columns: 1fr;
+    
+        gap: 25px;
+    
+        margin-top: 75px;
+    }
+    
+    .dam-lake-detail-navigation-item.next {
+        text-align: left;
+    }
+
+    
+    }
+    .dam-lake-popup-link {
+        margin-top: 14px;
+        padding-top: 10px;
+        border-top: 1px solid #e1ddd6;
+    }
+    
+    .dam-lake-popup-link a {
+        color: #302e2b;
+        font-size: 0.78rem;
+        letter-spacing: 0.05em;
+        text-decoration: none;
+    }
+    
+    .dam-lake-popup-link a:hover {
+        opacity: 0.6;
+    }
+/* ---------------------------------------------------------
+   Dam Lakes Back Link
+   --------------------------------------------------------- */
+
+   .dam-lakes-back {
+    margin-bottom: 55px;
+}
+
+.dam-lakes-back a {
+    display: inline-block;
+
+    color: #2f2d2a;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+
+    text-decoration: none;
+
+    transition: opacity 0.2s ease;
+}
+
+.dam-lakes-back a:hover {
+    opacity: 0.55;
+}
+
+#dam-lake-detail-map {
+    width: 100%;
+    height: 360px;
+    margin-top: 25px;
+
+    border: 1px solid #e1ddd6;
+    border-radius: 4px;
+
+    overflow: hidden;
+}
+
+.dam-lake-detail-gallery {
+    max-width: 1100px;
+    margin: 80px auto 0;
+}
+
+.dam-lake-detail-gallery .dam-lake-detail-section-label {
+    margin-bottom: 25px;
+}
+
+.dam-lake-detail-gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.dam-lake-detail-gallery-item {
+    margin: 0;
+}
+
+.dam-lake-detail-gallery-item img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+}
+
+.dam-lake-detail-gallery-item figcaption {
+    margin-top: 9px;
+    font-size: 0.75rem;
+    line-height: 1.5;
+    color: #8a847d;
+}
+
+@media (max-width: 600px) {
+
+    .dam-lake-detail-gallery {
+        margin-top: 60px;
+    }
+
+    .dam-lake-detail-gallery-grid {
+        grid-template-columns: 1fr;
+        gap: 25px;
+    }
+
+}
+
+/* =========================================
+   Dam Lake Detail - Gallery
+========================================= */
+
+.dam-lake-detail-gallery {
+    max-width: 1100px;
+    margin: 85px auto 0;
+}
+
+.dam-lake-detail-gallery
+.dam-lake-detail-section-label {
+    margin-bottom: 28px;
+}
+
+.dam-lake-detail-gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px 24px;
+}
+
+.dam-lake-detail-gallery-item {
+    margin: 0;
+}
+
+.dam-lake-detail-gallery-item img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+}
+
+.dam-lake-detail-gallery-item figcaption {
+    margin-top: 10px;
+    font-size: 0.75rem;
+    line-height: 1.6;
+    color: #8a847d;
+}
+
+
+/* =========================================
+   Responsive
+========================================= */
+
+@media (max-width: 600px) {
+
+    .dam-lake-detail-gallery {
+        margin-top: 65px;
+    }
+
+    .dam-lake-detail-gallery-grid {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+
+}
+
+/* =========================================================
+   Dam Lake Photo Lightbox
+========================================================= */
+
+.dam-lake-detail-gallery-button {
+    display: block;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    background: none;
+    cursor: zoom-in;
+}
+
+.dam-lake-detail-gallery-button img {
+    transition: opacity 0.25s ease;
+}
+
+.dam-lake-detail-gallery-button:hover img {
+    opacity: 0.78;
+}
+
+
+/* Lightbox */
+
+.dam-lake-lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 50px 90px;
+
+    background: rgba(20, 19, 17, 0.94);
+
+    opacity: 0;
+    visibility: hidden;
+
+    transition:
+        opacity 0.25s ease,
+        visibility 0.25s ease;
+}
+
+.dam-lake-lightbox.is-open {
+    opacity: 1;
+    visibility: visible;
+}
+
+
+/* Image */
+
+.dam-lake-lightbox-content {
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    max-width: min(1400px, 90vw);
+    max-height: 90vh;
+}
+
+#dam-lake-lightbox-image {
+    display: block;
+
+    max-width: 90vw;
+    max-height: 82vh;
+
+    width: auto;
+    height: auto;
+
+    object-fit: contain;
+}
+
+
+/* Caption */
+
+.dam-lake-lightbox-caption {
+    margin: 18px 0 0;
+
+    max-width: 800px;
+
+    color: rgba(255, 255, 255, 0.75);
+
+    font-size: 0.78rem;
+    line-height: 1.6;
+
+    text-align: center;
+}
+
+
+/* Close */
+
+.dam-lake-lightbox-close {
+    position: absolute;
+    top: 20px;
+    right: 25px;
+
+    z-index: 2;
+
+    width: 45px;
+    height: 45px;
+
+    padding: 0;
+
+    border: 0;
+    background: none;
+
+    color: rgba(255, 255, 255, 0.85);
+
+    font-size: 2.3rem;
+    font-weight: 200;
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition: opacity 0.2s ease;
+}
+
+.dam-lake-lightbox-close:hover {
+    opacity: 0.5;
+}
+
+
+/* Previous / Next */
+
+.dam-lake-lightbox-prev,
+.dam-lake-lightbox-next {
+    position: absolute;
+    top: 50%;
+
+    z-index: 2;
+
+    transform: translateY(-50%);
+
+    width: 55px;
+    height: 80px;
+
+    padding: 0;
+
+    border: 0;
+    background: none;
+
+    color: rgba(255, 255, 255, 0.85);
+
+    font-family: "Cormorant Garamond", serif;
+    font-size: 4rem;
+    font-weight: 300;
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition:
+        opacity 0.2s ease,
+        transform 0.2s ease;
+}
+
+.dam-lake-lightbox-prev {
+    left: 20px;
+}
+
+.dam-lake-lightbox-next {
+    right: 20px;
+}
+
+.dam-lake-lightbox-prev:hover {
+    opacity: 0.5;
+    transform: translateY(-50%) translateX(-3px);
+}
+
+.dam-lake-lightbox-next:hover {
+    opacity: 0.5;
+    transform: translateY(-50%) translateX(3px);
+}
+
+
+/* Mobile */
+
+@media (max-width: 768px) {
+
+    .dam-lake-lightbox {
+        padding: 45px 20px;
+    }
+
+    #dam-lake-lightbox-image {
+        max-width: 94vw;
+        max-height: 78vh;
+    }
+
+    .dam-lake-lightbox-prev,
+    .dam-lake-lightbox-next {
+        width: 45px;
+        height: 60px;
+
+        font-size: 3rem;
+    }
+
+    .dam-lake-lightbox-prev {
+        left: 3px;
+    }
+
+    .dam-lake-lightbox-next {
+        right: 3px;
+    }
+
+    .dam-lake-lightbox-close {
+        top: 10px;
+        right: 10px;
+
+        font-size: 2rem;
+    }
+
+    .dam-lake-lightbox-caption {
+        margin-top: 12px;
+        font-size: 0.72rem;
+    }
+}
+

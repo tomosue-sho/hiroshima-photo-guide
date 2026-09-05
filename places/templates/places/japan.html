@@ -45,13 +45,22 @@ Japan Through Film | Hiroshima Through Film
             Not a guide.
 Just places I happened to visit.
         </p>
-        <div class="mt-4">
+        <div class="mt-4 d-flex flex-wrap gap-2">
+
             <a
                 href="{% url 'diary_list' %}"
                 class="diary-hidden-link"
             >
                 Diary
             </a>
+        
+            <a
+                href="{% url 'dam_lake_list' %}"
+                class="diary-hidden-link"
+            >
+                Dam Lakes 100
+            </a>
+        
         </div>
     </header>
     <!-- JAPAN MAP -->

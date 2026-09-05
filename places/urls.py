@@ -20,4 +20,6 @@ urlpatterns = [
     path("photo-exhibition/", views.photo_exhibition, name="photo_exhibition"),
     path("diary/", views.diary_list, name="diary_list"),
     path("diary/<slug:slug>/", views.diary_detail, name="diary_detail"),
+    path("dam-lakes/", views.dam_lake_list, name="dam_lake_list"),
+    path("dam-lakes/<slug:slug>/",views.dam_lake_detail,name="dam_lake_detail",),
 ]

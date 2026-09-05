@@ -1,0 +1,469 @@
+{% extends "places/base.html" %}
+
+{% block content %}
+
+<link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
+
+<script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+</script>
+
+<section class="dam-lakes-page">
+
+    <div class="dam-lakes-back">
+
+        <a href="{% url 'japan' %}">
+            ← Back to Japan
+        </a>
+
+    </div>
+
+
+    <header class="dam-lakes-header">
+
+        <p class="dam-lakes-label">
+            DAM LAKES
+        </p>
+
+        <h1>
+            ダム湖百選
+        </h1>
+
+        <p class="dam-lakes-lead">
+            日本全国に選ばれた「ダム湖百選」を訪ね、
+            その風景を写真に残していく記録。
+        </p>
+
+        <div class="dam-lakes-progress">
+
+            <div class="dam-lakes-progress-number">
+                {{ achievement_rate }}%
+            </div>
+
+            <div class="dam-lakes-progress-label">
+                達成率
+            </div>
+
+            <div class="dam-lakes-progress-count">
+                訪問 {{ visited_count }} / {{ total_count }} 湖
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <!-- 日本地図 -->
+
+    <section class="dam-lakes-map">
+
+        <p class="section-label">
+            MAP
+        </p>
+    
+        <h2>
+            日本全国のダム湖
+        </h2>
+    
+        <div id="dam-lakes-map"></div>
+    
+    </section>
+
+
+    <!-- 記事 -->
+
+    <section class="dam-lakes-introduction">
+
+        <p class="section-label">
+            JOURNAL
+        </p>
+
+        <h2>
+            ダム湖百選を訪ねて
+        </h2>
+
+        <p>
+            日本各地にあるダム湖を訪れ、
+            その土地の風景や空気を写真に残していきます。
+        </p>
+
+    </section>
+
+
+    <!-- 65湖一覧 -->
+
+    <section class="dam-lakes-list">
+
+        <p class="section-label">
+            65 DAM LAKES
+        </p>
+
+        <h2>
+            ダム湖百選一覧
+        </h2>
+
+        <div class="dam-lakes-grid">
+
+            {% for lake in dam_lakes %}
+
+            <a
+            href="{% url 'dam_lake_detail' lake.slug %}"
+            class="dam-lake-card-link"
+        >
+        
+            <article class="dam-lake-card">
+        
+                <div class="dam-lake-number">
+                    {{ lake.order|stringformat:"02d" }}
+                </div>
+        
+                <div class="dam-lake-content">
+        
+                    <h3>
+                        {{ lake.name }}
+                    </h3>
+        
+                    <p>
+                        {{ lake.dam_name }} · {{ lake.prefecture }}
+                    </p>
+        
+                    <div class="dam-lake-status">
+        
+                        {% if lake.visited %}
+                            <span>Visited</span>
+                        {% else %}
+                            <span>Not yet visited</span>
+                        {% endif %}
+        
+                        {% if lake.photographed %}
+                            <span>Photographed</span>
+                        {% endif %}
+        
+                    </div>
+        
+                </div>
+        
+            </article>
+        
+        </a>
+
+            {% empty %}
+
+                <p>
+                    ダム湖のデータがありません。
+                </p>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+</section>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+    
+        const map = L.map("dam-lakes-map", {
+            zoomControl: true,
+            scrollWheelZoom: false,
+        });
+    
+        L.tileLayer(
+            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+            {
+                attribution:
+                    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+                maxZoom: 18,
+            }
+        ).addTo(map);
+    
+    
+        /* -----------------------------------------------------
+           65 Dam Lakes
+           ----------------------------------------------------- */
+    
+        const lakes = [
+           {% for lake in map_lakes %}
+           {
+               order: {{ lake.order }},
+               name: "{{ lake.name|escapejs }}",
+               dam_name: "{{ lake.dam_name|escapejs }}",
+               prefecture: "{{ lake.prefecture|escapejs }}",
+               latitude: {{ lake.latitude }},
+               longitude: {{ lake.longitude }},
+               visited: {{ lake.visited|yesno:"true,false" }},
+               photographed: {{ lake.photographed|yesno:"true,false" }},
+               url: "{{ lake.url|escapejs }}"
+           }{% if not forloop.last %},{% endif %}
+           {% endfor %}
+       ];
+    
+    
+        const markers = [];
+    
+    
+        /* -----------------------------------------------------
+           Marker size based on zoom
+           ----------------------------------------------------- */
+    
+        function getMarkerSize(zoom) {
+    
+            if (zoom >= 8) {
+                return {
+                    size: 27,
+                    fontSize: "0.78rem",
+                    className: "zoom-large",
+                };
+            }
+    
+            if (zoom >= 6) {
+                return {
+                    size: 22,
+                    fontSize: "0.65rem",
+                    className: "zoom-medium",
+                };
+            }
+    
+            return {
+                size: 18,
+                fontSize: "0.55rem",
+                className: "zoom-small",
+            };
+        }
+    
+    
+        /* -----------------------------------------------------
+           Create marker
+           ----------------------------------------------------- */
+    
+        lakes.forEach(function (lake) {
+    
+            let statusClass = "is-unvisited";
+    
+            if (lake.photographed) {
+                statusClass = "is-photographed";
+            } else if (lake.visited) {
+                statusClass = "is-visited";
+            }
+    
+    
+            const initialSize = getMarkerSize(map.getZoom());
+    
+    
+            const markerIcon = L.divIcon({
+    
+                className: "dam-lake-marker-wrapper",
+    
+                html: `
+                    <div
+                        class="dam-lake-marker ${statusClass} ${initialSize.className}"
+                    >
+                        ${String(lake.order).padStart(2, "0")}
+                    </div>
+                `,
+    
+                iconSize: [
+                    initialSize.size,
+                    initialSize.size
+                ],
+    
+                iconAnchor: [
+                    initialSize.size / 2,
+                    initialSize.size / 2
+                ],
+    
+                popupAnchor: [
+                    0,
+                    -(initialSize.size / 2)
+                ],
+            });
+    
+    
+            const marker = L.marker(
+                [
+                    lake.latitude,
+                    lake.longitude
+                ],
+                {
+                    icon: markerIcon,
+                }
+            ).addTo(map);
+    
+    
+            /* -------------------------------------------------
+               Popup
+               ------------------------------------------------- */
+    
+            let status = "";
+    
+            if (lake.photographed) {
+    
+                status = `
+                    <div class="dam-lake-popup-status">
+                        撮影済み
+                    </div>
+                `;
+    
+            } else if (lake.visited) {
+    
+                status = `
+                    <div class="dam-lake-popup-status">
+                        訪問済み
+                    </div>
+                `;
+    
+            } else {
+    
+                status = `
+                    <div class="dam-lake-popup-status is-unvisited">
+                        未訪問
+                    </div>
+                `;
+    
+            }
+    
+    
+            marker.bindPopup(`
+                 <div class="dam-lake-popup">
+
+                    <div class="dam-lake-popup-number">
+                        ${String(lake.order).padStart(2, "0")}
+                    </div>
+
+                     <strong>
+                        ${lake.name}
+                     </strong>
+
+                    <div>
+                        ${lake.dam_name}
+                    </div>
+
+                    <div>
+                       ${lake.prefecture}
+                    </div>
+
+                     ${status}
+
+                    <div class="dam-lake-popup-link">
+                        <a href="${lake.url}">
+                             詳細を見る →
+                        </a>
+                    </div>
+
+                </div>
+            `);
+    
+    
+            markers.push(marker);
+    
+        });
+    
+    
+        /* -----------------------------------------------------
+           Update marker size when zoom changes
+           ----------------------------------------------------- */
+    
+        function updateMarkerSizes() {
+    
+            const zoom = map.getZoom();
+            const markerSize = getMarkerSize(zoom);
+    
+    
+            markers.forEach(function (marker) {
+    
+                const element = marker.getElement();
+    
+                if (!element) {
+                    return;
+                }
+    
+    
+                const markerElement =
+                    element.querySelector(".dam-lake-marker");
+    
+    
+                if (!markerElement) {
+                    return;
+                }
+    
+    
+                markerElement.classList.remove(
+                    "zoom-small",
+                    "zoom-medium",
+                    "zoom-large"
+                );
+    
+    
+                markerElement.classList.add(
+                    markerSize.className
+                );
+    
+    
+                marker.setIcon(
+                    L.divIcon({
+    
+                        className:
+                            "dam-lake-marker-wrapper",
+    
+                        html:
+                            markerElement.outerHTML,
+    
+                        iconSize: [
+                            markerSize.size,
+                            markerSize.size
+                        ],
+    
+                        iconAnchor: [
+                            markerSize.size / 2,
+                            markerSize.size / 2
+                        ],
+    
+                        popupAnchor: [
+                            0,
+                            -(markerSize.size / 2)
+                        ],
+    
+                    })
+                );
+    
+            });
+    
+        }
+    
+    
+        map.on(
+            "zoomend",
+            updateMarkerSizes
+        );
+    
+    
+        /* -----------------------------------------------------
+           Fit map to all markers
+           ----------------------------------------------------- */
+    
+        if (markers.length > 0) {
+    
+            const group =
+                L.featureGroup(markers);
+    
+            map.fitBounds(
+                group.getBounds().pad(0.08)
+            );
+    
+        } else {
+    
+            map.setView(
+                [36.5, 138.0],
+                5
+            );
+    
+        }
+    
+    });
+    </script>
+
+{% endblock %}

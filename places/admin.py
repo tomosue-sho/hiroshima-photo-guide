@@ -2,9 +2,17 @@ from django.contrib import admin
 from .models import Area, Location, Photo, Tag
 from .models import About, AboutImage, Collaborator
 from .models import Gear, Message
-from .models import CarpNews, CarpPageSettings, DiaryPost, DiaryPhoto
+from .models import (
+    CarpNews,
+    CarpPageSettings,
+    DiaryPost,
+    DiaryPhoto,
+    DamLake,
+    DamLakePhoto,
+)
 from .image_utils import process_photo_image
 from django.utils.html import format_html
+
 
 class PhotoInline(admin.TabularInline):
     model = Photo
@@ -26,7 +34,8 @@ class PhotoInline(admin.TabularInline):
                 )
 
                 process_photo_image(instance)
-                
+
+
 @admin.register(Location)
 class LocationAdmin(admin.ModelAdmin):
     list_display = (
@@ -62,7 +71,8 @@ class LocationAdmin(admin.ModelAdmin):
     )
     def get_collection(self, obj):
         return obj.area.get_collection_display()
-    
+
+
 @admin.register(Photo)
 class PhotoAdmin(admin.ModelAdmin):
     list_display = (
@@ -125,37 +135,100 @@ class PhotoAdmin(admin.ModelAdmin):
         if obj.image and obj.processing_status == "pending":
             process_photo_image(obj)
 
+
 @admin.register(Gear)
 class GearAdmin(admin.ModelAdmin):
     list_display = ("name", "gear_type")
     list_filter = ("gear_type",)
     search_fields = ("name", "description")
-    
+
+
 @admin.register(Message)
 class MessageAdmin(admin.ModelAdmin):
-    list_display = ("name", "country", "suggested_location", "is_read", "created_at")
-    list_filter = ("is_read", "country", "created_at")
-    search_fields = ("name", "email", "country", "suggested_location", "message")
+    list_display = (
+        "name",
+        "country",
+        "suggested_location",
+        "is_read",
+        "created_at",
+    )
+
+    list_filter = (
+        "is_read",
+        "country",
+        "created_at",
+    )
+
+    search_fields = (
+        "name",
+        "email",
+        "country",
+        "suggested_location",
+        "message",
+    )
+
     readonly_fields = ("created_at",)
-    
+
+
 @admin.register(Collaborator)
 class CollaboratorAdmin(admin.ModelAdmin):
-    list_display = ("name", "role", "is_visible", "created_at")
-    list_filter = ("is_visible", "created_at")
-    search_fields = ("name", "role", "description")
-    
+    list_display = (
+        "name",
+        "role",
+        "is_visible",
+        "created_at",
+    )
+
+    list_filter = (
+        "is_visible",
+        "created_at",
+    )
+
+    search_fields = (
+        "name",
+        "role",
+        "description",
+    )
+
+
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
-    list_display = ("name", "name_ja", "slug")
-    search_fields = ("name", "name_ja", "slug")
-    prepopulated_fields = {"slug": ("name",)}
-    
+    list_display = (
+        "name",
+        "name_ja",
+        "slug",
+    )
+
+    search_fields = (
+        "name",
+        "name_ja",
+        "slug",
+    )
+
+    prepopulated_fields = {
+        "slug": ("name",)
+    }
+
+
 @admin.register(Area)
 class AreaAdmin(admin.ModelAdmin):
-    list_display = ("name", "country", "collection")
-    list_filter = ("collection", "country")
-    search_fields = ("name", "country")
-    
+    list_display = (
+        "name",
+        "country",
+        "collection",
+    )
+
+    list_filter = (
+        "collection",
+        "country",
+    )
+
+    search_fields = (
+        "name",
+        "country",
+    )
+
+
 @admin.register(CarpNews)
 class CarpNewsAdmin(admin.ModelAdmin):
 
@@ -181,7 +254,8 @@ class CarpNewsAdmin(admin.ModelAdmin):
     ordering = (
         "-published_at",
     )
-    
+
+
 @admin.register(CarpPageSettings)
 class CarpPageSettingsAdmin(admin.ModelAdmin):
 
@@ -190,22 +264,15 @@ class CarpPageSettingsAdmin(admin.ModelAdmin):
         "updated_at",
     ]
 
+
+# =========================================
+# Diary
+# =========================================
+
 class DiaryPhotoInline(admin.TabularInline):
-
     model = DiaryPhoto
+    extra = 3
 
-    extra = 1
-
-    fields = (
-        "image",
-        "caption",
-        "order",
-    )
-
-    ordering = (
-        "order",
-        "id",
-    )
 
 @admin.register(DiaryPost)
 class DiaryPostAdmin(admin.ModelAdmin):
@@ -238,3 +305,135 @@ class DiaryPostAdmin(admin.ModelAdmin):
     inlines = [
         DiaryPhotoInline,
     ]
+
+
+# =========================================
+# Dam Lakes
+# =========================================
+
+class DamLakePhotoInline(admin.TabularInline):
+    model = DamLakePhoto
+    extra = 3
+
+    fields = (
+        "image",
+        "caption",
+        "order",
+        "image_large",
+        "image_medium",
+        "image_thumb",
+    )
+
+    readonly_fields = (
+        "image_large",
+        "image_medium",
+        "image_thumb",
+    )
+
+
+@admin.register(DamLake)
+class DamLakeAdmin(admin.ModelAdmin):
+
+    inlines = [
+        DamLakePhotoInline,
+    ]
+
+    list_display = (
+        "order",
+        "name",
+        "dam_name",
+        "prefecture",
+        "visited",
+        "photographed",
+        "visit_date",
+        "is_visible",
+    )
+
+    list_filter = (
+        "visited",
+        "photographed",
+        "prefecture",
+        "is_visible",
+    )
+
+    search_fields = (
+        "name",
+        "dam_name",
+        "prefecture",
+    )
+
+    list_editable = (
+        "visited",
+        "photographed",
+        "is_visible",
+    )
+
+    prepopulated_fields = {
+        "slug": ("name",)
+    }
+
+    ordering = (
+        "order",
+        "id",
+    )
+
+    fieldsets = (
+        (
+            "基本情報",
+            {
+                "fields": (
+                    "name",
+                    "slug",
+                    "dam_name",
+                    "prefecture",
+                    "order",
+                    "is_visible",
+                )
+            },
+        ),
+        (
+            "地図",
+            {
+                "fields": (
+                    "latitude",
+                    "longitude",
+                )
+            },
+        ),
+        (
+            "訪問・撮影",
+            {
+                "fields": (
+                    "visited",
+                    "photographed",
+                    "visit_date",
+                )
+            },
+        ),
+        (
+            "紹介",
+            {
+                "fields": (
+                    "excerpt",
+                    "description",
+                )
+            },
+        ),
+        (
+            "写真",
+            {
+                "fields": (
+                    "image",
+                    "image_large",
+                    "image_medium",
+                    "image_thumb",
+                )
+            },
+        ),
+    )
+
+    readonly_fields = (
+        "image_large",
+        "image_medium",
+        "image_thumb",
+    )

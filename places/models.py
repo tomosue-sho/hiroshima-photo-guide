@@ -724,6 +724,14 @@ class CarpPageSettings(models.Model):
         return self.title
 
 class JournalArticle(models.Model):
+    dam_lake = models.ForeignKey( 
+        "DamLake",
+        on_delete=models.SET_NULL,
+        blank=True, null=True, 
+        related_name="journal_articles", 
+        verbose_name="ダム湖百選", 
+        )
+    
     title = models.CharField(
         max_length=200
     )
@@ -1112,3 +1120,426 @@ class DiaryPhoto(models.Model):
 
     def __str__(self):
         return f"{self.post.title} - Photo {self.order}"
+    
+class DamLake(models.Model):
+    """
+    Dam Lake 100 Selection
+    全国の「ダム湖百選」65湖を管理するモデル
+    """
+
+    name = models.CharField(
+        max_length=200,
+        verbose_name="ダム湖名",
+    )
+
+    slug = models.SlugField(
+        unique=True,
+        verbose_name="Slug",
+    )
+
+    dam_name = models.CharField(
+        max_length=200,
+        verbose_name="ダム名",
+    )
+
+    prefecture = models.CharField(
+        max_length=100,
+        verbose_name="都道府県",
+    )
+
+    latitude = models.FloatField(
+        blank=True,
+        null=True,
+        verbose_name="緯度",
+    )
+
+    longitude = models.FloatField(
+        blank=True,
+        null=True,
+        verbose_name="経度",
+    )
+
+    # ---------------------------------
+    # Visit / Photography status
+    # ---------------------------------
+
+    visited = models.BooleanField(
+        default=False,
+        db_index=True,
+        verbose_name="訪問済み",
+    )
+
+    photographed = models.BooleanField(
+        default=False,
+        db_index=True,
+        verbose_name="撮影済み",
+    )
+
+    visit_date = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name="訪問日",
+    )
+
+    # ---------------------------------
+    # Content
+    # ---------------------------------
+
+    excerpt = models.TextField(
+        blank=True,
+        verbose_name="概要",
+    )
+
+    description = models.TextField(
+        blank=True,
+        verbose_name="紹介文",
+    )
+
+    # ---------------------------------
+    # Main image
+    # ---------------------------------
+
+    image = models.ImageField(
+        upload_to="dam_lakes/",
+        blank=True,
+        null=True,
+        verbose_name="メイン画像",
+    )
+
+    image_large = models.ImageField(
+        upload_to="dam_lakes/large/",
+        blank=True,
+        null=True,
+    )
+
+    image_medium = models.ImageField(
+        upload_to="dam_lakes/medium/",
+        blank=True,
+        null=True,
+    )
+
+    image_thumb = models.ImageField(
+        upload_to="dam_lakes/thumb/",
+        blank=True,
+        null=True,
+    )
+
+    # ---------------------------------
+    # Display
+    # ---------------------------------
+
+    order = models.PositiveIntegerField(
+        default=0,
+        db_index=True,
+        verbose_name="表示順",
+    )
+
+    is_visible = models.BooleanField(
+        default=True,
+        db_index=True,
+        verbose_name="公開",
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True,
+    )
+
+    class Meta:
+        ordering = ["order", "id"]
+        verbose_name = "ダム湖百選"
+        verbose_name_plural = "ダム湖百選"
+
+    def __str__(self):
+        return f"{self.name} / {self.dam_name}"
+
+    @property
+    def has_location(self):
+        """
+        日本地図に表示できる座標が登録されているか
+        """
+        return (
+            self.latitude is not None
+            and self.longitude is not None
+        )
+
+    def save(self, *args, **kwargs):
+
+        old_image_name = None
+
+        if self.pk:
+            try:
+                old = DamLake.objects.get(pk=self.pk)
+                old_image_name = old.image.name
+            except DamLake.DoesNotExist:
+                pass
+
+        super().save(*args, **kwargs)
+
+        if not self.image:
+            return
+
+        image_changed = old_image_name != self.image.name
+
+        should_generate = (
+            image_changed
+            or not self.image_large
+            or not self.image_medium
+            or not self.image_thumb
+        )
+
+        if not should_generate:
+            return
+
+        try:
+
+            large = create_webp_variant(
+                self.image,
+                max_width=1800,
+                quality=82,
+            )
+
+            medium = create_webp_variant(
+                self.image,
+                max_width=1200,
+                quality=78,
+            )
+
+            thumb = create_webp_variant(
+                self.image,
+                max_width=600,
+                quality=75,
+            )
+
+            self.image_large.save(
+                build_variant_filename(
+                    self.image.name,
+                    "large",
+                ),
+                large,
+                save=False,
+            )
+
+            self.image_medium.save(
+                build_variant_filename(
+                    self.image.name,
+                    "medium",
+                ),
+                medium,
+                save=False,
+            )
+
+            self.image_thumb.save(
+                build_variant_filename(
+                    self.image.name,
+                    "thumb",
+                ),
+                thumb,
+                save=False,
+            )
+
+            super().save(
+                update_fields=[
+                    "image_large",
+                    "image_medium",
+                    "image_thumb",
+                ]
+            )
+
+        except Exception as e:
+
+            print(
+                "DAM LAKE IMAGE VARIANT SKIPPED:",
+                e,
+            )
+
+class DamLakePhoto(models.Model):
+    lake = models.ForeignKey(
+        DamLake,
+        on_delete=models.CASCADE,
+        related_name="photos",
+        verbose_name="ダム湖",
+    )
+
+    # ---------------------------------
+    # Original image
+    # ---------------------------------
+
+    image = models.ImageField(
+        upload_to="dam_lakes/photos/",
+        verbose_name="写真",
+    )
+
+    # ---------------------------------
+    # WebP variants
+    # ---------------------------------
+
+    image_large = models.ImageField(
+        upload_to="dam_lakes/photos/large/",
+        blank=True,
+        null=True,
+        verbose_name="Large",
+    )
+
+    image_medium = models.ImageField(
+        upload_to="dam_lakes/photos/medium/",
+        blank=True,
+        null=True,
+        verbose_name="Medium",
+    )
+
+    image_thumb = models.ImageField(
+        upload_to="dam_lakes/photos/thumb/",
+        blank=True,
+        null=True,
+        verbose_name="Thumb",
+    )
+
+    # ---------------------------------
+    # Content
+    # ---------------------------------
+
+    caption = models.CharField(
+        max_length=200,
+        blank=True,
+        verbose_name="キャプション",
+    )
+
+    # ---------------------------------
+    # Display
+    # ---------------------------------
+
+    order = models.PositiveIntegerField(
+        default=0,
+        db_index=True,
+        verbose_name="表示順",
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True,
+    )
+
+    class Meta:
+        ordering = ["order", "id"]
+        verbose_name = "ダム湖写真"
+        verbose_name_plural = "ダム湖写真"
+
+    def __str__(self):
+        return f"{self.lake.name} - {self.order}"
+
+    # ---------------------------------
+    # Save
+    # ---------------------------------
+
+    def save(self, *args, **kwargs):
+
+        old_image_name = None
+
+        if self.pk:
+            try:
+                old = DamLakePhoto.objects.get(pk=self.pk)
+                old_image_name = old.image.name
+            except DamLakePhoto.DoesNotExist:
+                pass
+
+        super().save(*args, **kwargs)
+
+        if not self.image:
+            return
+
+        image_changed = old_image_name != self.image.name
+
+        should_generate = (
+            image_changed
+            or not self.image_large
+            or not self.image_medium
+            or not self.image_thumb
+        )
+
+        if not should_generate:
+            return
+
+        try:
+
+            # ---------------------------------
+            # Large
+            # ---------------------------------
+
+            large = create_webp_variant(
+                self.image,
+                max_width=1800,
+                quality=82,
+            )
+
+            # ---------------------------------
+            # Medium
+            # ---------------------------------
+
+            medium = create_webp_variant(
+                self.image,
+                max_width=1200,
+                quality=78,
+            )
+
+            # ---------------------------------
+            # Thumb
+            # ---------------------------------
+
+            thumb = create_webp_variant(
+                self.image,
+                max_width=600,
+                quality=75,
+            )
+
+            # ---------------------------------
+            # Save variants
+            # ---------------------------------
+
+            self.image_large.save(
+                build_variant_filename(
+                    self.image.name,
+                    "large",
+                ),
+                large,
+                save=False,
+            )
+
+            self.image_medium.save(
+                build_variant_filename(
+                    self.image.name,
+                    "medium",
+                ),
+                medium,
+                save=False,
+            )
+
+            self.image_thumb.save(
+                build_variant_filename(
+                    self.image.name,
+                    "thumb",
+                ),
+                thumb,
+                save=False,
+            )
+
+            super().save(
+                update_fields=[
+                    "image_large",
+                    "image_medium",
+                    "image_thumb",
+                ]
+            )
+
+        except Exception as e:
+
+            print(
+                "DAM LAKE PHOTO IMAGE VARIANT SKIPPED:",
+                e,
+            )

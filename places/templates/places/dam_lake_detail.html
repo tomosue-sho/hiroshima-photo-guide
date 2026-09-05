@@ -1,0 +1,699 @@
+{% extends "places/base.html" %}
+
+{% block title %}
+{{ lake.name }} | Dam Lakes 100 | Hiroshima Through Film
+{% endblock %}
+
+{% block breadcrumb %}
+
+<nav class="breadcrumb-container mb-3">
+
+    <a href="{% url 'home' %}">
+        Home
+    </a>
+
+    <span>›</span>
+
+    <a href="{% url 'dam_lake_list' %}">
+        Dam Lakes 100
+    </a>
+
+    <span>›</span>
+
+    <span class="current">
+        {{ lake.name }}
+    </span>
+
+</nav>
+
+{% endblock %}
+
+
+{% block content %}
+
+<!-- Leaflet CSS -->
+<link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
+
+
+<main class="dam-lake-detail">
+
+
+    <!-- Back -->
+    <div class="dam-lake-detail-top-back">
+
+        <a href="{% url 'dam_lake_list' %}">
+            ← Back to Dam Lakes 100
+        </a>
+
+    </div>
+
+
+    <!-- Header -->
+    <header class="dam-lake-detail-header">
+
+        <p class="dam-lake-detail-number">
+            {{ lake.order|stringformat:"02d" }}
+        </p>
+
+        <p class="dam-lake-detail-label">
+            DAM LAKES 100
+        </p>
+
+        <h1>
+            {{ lake.name }}
+        </h1>
+
+        <p class="dam-lake-detail-dam">
+            {{ lake.dam_name }} · {{ lake.prefecture }}
+        </p>
+
+    </header>
+
+
+    <!-- Main Image -->
+    {% if lake.image_large or lake.image_medium or lake.image %}
+
+    <figure class="dam-lake-detail-image">
+
+        {% if lake.image_large %}
+
+            <img
+                src="{{ lake.image_large.url }}"
+                alt="{{ lake.name }}"
+            >
+
+        {% elif lake.image_medium %}
+
+            <img
+                src="{{ lake.image_medium.url }}"
+                alt="{{ lake.name }}"
+            >
+
+        {% else %}
+
+            <img
+                src="{{ lake.image.url }}"
+                alt="{{ lake.name }}"
+            >
+
+        {% endif %}
+
+    </figure>
+
+    {% endif %}
+
+
+    <!-- Information -->
+    <section class="dam-lake-detail-info">
+
+
+        <!-- Status -->
+        <div class="dam-lake-detail-status">
+
+
+            <div class="dam-lake-detail-status-item">
+
+                <span class="dam-lake-detail-status-label">
+                    VISITED
+                </span>
+
+                {% if lake.visited %}
+
+                    <span class="dam-lake-detail-status-value is-active">
+                        Visited
+                    </span>
+
+                {% else %}
+
+                    <span class="dam-lake-detail-status-value">
+                        Not yet visited
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+
+            <div class="dam-lake-detail-status-item">
+
+                <span class="dam-lake-detail-status-label">
+                    PHOTOGRAPHED
+                </span>
+
+                {% if lake.photographed %}
+
+                    <span class="dam-lake-detail-status-value is-active">
+                        Photographed
+                    </span>
+
+                {% else %}
+
+                    <span class="dam-lake-detail-status-value">
+                        Not yet photographed
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+
+            <div class="dam-lake-detail-status-item">
+
+                <span class="dam-lake-detail-status-label">
+                    VISIT DATE
+                </span>
+
+                {% if lake.visit_date %}
+
+                    <span class="dam-lake-detail-status-value">
+                        {{ lake.visit_date|date:"Y.m.d" }}
+                    </span>
+
+                {% else %}
+
+                    <span class="dam-lake-detail-status-value">
+                        —
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+
+        </div>
+
+
+        <!-- Description -->
+        {% if lake.excerpt or lake.description %}
+
+        <div class="dam-lake-detail-text">
+
+
+            {% if lake.excerpt %}
+
+                <p class="dam-lake-detail-excerpt">
+                    {{ lake.excerpt }}
+                </p>
+
+            {% endif %}
+
+
+            {% if lake.description %}
+
+                <div class="dam-lake-detail-description">
+                    {{ lake.description|linebreaks }}
+                </div>
+
+            {% endif %}
+
+
+        </div>
+
+        {% endif %}
+
+
+    </section>
+
+
+    <!-- Photo Gallery -->
+    {% with photos=lake.photos.all %}
+
+        {% if photos %}
+
+        <section class="dam-lake-detail-gallery">
+
+
+            <p class="dam-lake-detail-section-label">
+                PHOTOGRAPHS
+            </p>
+
+
+<div class="dam-lake-detail-gallery-grid">
+
+    {% for photo in photos %}
+    <figure class="dam-lake-detail-gallery-item">
+
+        <button
+            type="button"
+            class="dam-lake-detail-gallery-button"
+            data-gallery-index="{{ forloop.counter0 }}"
+            data-large-image="{% if photo.image_large %}{{ photo.image_large.url }}{% elif photo.image %}{{ photo.image.url }}{% endif %}"
+            data-caption="{{ photo.caption|escape }}"
+            aria-label="Open photograph"
+        >
+
+            {% if photo.image_medium %}
+                <img
+                    src="{{ photo.image_medium.url }}"
+                    alt="{% if photo.caption %}{{ photo.caption }}{% else %}{{ lake.name }}{% endif %}"
+                    loading="lazy"
+                >
+            {% elif photo.image %}
+                <img
+                    src="{{ photo.image.url }}"
+                    alt="{% if photo.caption %}{{ photo.caption }}{% else %}{{ lake.name }}{% endif %}"
+                    loading="lazy"
+                >
+            {% endif %}
+
+        </button>
+
+        {% if photo.caption %}
+            <figcaption>
+                {{ photo.caption }}
+            </figcaption>
+        {% endif %}
+
+    </figure>
+    {% endfor %}
+
+</div>
+
+        </section>
+
+        {% endif %}
+
+    {% endwith %}
+
+
+    <!-- Location -->
+    {% if lake.has_location %}
+
+    <section class="dam-lake-detail-location">
+
+
+        <p class="dam-lake-detail-section-label">
+            LOCATION
+        </p>
+
+
+        <p>
+            {{ lake.prefecture }}
+        </p>
+
+
+        <div
+            id="dam-lake-detail-map"
+            data-lat="{{ lake.latitude }}"
+            data-lng="{{ lake.longitude }}"
+        ></div>
+
+
+        <p class="dam-lake-detail-coordinates">
+            {{ lake.latitude }},
+            {{ lake.longitude }}
+        </p>
+
+
+    </section>
+
+    {% endif %}
+
+
+    <!-- Previous / Next -->
+    <nav class="dam-lake-detail-navigation">
+
+
+        <div class="dam-lake-detail-navigation-item previous">
+
+            {% if previous_lake %}
+
+                <a href="{% url 'dam_lake_detail' previous_lake.slug %}">
+
+                    <span>
+                        ← Previous
+                    </span>
+
+                    <strong>
+                        {{ previous_lake.order|stringformat:"02d" }}
+                        {{ previous_lake.name }}
+                    </strong>
+
+                </a>
+
+            {% endif %}
+
+        </div>
+
+
+        <div class="dam-lake-detail-navigation-item next">
+
+            {% if next_lake %}
+
+                <a href="{% url 'dam_lake_detail' next_lake.slug %}">
+
+                    <span>
+                        Next →
+                    </span>
+
+                    <strong>
+                        {{ next_lake.order|stringformat:"02d" }}
+                        {{ next_lake.name }}
+                    </strong>
+
+                </a>
+
+            {% endif %}
+
+        </div>
+
+
+    </nav>
+
+
+</main>
+
+<!-- Photo Lightbox -->
+
+<div
+    id="dam-lake-lightbox"
+    class="dam-lake-lightbox"
+    aria-hidden="true"
+>
+
+    <button
+        type="button"
+        class="dam-lake-lightbox-close"
+        aria-label="Close"
+    >
+        ×
+    </button>
+
+    <button
+        type="button"
+        class="dam-lake-lightbox-prev"
+        aria-label="Previous photograph"
+    >
+        ‹
+    </button>
+
+    <div class="dam-lake-lightbox-content">
+
+        <img
+            id="dam-lake-lightbox-image"
+            src=""
+            alt=""
+        >
+
+        <p
+            id="dam-lake-lightbox-caption"
+            class="dam-lake-lightbox-caption"
+        ></p>
+
+    </div>
+
+    <button
+        type="button"
+        class="dam-lake-lightbox-next"
+        aria-label="Next photograph"
+    >
+        ›
+    </button>
+
+</div>
+
+
+<!-- Leaflet JS -->
+<script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+</script>
+
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const mapElement =
+        document.getElementById("dam-lake-detail-map");
+
+
+    /*
+     * 地図が存在しない場合は何もしない
+     */
+    if (!mapElement) {
+        return;
+    }
+
+
+    /*
+     * Djangoから緯度・経度を取得
+     */
+    const latitude =
+        parseFloat(mapElement.dataset.lat);
+
+    const longitude =
+        parseFloat(mapElement.dataset.lng);
+
+
+    /*
+     * 座標が正しくない場合は終了
+     */
+    if (
+        Number.isNaN(latitude) ||
+        Number.isNaN(longitude)
+    ) {
+        return;
+    }
+
+
+    /*
+     * 地図を作成
+     */
+    const map = L.map(
+        "dam-lake-detail-map",
+        {
+            scrollWheelZoom: false
+        }
+    ).setView(
+        [latitude, longitude],
+        12
+    );
+
+
+    /*
+     * OpenStreetMap
+     */
+    L.tileLayer(
+        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        {
+            maxZoom: 18,
+
+            attribution:
+                '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }
+    ).addTo(map);
+
+
+    /*
+     * ダム湖の位置にマーカー
+     */
+    const marker =
+        L.marker(
+            [latitude, longitude]
+        ).addTo(map);
+
+
+    /*
+     * マーカーをクリックすると湖名を表示
+     */
+    marker.bindPopup(
+        "{{ lake.name|escapejs }}"
+    );
+
+});
+
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+    
+        const galleryButtons = Array.from(
+            document.querySelectorAll(
+                ".dam-lake-detail-gallery-button"
+            )
+        );
+    
+        const lightbox =
+            document.getElementById("dam-lake-lightbox");
+    
+        const lightboxImage =
+            document.getElementById("dam-lake-lightbox-image");
+    
+        const lightboxCaption =
+            document.getElementById("dam-lake-lightbox-caption");
+    
+        const closeButton =
+            document.querySelector(
+                ".dam-lake-lightbox-close"
+            );
+    
+        const prevButton =
+            document.querySelector(
+                ".dam-lake-lightbox-prev"
+            );
+    
+        const nextButton =
+            document.querySelector(
+                ".dam-lake-lightbox-next"
+            );
+    
+        if (
+            !galleryButtons.length ||
+            !lightbox
+        ) {
+            return;
+        }
+    
+        let currentIndex = 0;
+    
+    
+        function showPhoto(index) {
+    
+            if (index < 0) {
+                index = galleryButtons.length - 1;
+            }
+    
+            if (index >= galleryButtons.length) {
+                index = 0;
+            }
+    
+            currentIndex = index;
+    
+            const button =
+                galleryButtons[currentIndex];
+    
+            const imageUrl =
+                button.dataset.largeImage;
+    
+            const caption =
+                button.dataset.caption || "";
+    
+            if (!imageUrl) {
+                return;
+            }
+    
+            lightboxImage.src = imageUrl;
+            lightboxImage.alt = caption;
+    
+            lightboxCaption.textContent = caption;
+    
+            lightbox.classList.add("is-open");
+    
+            lightbox.setAttribute(
+                "aria-hidden",
+                "false"
+            );
+    
+            document.body.style.overflow = "hidden";
+        }
+    
+    
+        function closeLightbox() {
+    
+            lightbox.classList.remove("is-open");
+    
+            lightbox.setAttribute(
+                "aria-hidden",
+                "true"
+            );
+    
+            document.body.style.overflow = "";
+    
+            lightboxImage.src = "";
+        }
+    
+    
+        function showPrevious() {
+            showPhoto(currentIndex - 1);
+        }
+    
+    
+        function showNext() {
+            showPhoto(currentIndex + 1);
+        }
+    
+    
+        galleryButtons.forEach(
+            function (button, index) {
+    
+                button.addEventListener(
+                    "click",
+                    function () {
+                        showPhoto(index);
+                    }
+                );
+    
+            }
+        );
+    
+    
+        closeButton.addEventListener(
+            "click",
+            closeLightbox
+        );
+    
+    
+        prevButton.addEventListener(
+            "click",
+            function (event) {
+                event.stopPropagation();
+                showPrevious();
+            }
+        );
+    
+    
+        nextButton.addEventListener(
+            "click",
+            function (event) {
+                event.stopPropagation();
+                showNext();
+            }
+        );
+    
+    
+        lightbox.addEventListener(
+            "click",
+            function (event) {
+    
+                if (
+                    event.target === lightbox
+                ) {
+                    closeLightbox();
+                }
+    
+            }
+        );
+    
+    
+        document.addEventListener(
+            "keydown",
+            function (event) {
+    
+                if (
+                    !lightbox.classList.contains(
+                        "is-open"
+                    )
+                ) {
+                    return;
+                }
+    
+                if (event.key === "Escape") {
+                    closeLightbox();
+                }
+    
+                if (event.key === "ArrowLeft") {
+                    showPrevious();
+                }
+    
+                if (event.key === "ArrowRight") {
+                    showNext();
+                }
+    
+            }
+        );
+    
+    });
+    </script>
+{% endblock %}

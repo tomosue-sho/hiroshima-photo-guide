@@ -3,7 +3,7 @@ from django.urls import reverse
 
 from .forms import MessageForm
 from .models import (
-    About,Area,CarpNews,Collaborator,Gear,Location,Tag,CarpPageSettings,Photo,DiaryPost,
+    About,Area,CarpNews,Collaborator,Gear,Location,Tag,CarpPageSettings,Photo,DiaryPost,DamLake,
 )
 
 
@@ -420,4 +420,109 @@ def diary_detail(request, slug):
         {
             "post": post,
         }
+    )
+
+
+def dam_lake_list(request):
+    """
+    ダム湖百選トップページ
+    """
+
+    dam_lakes = (
+        DamLake.objects
+        .filter(is_visible=True)
+        .order_by("order", "id")
+    )
+
+    total_count = dam_lakes.count()
+
+    visited_count = dam_lakes.filter(
+        visited=True,
+    ).count()
+
+    photographed_count = dam_lakes.filter(
+        photographed=True,
+    ).count()
+
+    if total_count > 0:
+        achievement_rate = round(
+            visited_count / total_count * 100,
+            1,
+        )
+    else:
+        achievement_rate = 0
+
+    # 地図用データ
+    map_lakes = []
+
+    for lake in dam_lakes:
+        if lake.has_location:
+            map_lakes.append({
+                "order": lake.order,
+                "name": lake.name,
+                "dam_name": lake.dam_name,
+                "prefecture": lake.prefecture,
+                "latitude": float(lake.latitude),
+                "longitude": float(lake.longitude),
+                "visited": lake.visited,
+                "photographed": lake.photographed,
+                "url": reverse(
+                    "dam_lake_detail",
+                    args=[lake.slug],
+                ),
+            })
+
+    return render(
+        request,
+        "places/dam_lakes.html",
+        {
+            "dam_lakes": dam_lakes,
+            "total_count": total_count,
+            "visited_count": visited_count,
+            "photographed_count": photographed_count,
+            "achievement_rate": achievement_rate,
+            "map_lakes": map_lakes,
+        },
+    )
+    
+def dam_lake_detail(request, slug):
+    """
+    ダム湖百選 詳細ページ
+    """
+
+    lake = get_object_or_404(
+        DamLake,
+        slug=slug,
+        is_visible=True,
+    )
+
+    # 前後のダム湖
+    previous_lake = (
+        DamLake.objects
+        .filter(
+            is_visible=True,
+            order__lt=lake.order,
+        )
+        .order_by("-order")
+        .first()
+    )
+
+    next_lake = (
+        DamLake.objects
+        .filter(
+            is_visible=True,
+            order__gt=lake.order,
+        )
+        .order_by("order")
+        .first()
+    )
+
+    return render(
+        request,
+        "places/dam_lake_detail.html",
+        {
+            "lake": lake,
+            "previous_lake": previous_lake,
+            "next_lake": next_lake,
+        },
     )
