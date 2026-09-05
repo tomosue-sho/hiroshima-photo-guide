@@ -108,58 +108,71 @@
         <div class="dam-lakes-grid">
 
             {% for lake in dam_lakes %}
-
+        
             <a
-            href="{% url 'dam_lake_detail' lake.slug %}"
-            class="dam-lake-card-link"
-        >
+                href="{% url 'dam_lake_detail' lake.slug %}"
+                class="dam-lake-card-link"
+            >
         
-            <article class="dam-lake-card">
+                <article class="dam-lake-card">
         
-                <div class="dam-lake-number">
-                    {{ lake.order|stringformat:"02d" }}
-                </div>
+                    {% if lake.image_thumb %}
+                        <div class="dam-lake-card-image">
+                            <img
+                                src="{{ lake.image_thumb.url }}"
+                                alt="{{ lake.name }}"
+                                loading="lazy"
+                            >
+                        </div>
+                    {% endif %}
         
-                <div class="dam-lake-content">
+                    <div class="dam-lake-card-body">
         
-                    <h3>
-                        {{ lake.name }}
-                    </h3>
+                        <div class="dam-lake-number">
+                            {{ lake.order|stringformat:"02d" }}
+                        </div>
         
-                    <p>
-                        {{ lake.dam_name }} · {{ lake.prefecture }}
-                    </p>
+                        <div class="dam-lake-content">
         
-                    <div class="dam-lake-status">
+                            <h3>
+                                {{ lake.name }}
+                            </h3>
         
-                        {% if lake.visited %}
-                            <span>Visited</span>
-                        {% else %}
-                            <span>Not yet visited</span>
-                        {% endif %}
+                            <p>
+                                {{ lake.dam_name }} · {{ lake.prefecture }}
+                            </p>
         
-                        {% if lake.photographed %}
-                            <span>Photographed</span>
-                        {% endif %}
+                            <div class="dam-lake-status">
+        
+                                {% if lake.visited %}
+                                    <span>Visited</span>
+                                {% else %}
+                                    <span>Not yet visited</span>
+                                {% endif %}
+        
+                                {% if lake.photographed %}
+                                    <span>Photographed</span>
+                                {% endif %}
+        
+                            </div>
+        
+                        </div>
         
                     </div>
         
-                </div>
+                </article>
         
-            </article>
+            </a>
         
-        </a>
-
             {% empty %}
-
+        
                 <p>
                     ダム湖のデータがありません。
                 </p>
-
+        
             {% endfor %}
-
+        
         </div>
-
     </section>
 
 </section>
