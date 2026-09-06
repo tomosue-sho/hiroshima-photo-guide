@@ -857,20 +857,8 @@ class DiaryPost(models.Model):
         null=True,
     )
 
-    image_large = models.ImageField(
-        upload_to="diary/large/",
-        blank=True,
-        null=True,
-    )
-
     image_medium = models.ImageField(
         upload_to="diary/medium/",
-        blank=True,
-        null=True,
-    )
-
-    image_thumb = models.ImageField(
-        upload_to="diary/thumb/",
         blank=True,
         null=True,
     )
@@ -914,9 +902,7 @@ class DiaryPost(models.Model):
 
         should_generate = (
             image_changed
-            or not self.image_large
             or not self.image_medium
-            or not self.image_thumb
         )
 
         if not should_generate:
@@ -924,56 +910,24 @@ class DiaryPost(models.Model):
 
         try:
 
-            large = create_webp_variant(
-                self.image,
-                max_width=1800,
-                quality=82
-            )
-
             medium = create_webp_variant(
                 self.image,
                 max_width=1200,
-                quality=78
-            )
-
-            thumb = create_webp_variant(
-                self.image,
-                max_width=600,
-                quality=75
-            )
-
-            self.image_large.save(
-                build_variant_filename(
-                    self.image.name,
-                    "large"
-                ),
-                large,
-                save=False
+                quality=78,
             )
 
             self.image_medium.save(
                 build_variant_filename(
                     self.image.name,
-                    "medium"
+                    "medium",
                 ),
                 medium,
-                save=False
-            )
-
-            self.image_thumb.save(
-                build_variant_filename(
-                    self.image.name,
-                    "thumb"
-                ),
-                thumb,
-                save=False
+                save=False,
             )
 
             super().save(
                 update_fields=[
-                    "image_large",
                     "image_medium",
-                    "image_thumb",
                 ]
             )
 
