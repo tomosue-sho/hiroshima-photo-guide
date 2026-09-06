@@ -80,21 +80,21 @@
 <li class="nav-item">
     <a class="nav-link {% if request.resolver_match.url_name == 'photo_exhibition' %}active{% endif %}"
        href="{% url 'photo_exhibition' %}">
-        Photo Exhibition
+        Exhibition
     </a>
 </li>
                 <!-- Carp Today -->
                 <li class="nav-item">
                     <a class="nav-link {% if request.resolver_match.url_name == 'carp_today' %}active{% endif %}"
                        href="{% url 'carp_today' %}">
-                        Carp Today
+                        Carp
                     </a>
                 </li>
                 <!-- Hiroshima Kagura -->
                 <li class="nav-item">
                     <a class="nav-link {% if request.resolver_match.url_name == 'kagura_home' or request.resolver_match.url_name == 'kagura_performance_detail' or request.resolver_match.url_name == 'kagura_journal_list' or request.resolver_match.url_name == 'kagura_journal_detail' %}active{% endif %}"
                      href="{% url 'kagura_home' %}">
-                      Hiroshima Kagura
+                      Kagura
                     </a>
                 </li>
                 <!-- Map -->
@@ -117,7 +117,7 @@
                 <li class="nav-item">
                     <a class="nav-link {% if request.resolver_match.url_name == 'contact' %}active{% endif %}"
                        href="{% url 'contact' %}">
-                        Send a Message
+                       Contact
                     </a>
                 </li>
 
