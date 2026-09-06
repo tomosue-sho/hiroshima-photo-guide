@@ -325,15 +325,11 @@ class DamLakePhotoInline(admin.TabularInline):
         "image",
         "caption",
         "order",
-        "image_large",
         "image_medium",
-        "image_thumb",
     )
 
     readonly_fields = (
-        "image_large",
         "image_medium",
-        "image_thumb",
     )
 
 
@@ -430,18 +426,14 @@ class DamLakeAdmin(admin.ModelAdmin):
             {
                 "fields": (
                     "image",
-                    "image_large",
                     "image_medium",
-                    "image_thumb",
                 )
             },
         ),
     )
 
     readonly_fields = (
-        "image_large",
         "image_medium",
-        "image_thumb",
     )
 
 
