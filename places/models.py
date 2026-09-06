@@ -1461,3 +1461,610 @@ class DamLakePhoto(models.Model):
                 "DAM LAKE PHOTO IMAGE VARIANT SKIPPED:",
                 e,
             )
+
+# =========================================
+# Hiroshima Kagura
+# =========================================
+
+class KaguraPerformance(models.Model):
+    """
+    Hiroshima Kagura performance / story.
+
+    This represents the story itself, not a specific live performance.
+    """
+
+    name = models.CharField(
+        max_length=100,
+        verbose_name="演目名",
+    )
+
+    name_en = models.CharField(
+        max_length=150,
+        verbose_name="英語名",
+    )
+
+    slug = models.SlugField(
+        unique=True,
+        verbose_name="Slug",
+    )
+
+    short_description = models.TextField(
+        blank=True,
+        verbose_name="簡単な説明",
+    )
+
+    story = models.TextField(
+        blank=True,
+        verbose_name="ストーリー",
+    )
+
+    characters = models.TextField(
+        blank=True,
+        verbose_name="登場人物",
+    )
+
+    highlights = models.TextField(
+        blank=True,
+        verbose_name="見どころ",
+    )
+
+    costume_description = models.TextField(
+        blank=True,
+        verbose_name="衣装・仮面",
+    )
+
+    image = models.ImageField(
+        upload_to="kagura/",
+        blank=True,
+        null=True,
+        verbose_name="メイン画像",
+    )
+
+    image_medium = models.ImageField(
+        upload_to="kagura/medium/",
+        blank=True,
+        null=True,
+        verbose_name="Medium",
+    )
+
+    order = models.PositiveIntegerField(
+        default=0,
+        db_index=True,
+        verbose_name="表示順",
+    )
+
+    is_visible = models.BooleanField(
+        default=True,
+        db_index=True,
+        verbose_name="公開",
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True,
+    )
+
+    class Meta:
+        ordering = ["order", "id"]
+        verbose_name = "神楽演目"
+        verbose_name_plural = "神楽演目"
+
+    def __str__(self):
+        return f"{self.name} / {self.name_en}"
+
+    def save(self, *args, **kwargs):
+
+        old_image_name = None
+
+        if self.pk:
+            try:
+                old = KaguraPerformance.objects.get(pk=self.pk)
+                old_image_name = old.image.name
+            except KaguraPerformance.DoesNotExist:
+                pass
+
+        super().save(*args, **kwargs)
+
+        if not self.image:
+            return
+
+        image_changed = old_image_name != self.image.name
+
+        should_generate = (
+            image_changed
+            or not self.image_medium
+        )
+
+        if not should_generate:
+            return
+
+        try:
+
+            medium = create_webp_variant(
+                self.image,
+                max_width=1200,
+                quality=78,
+            )
+
+            self.image_medium.save(
+                build_variant_filename(
+                    self.image.name,
+                    "medium",
+                ),
+                medium,
+                save=False,
+            )
+
+            super().save(
+                update_fields=[
+                    "image_medium",
+                ]
+            )
+
+        except Exception as e:
+
+            print(
+                "KAGURA PERFORMANCE IMAGE SKIPPED:",
+                e,
+            )
+
+
+class KaguraPerformancePhoto(models.Model):
+    """
+    Additional photographs for a Kagura performance.
+    Medium image only.
+    """
+
+    performance = models.ForeignKey(
+        KaguraPerformance,
+        on_delete=models.CASCADE,
+        related_name="photos",
+        verbose_name="演目",
+    )
+
+    image = models.ImageField(
+        upload_to="kagura/photos/",
+        verbose_name="写真",
+    )
+
+    image_medium = models.ImageField(
+        upload_to="kagura/photos/medium/",
+        blank=True,
+        null=True,
+        verbose_name="Medium",
+    )
+
+    caption = models.CharField(
+        max_length=300,
+        blank=True,
+        verbose_name="キャプション",
+    )
+
+    order = models.PositiveIntegerField(
+        default=0,
+        db_index=True,
+        verbose_name="表示順",
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    class Meta:
+        ordering = ["order", "id"]
+        verbose_name = "神楽演目写真"
+        verbose_name_plural = "神楽演目写真"
+
+    def __str__(self):
+        return f"{self.performance.name} - Photo {self.order}"
+
+    def save(self, *args, **kwargs):
+
+        old_image_name = None
+
+        if self.pk:
+            try:
+                old = KaguraPerformancePhoto.objects.get(pk=self.pk)
+                old_image_name = old.image.name
+            except KaguraPerformancePhoto.DoesNotExist:
+                pass
+
+        super().save(*args, **kwargs)
+
+        if not self.image:
+            return
+
+        image_changed = old_image_name != self.image.name
+
+        should_generate = (
+            image_changed
+            or not self.image_medium
+        )
+
+        if not should_generate:
+            return
+
+        try:
+
+            medium = create_webp_variant(
+                self.image,
+                max_width=1200,
+                quality=78,
+            )
+
+            self.image_medium.save(
+                build_variant_filename(
+                    self.image.name,
+                    "medium",
+                ),
+                medium,
+                save=False,
+            )
+
+            super().save(
+                update_fields=[
+                    "image_medium",
+                ]
+            )
+
+        except Exception as e:
+
+            print(
+                "KAGURA PERFORMANCE PHOTO SKIPPED:",
+                e,
+            )
+
+
+class KaguraTroupe(models.Model):
+    """
+    Kagura troupe.
+    Initially this can contain only a few troupes.
+    """
+
+    name = models.CharField(
+        max_length=200,
+        verbose_name="神楽団名",
+    )
+
+    name_en = models.CharField(
+        max_length=200,
+        blank=True,
+        verbose_name="英語名",
+    )
+
+    slug = models.SlugField(
+        unique=True,
+        verbose_name="Slug",
+    )
+
+    description = models.TextField(
+        blank=True,
+        verbose_name="紹介",
+    )
+
+    style = models.CharField(
+        max_length=200,
+        blank=True,
+        verbose_name="スタイル",
+    )
+
+    website_url = models.URLField(
+        blank=True,
+        null=True,
+        verbose_name="Webサイト",
+    )
+
+    is_visible = models.BooleanField(
+        default=True,
+        db_index=True,
+        verbose_name="公開",
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True,
+    )
+
+    class Meta:
+        ordering = ["name"]
+        verbose_name = "神楽団"
+        verbose_name_plural = "神楽団"
+
+    def __str__(self):
+        return self.name
+
+
+class KaguraEvent(models.Model):
+    """
+    A specific Kagura performance at a specific place and date.
+    """
+
+    title = models.CharField(
+        max_length=200,
+        verbose_name="公演名",
+    )
+
+    date = models.DateField(
+        verbose_name="公演日",
+    )
+
+    venue = models.CharField(
+        max_length=200,
+        blank=True,
+        verbose_name="会場",
+    )
+
+    venue_address = models.CharField(
+        max_length=300,
+        blank=True,
+        verbose_name="会場住所",
+    )
+
+    troupe = models.ForeignKey(
+        KaguraTroupe,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name="events",
+        verbose_name="神楽団",
+    )
+
+    performances = models.ManyToManyField(
+        KaguraPerformance,
+        blank=True,
+        related_name="events",
+        verbose_name="演目",
+    )
+
+    description = models.TextField(
+        blank=True,
+        verbose_name="公演について",
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    class Meta:
+        ordering = ["-date", "-id"]
+        verbose_name = "神楽公演"
+        verbose_name_plural = "神楽公演"
+
+    def __str__(self):
+        return f"{self.title} - {self.date}"
+
+
+class KaguraJournal(models.Model):
+    """
+    Personal journal entry about attending a Kagura performance.
+    """
+
+    title = models.CharField(
+        max_length=200,
+        verbose_name="タイトル",
+    )
+
+    slug = models.SlugField(
+        unique=True,
+        verbose_name="Slug",
+    )
+
+    event = models.ForeignKey(
+        KaguraEvent,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name="journal_entries",
+        verbose_name="神楽公演",
+    )
+
+    date = models.DateField(
+        default=timezone.now,
+        verbose_name="投稿日",
+    )
+
+    excerpt = models.TextField(
+        blank=True,
+        verbose_name="概要",
+    )
+
+    body = models.TextField(
+        blank=True,
+        verbose_name="本文",
+    )
+
+    image = models.ImageField(
+        upload_to="kagura/journal/",
+        blank=True,
+        null=True,
+        verbose_name="メイン画像",
+    )
+
+    image_medium = models.ImageField(
+        upload_to="kagura/journal/medium/",
+        blank=True,
+        null=True,
+        verbose_name="Medium",
+    )
+
+    is_published = models.BooleanField(
+        default=True,
+        db_index=True,
+        verbose_name="公開",
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True,
+    )
+
+    class Meta:
+        ordering = ["-date", "-id"]
+        verbose_name = "神楽Journal"
+        verbose_name_plural = "神楽Journal"
+
+    def __str__(self):
+        return self.title
+
+    def save(self, *args, **kwargs):
+
+        old_image_name = None
+
+        if self.pk:
+            try:
+                old = KaguraJournal.objects.get(pk=self.pk)
+                old_image_name = old.image.name
+            except KaguraJournal.DoesNotExist:
+                pass
+
+        super().save(*args, **kwargs)
+
+        if not self.image:
+            return
+
+        image_changed = old_image_name != self.image.name
+
+        should_generate = (
+            image_changed
+            or not self.image_medium
+        )
+
+        if not should_generate:
+            return
+
+        try:
+
+            medium = create_webp_variant(
+                self.image,
+                max_width=1200,
+                quality=78,
+            )
+
+            self.image_medium.save(
+                build_variant_filename(
+                    self.image.name,
+                    "medium",
+                ),
+                medium,
+                save=False,
+            )
+
+            super().save(
+                update_fields=[
+                    "image_medium",
+                ]
+            )
+
+        except Exception as e:
+
+            print(
+                "KAGURA JOURNAL IMAGE SKIPPED:",
+                e,
+            )
+
+
+class KaguraJournalPhoto(models.Model):
+
+    journal = models.ForeignKey(
+        KaguraJournal,
+        on_delete=models.CASCADE,
+        related_name="photos",
+        verbose_name="Journal",
+    )
+
+    image = models.ImageField(
+        upload_to="kagura/journal/photos/",
+        verbose_name="写真",
+    )
+
+    image_medium = models.ImageField(
+        upload_to="kagura/journal/photos/medium/",
+        blank=True,
+        null=True,
+        verbose_name="Medium",
+    )
+
+    caption = models.CharField(
+        max_length=300,
+        blank=True,
+        verbose_name="キャプション",
+    )
+
+    order = models.PositiveIntegerField(
+        default=0,
+        db_index=True,
+        verbose_name="表示順",
+    )
+
+    class Meta:
+        ordering = ["order", "id"]
+        verbose_name = "神楽Journal写真"
+        verbose_name_plural = "神楽Journal写真"
+
+    def __str__(self):
+        return f"{self.journal.title} - Photo {self.order}"
+
+    def save(self, *args, **kwargs):
+
+        old_image_name = None
+
+        if self.pk:
+            try:
+                old = KaguraJournalPhoto.objects.get(pk=self.pk)
+                old_image_name = old.image.name
+            except KaguraJournalPhoto.DoesNotExist:
+                pass
+
+        super().save(*args, **kwargs)
+
+        if not self.image:
+            return
+
+        image_changed = old_image_name != self.image.name
+
+        should_generate = (
+            image_changed
+            or not self.image_medium
+        )
+
+        if not should_generate:
+            return
+
+        try:
+
+            medium = create_webp_variant(
+                self.image,
+                max_width=1200,
+                quality=78,
+            )
+
+            self.image_medium.save(
+                build_variant_filename(
+                    self.image.name,
+                    "medium",
+                ),
+                medium,
+                save=False,
+            )
+
+            super().save(
+                update_fields=[
+                    "image_medium",
+                ]
+            )
+
+        except Exception as e:
+
+            print(
+                "KAGURA JOURNAL PHOTO IMAGE SKIPPED:",
+                e,
+            )

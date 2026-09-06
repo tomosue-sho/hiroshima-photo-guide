@@ -1,0 +1,378 @@
+{% extends 'places/base.html' %}
+
+{% block title %}{{ journal.title }} | Kagura Journal | Hiroshima Through Film{% endblock %}
+
+{% block content %}
+
+<!-- BREADCRUMB -->
+<nav class="breadcrumb-container mb-3">
+
+    <a href="{% url 'home' %}">
+        Home
+    </a>
+
+    <span>›</span>
+
+    <a href="{% url 'kagura_home' %}">
+        Hiroshima Kagura
+    </a>
+
+    <span>›</span>
+
+    <a href="{% url 'kagura_journal_list' %}">
+        Kagura Journal
+    </a>
+
+    <span>›</span>
+
+    <span class="current">
+        {{ journal.title }}
+    </span>
+
+</nav>
+
+
+<!-- HERO IMAGE -->
+{% if journal.image %}
+
+<div class="hero-image mb-5">
+
+    {% if journal.image_medium %}
+
+        <img
+            src="{{ journal.image_medium.url }}"
+            alt="{{ journal.title }}"
+            class="img-fluid w-100 hero-photo"
+            loading="eager"
+            decoding="async"
+        >
+
+    {% else %}
+
+        <img
+            src="{{ journal.image.url }}"
+            alt="{{ journal.title }}"
+            class="img-fluid w-100 hero-photo"
+            loading="eager"
+            decoding="async"
+        >
+
+    {% endif %}
+
+</div>
+
+{% endif %}
+
+
+<!-- TITLE -->
+<header class="mb-5">
+
+    <p class="text-muted mb-2">
+        {{ journal.date|date:"F j, Y" }}
+    </p>
+
+    <h1 class="display-4 mb-3">
+        {{ journal.title }}
+    </h1>
+
+    {% if journal.event %}
+
+        <div class="text-muted">
+
+            {% if journal.event.venue %}
+                <span>{{ journal.event.venue }}</span>
+            {% endif %}
+
+            {% if journal.event.troupe %}
+
+                {% if journal.event.venue %}
+                    <span> · </span>
+                {% endif %}
+
+                <span>
+                    {{ journal.event.troupe.name }}
+                </span>
+
+            {% endif %}
+
+        </div>
+
+    {% endif %}
+
+</header>
+
+
+<!-- JOURNAL BODY -->
+{% if journal.body %}
+
+<section class="mb-5">
+
+    <div class="location-info-card p-4 p-md-5">
+
+        <div class="location-description">
+
+            {{ journal.body|linebreaks }}
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endif %}
+
+
+<!-- EVENT INFORMATION -->
+{% if journal.event %}
+
+<section class="mb-5">
+
+    <h2 class="display-6 mb-4">
+        Event Information
+    </h2>
+
+    <div class="location-info-card p-4 p-md-5">
+
+        <dl class="row mb-0">
+
+            {% if journal.event.title %}
+
+            <dt class="col-sm-3">
+                Event
+            </dt>
+
+            <dd class="col-sm-9">
+                {{ journal.event.title }}
+            </dd>
+
+            {% endif %}
+
+
+            {% if journal.event.date %}
+
+            <dt class="col-sm-3">
+                Date
+            </dt>
+
+            <dd class="col-sm-9">
+                {{ journal.event.date|date:"F j, Y" }}
+            </dd>
+
+            {% endif %}
+
+
+            {% if journal.event.venue %}
+
+            <dt class="col-sm-3">
+                Venue
+            </dt>
+
+            <dd class="col-sm-9">
+                {{ journal.event.venue }}
+            </dd>
+
+            {% endif %}
+
+
+            {% if journal.event.venue_address %}
+
+            <dt class="col-sm-3">
+                Address
+            </dt>
+
+            <dd class="col-sm-9">
+                {{ journal.event.venue_address }}
+            </dd>
+
+            {% endif %}
+
+
+            {% if journal.event.troupe %}
+
+            <dt class="col-sm-3">
+                Kagura Troupe
+            </dt>
+
+            <dd class="col-sm-9">
+                {{ journal.event.troupe.name }}
+
+                {% if journal.event.troupe.name_en %}
+                    <span class="text-muted">
+                        ({{ journal.event.troupe.name_en }})
+                    </span>
+                {% endif %}
+
+            </dd>
+
+            {% endif %}
+
+        </dl>
+
+    </div>
+
+</section>
+
+{% endif %}
+
+
+<!-- PERFORMANCES -->
+{% if journal.event %}
+
+<section class="mb-5">
+
+    <h2 class="display-6 mb-4">
+        Performances
+    </h2>
+
+    <div class="row g-3">
+
+        {% for performance in journal.event.performances.all %}
+
+        <div class="col-12 col-md-6 col-lg-4">
+
+            <a
+                href="{% url 'kagura_performance_detail' performance.slug %}"
+                class="text-decoration-none"
+            >
+
+                <div class="border rounded p-3 h-100">
+
+                    <h3 class="h5 mb-1">
+                        {{ performance.name }}
+                    </h3>
+
+                    {% if performance.name_en %}
+
+                        <p class="text-muted small mb-0">
+                            {{ performance.name_en }}
+                        </p>
+
+                    {% endif %}
+
+                </div>
+
+            </a>
+
+        </div>
+
+        {% empty %}
+
+        <div class="col-12">
+
+            <p class="text-muted">
+                No performances have been linked to this event yet.
+            </p>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+{% endif %}
+
+
+<!-- PHOTO GALLERY -->
+<section class="mb-5">
+
+    <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4">
+
+        <div>
+
+            <h2 class="display-6 mb-1">
+                Photo Gallery
+            </h2>
+
+            <p class="text-muted mb-0">
+                Photographs from this Kagura event
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="row g-4 museum-gallery">
+
+        {% for photo in journal.photos.all %}
+
+        <div class="col-12 col-md-6 col-lg-4">
+
+            <a
+                href="{% if photo.image_medium %}{{ photo.image_medium.url }}{% else %}{{ photo.image.url }}{% endif %}"
+                data-lightbox="kagura-journal-gallery"
+                data-title="{{ photo.caption|default:journal.title }}"
+                class="museum-item text-decoration-none"
+            >
+
+                <div class="museum-frame">
+
+                    {% if photo.image_medium %}
+
+                        <img
+                            src="{{ photo.image_medium.url }}"
+                            class="museum-img"
+                            alt="{{ photo.caption|default:journal.title }}"
+                            loading="lazy"
+                            decoding="async"
+                        >
+
+                    {% elif photo.image %}
+
+                        <img
+                            src="{{ photo.image.url }}"
+                            class="museum-img"
+                            alt="{{ photo.caption|default:journal.title }}"
+                            loading="lazy"
+                            decoding="async"
+                        >
+
+                    {% endif %}
+
+                </div>
+
+            </a>
+
+
+            {% if photo.caption %}
+
+                <p class="museum-caption">
+                    {{ photo.caption }}
+                </p>
+
+            {% endif %}
+
+        </div>
+
+        {% empty %}
+
+        <div class="col-12">
+
+            <p class="text-muted">
+                No photographs are available yet.
+            </p>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+
+<!-- BACK -->
+<div class="mt-5 mb-5">
+
+    <a
+        href="{% url 'kagura_journal_list' %}"
+        class="btn btn-outline-dark"
+    >
+        ← Back to Kagura Journal
+    </a>
+
+</div>
+
+{% endblock %}

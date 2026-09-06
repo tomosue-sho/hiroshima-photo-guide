@@ -3,7 +3,9 @@ from django.urls import reverse
 
 from .forms import MessageForm
 from .models import (
-    About,Area,CarpNews,Collaborator,Gear,Location,Tag,CarpPageSettings,Photo,DiaryPost,DamLake,
+    About,Area,CarpNews,Collaborator,Gear,Location,Tag,CarpPageSettings,Photo,DiaryPost,
+    DamLake,
+    KaguraPerformance,KaguraJournal,
 )
 
 
@@ -524,5 +526,99 @@ def dam_lake_detail(request, slug):
             "lake": lake,
             "previous_lake": previous_lake,
             "next_lake": next_lake,
+        },
+    )
+    
+    # ============================================================
+# Hiroshima Kagura
+# ============================================================
+
+def kagura_home(request):
+    """
+    Hiroshima Kagura top page
+    """
+
+    performances = (
+        KaguraPerformance.objects
+        .filter(is_visible=True)
+        .order_by("order", "id")
+    )
+
+    return render(
+        request,
+        "places/kagura_home.html",
+        {
+            "performances": performances,
+        },
+    )
+
+
+def kagura_performance_detail(request, slug):
+    performance = get_object_or_404(
+        KaguraPerformance.objects.prefetch_related(
+            "photos",
+            "events",
+            "events__troupe",
+        ),
+        slug=slug,
+        is_visible=True,
+    )
+
+    events = performance.events.all()
+
+    return render(
+        request,
+        "places/kagura_performance_detail.html",
+        {
+            "performance": performance,
+            "events": events,
+        },
+    )
+
+def kagura_journal_list(request):
+    """
+    Kagura Journal list
+    """
+
+    journals = (
+        KaguraJournal.objects
+        .filter(is_published=True)
+        .select_related("event")
+        .order_by("-date", "-id")
+    )
+
+    return render(
+        request,
+        "places/kagura_journal_list.html",
+        {
+            "journals": journals,
+        },
+    )
+
+
+def kagura_journal_detail(request, slug):
+    """
+    Kagura Journal detail page
+    """
+
+    journal = get_object_or_404(
+        KaguraJournal.objects
+        .select_related(
+            "event",
+            "event__troupe",
+        )
+        .prefetch_related(
+            "photos",
+            "event__performances",
+        ),
+        slug=slug,
+        is_published=True,
+    )
+
+    return render(
+        request,
+        "places/kagura_journal_detail.html",
+        {
+            "journal": journal,
         },
     )

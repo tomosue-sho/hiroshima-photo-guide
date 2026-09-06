@@ -22,4 +22,8 @@ urlpatterns = [
     path("diary/<slug:slug>/", views.diary_detail, name="diary_detail"),
     path("dam-lakes/", views.dam_lake_list, name="dam_lake_list"),
     path("dam-lakes/<slug:slug>/",views.dam_lake_detail,name="dam_lake_detail",),
+    path("kagura/", views.kagura_home, name="kagura_home"),
+    path( "kagura/performances/<slug:slug>/",views.kagura_performance_detail,name="kagura_performance_detail",),
+    path("kagura/journal/",views.kagura_journal_list,name="kagura_journal_list",),
+    path("kagura/journal/<slug:slug>/",views.kagura_journal_detail,name="kagura_journal_detail",),
 ]

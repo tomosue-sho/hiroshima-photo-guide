@@ -1,0 +1,282 @@
+{% extends 'places/base.html' %}
+
+{% block title %}Hiroshima Kagura | Hiroshima Through Film{% endblock %}
+
+{% block content %}
+
+<!-- BREADCRUMB -->
+<nav class="breadcrumb-container mb-3">
+    <a href="{% url 'home' %}">Home</a>
+    <span>›</span>
+    <span class="current">Hiroshima Kagura</span>
+</nav>
+
+
+<!-- HERO -->
+<div class="hero-image mb-5">
+
+    {% comment %}
+    A dedicated Kagura hero image can be added later.
+    For now, use a dark introductory panel.
+    {% endcomment %}
+
+    <div class="p-5 bg-dark text-white rounded-3">
+
+        <div class="container-fluid py-4">
+
+            <h1 class="display-4">
+                Hiroshima Kagura
+            </h1>
+
+            <p class="col-md-9 fs-5 text-light opacity-75">
+                A powerful form of traditional Japanese performing art,
+                brought to life through masks, costumes, music, dance,
+                and dramatic storytelling.
+            </p>
+
+            <a href="#performances"
+               class="btn btn-outline-light mt-3">
+                Explore the Performances
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- INTRODUCTION -->
+<section class="mb-5">
+
+    <h2 class="display-6 mb-4">
+        What is Hiroshima Kagura?
+    </h2>
+
+    <div class="location-info-card p-4 p-md-5">
+
+        <p>
+            Kagura is a traditional Japanese performing art with deep
+            connections to Shinto rituals and mythology.
+        </p>
+
+        <p>
+            Hiroshima Kagura developed its own distinctive style in the
+            Hiroshima region. Performances combine traditional stories
+            with dramatic costumes, elaborate masks, powerful music,
+            and highly expressive movement.
+        </p>
+
+        <p class="mb-0">
+            Hiroshima Kagura is also known for its accessibility and
+            entertainment value. While some performances and venues
+            retain a solemn and traditional atmosphere, others are
+            lively events enjoyed by local communities and visitors alike.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- HOW TO UNDERSTAND KAGURA -->
+<section class="mb-5">
+
+    <h2 class="display-6 mb-4">
+        How to Experience Kagura
+    </h2>
+
+    <div class="row g-4">
+
+        <div class="col-12 col-md-4">
+
+            <div class="h-100 border rounded p-4">
+
+                <h3 class="h5 mb-3">
+                    🎭 Masks & Costumes
+                </h3>
+
+                <p class="text-muted mb-0">
+                    Masks and costumes help reveal who a character really is.
+                    A performer may even transform dramatically during a scene.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-12 col-md-4">
+
+            <div class="h-100 border rounded p-4">
+
+                <h3 class="h5 mb-3">
+                    🥁 Music & Movement
+                </h3>
+
+                <p class="text-muted mb-0">
+                    Drums, flutes, chanting, and highly energetic movements
+                    create the rhythm and atmosphere of the performance.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-12 col-md-4">
+
+            <div class="h-100 border rounded p-4">
+
+                <h3 class="h5 mb-3">
+                    📖 Stories
+                </h3>
+
+                <p class="text-muted mb-0">
+                    Many performances are based on Japanese mythology,
+                    legends, historical figures, and famous stories.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- PERFORMANCES -->
+<section id="performances" class="mb-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2 class="display-6 mb-1">
+                Hiroshima Kagura Performances
+            </h2>
+
+            <p class="text-muted mb-0">
+                Stories commonly performed in Hiroshima Kagura
+            </p>
+        </div>
+
+    </div>
+
+
+    <div class="row g-4 museum-gallery">
+
+        {% for performance in performances %}
+
+        <div class="col-12 col-md-6 col-lg-4">
+
+            <a href="{% url 'kagura_performance_detail' performance.slug %}"
+               class="museum-item text-decoration-none">
+
+                <div class="museum-frame">
+
+                    {% if performance.image_medium %}
+
+                        <img
+                            src="{{ performance.image_medium.url }}"
+                            class="museum-img"
+                            alt="{{ performance.name_en }}"
+                            loading="lazy"
+                            decoding="async"
+                        >
+
+                    {% elif performance.image %}
+
+                        <img
+                            src="{{ performance.image.url }}"
+                            class="museum-img"
+                            alt="{{ performance.name_en }}"
+                            loading="lazy"
+                            decoding="async"
+                        >
+
+                    {% else %}
+
+                        <div class="museum-img
+                                    d-flex
+                                    align-items-center
+                                    justify-content-center
+                                    bg-light">
+
+                            <span class="text-muted">
+                                No Image
+                            </span>
+
+                        </div>
+
+                    {% endif %}
+
+
+                    <div class="p-3">
+
+                        <h3 class="h5 mb-1">
+                            {{ performance.name }}
+                        </h3>
+
+                        {% if performance.name_en %}
+                            <p class="text-muted small mb-2">
+                                {{ performance.name_en }}
+                            </p>
+                        {% endif %}
+
+                        {% if performance.short_description %}
+                            <p class="mb-0 small">
+                                {{ performance.short_description }}
+                            </p>
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </a>
+
+        </div>
+
+        {% empty %}
+
+        <div class="col-12">
+
+            <p class="text-muted">
+                Kagura performances will be added soon.
+            </p>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+
+<!-- JOURNAL -->
+<section class="mb-5">
+
+    <div class="location-info-card p-4 p-md-5">
+
+        <h2 class="display-6 mb-3">
+            Kagura Journal
+        </h2>
+
+        <p class="location-description">
+            Notes and photographs from my visits to Hiroshima Kagura
+            performances.
+        </p>
+
+        <a href="{% url 'kagura_journal_list' %}"
+           class="btn btn-outline-dark">
+            View Kagura Journal
+        </a>
+
+    </div>
+
+</section>
+
+
+{% endblock %}

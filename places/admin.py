@@ -9,6 +9,12 @@ from .models import (
     DiaryPhoto,
     DamLake,
     DamLakePhoto,
+    KaguraPerformance,
+    KaguraPerformancePhoto,
+    KaguraTroupe,
+    KaguraEvent,
+    KaguraJournal,
+    KaguraJournalPhoto,
 )
 from .image_utils import process_photo_image
 from django.utils.html import format_html
@@ -436,4 +442,419 @@ class DamLakeAdmin(admin.ModelAdmin):
         "image_large",
         "image_medium",
         "image_thumb",
+    )
+
+
+# ============================================================
+# Kagura
+# ============================================================
+
+class KaguraPerformancePhotoInline(admin.TabularInline):
+    model = KaguraPerformancePhoto
+    extra = 3
+    fields = (
+        "image",
+        "caption",
+        "order",
+        "image_medium",
+    )
+    readonly_fields = ("image_medium",)
+    ordering = ("order", "id")
+
+
+@admin.register(KaguraPerformance)
+class KaguraPerformanceAdmin(admin.ModelAdmin):
+    list_display = (
+        "name",
+        "name_en",
+        "order",
+        "is_visible",
+        "updated_at",
+    )
+    list_display_links = ("name",)
+    list_filter = ("is_visible",)
+    search_fields = (
+        "name",
+        "name_en",
+        "short_description",
+        "story",
+        "characters",
+        "highlights",
+    )
+    prepopulated_fields = {
+        "slug": ("name_en",),
+    }
+    ordering = ("order", "id")
+
+    fieldsets = (
+        (
+            "Basic Information",
+            {
+                "fields": (
+                    "name",
+                    "name_en",
+                    "slug",
+                    "order",
+                    "is_visible",
+                )
+            },
+        ),
+        (
+            "Content",
+            {
+                "fields": (
+                    "short_description",
+                    "story",
+                    "characters",
+                    "highlights",
+                    "costume_description",
+                )
+            },
+        ),
+        (
+            "Main Image",
+            {
+                "fields": (
+                    "image",
+                    "image_medium",
+                )
+            },
+        ),
+        (
+            "Timestamps",
+            {
+                "fields": (
+                    "created_at",
+                    "updated_at",
+                )
+            },
+        ),
+    )
+
+    readonly_fields = (
+        "image_medium",
+        "created_at",
+        "updated_at",
+    )
+
+    inlines = [
+        KaguraPerformancePhotoInline,
+    ]
+
+
+@admin.register(KaguraPerformancePhoto)
+class KaguraPerformancePhotoAdmin(admin.ModelAdmin):
+    list_display = (
+        "performance",
+        "caption",
+        "order",
+        "created_at",
+    )
+    list_filter = (
+        "performance",
+    )
+    search_fields = (
+        "performance__name",
+        "performance__name_en",
+        "caption",
+    )
+    ordering = (
+        "performance",
+        "order",
+        "id",
+    )
+
+    fields = (
+        "performance",
+        "image",
+        "image_medium",
+        "caption",
+        "order",
+        "created_at",
+    )
+
+    readonly_fields = (
+        "image_medium",
+        "created_at",
+    )
+
+
+@admin.register(KaguraTroupe)
+class KaguraTroupeAdmin(admin.ModelAdmin):
+    list_display = (
+        "name",
+        "name_en",
+        "style",
+        "is_visible",
+        "updated_at",
+    )
+    list_display_links = ("name",)
+    list_filter = (
+        "is_visible",
+    )
+    search_fields = (
+        "name",
+        "name_en",
+        "description",
+        "style",
+    )
+    prepopulated_fields = {
+        "slug": ("name_en",),
+    }
+    ordering = (
+        "name",
+    )
+
+    fieldsets = (
+        (
+            "Basic Information",
+            {
+                "fields": (
+                    "name",
+                    "name_en",
+                    "slug",
+                    "is_visible",
+                )
+            },
+        ),
+        (
+            "Description",
+            {
+                "fields": (
+                    "description",
+                    "style",
+                    "website_url",
+                )
+            },
+        ),
+        (
+            "Timestamps",
+            {
+                "fields": (
+                    "created_at",
+                    "updated_at",
+                )
+            },
+        ),
+    )
+
+    readonly_fields = (
+        "created_at",
+        "updated_at",
+    )
+
+
+@admin.register(KaguraEvent)
+class KaguraEventAdmin(admin.ModelAdmin):
+    list_display = (
+        "title",
+        "date",
+        "venue",
+        "troupe",
+    )
+    list_display_links = ("title",)
+    list_filter = (
+        "date",
+        "troupe",
+    )
+    search_fields = (
+        "title",
+        "venue",
+        "venue_address",
+        "description",
+        "troupe__name",
+        "troupe__name_en",
+    )
+    filter_horizontal = (
+        "performances",
+    )
+    ordering = (
+        "-date",
+        "-id",
+    )
+
+    fieldsets = (
+        (
+            "Event Information",
+            {
+                "fields": (
+                    "title",
+                    "date",
+                    "troupe",
+                )
+            },
+        ),
+        (
+            "Venue",
+            {
+                "fields": (
+                    "venue",
+                    "venue_address",
+                )
+            },
+        ),
+        (
+            "Program",
+            {
+                "fields": (
+                    "performances",
+                )
+            },
+        ),
+        (
+            "Description",
+            {
+                "fields": (
+                    "description",
+                )
+            },
+        ),
+        (
+            "Created",
+            {
+                "fields": (
+                    "created_at",
+                )
+            },
+        ),
+    )
+
+    readonly_fields = (
+        "created_at",
+    )
+
+
+class KaguraJournalPhotoInline(admin.TabularInline):
+    model = KaguraJournalPhoto
+    extra = 3
+    fields = (
+        "image",
+        "caption",
+        "order",
+        "image_medium",
+    )
+    readonly_fields = (
+        "image_medium",
+    )
+    ordering = (
+        "order",
+        "id",
+    )
+
+
+@admin.register(KaguraJournal)
+class KaguraJournalAdmin(admin.ModelAdmin):
+    list_display = (
+        "title",
+        "date",
+        "event",
+        "is_published",
+        "updated_at",
+    )
+    list_display_links = ("title",)
+    list_filter = (
+        "is_published",
+        "date",
+    )
+    search_fields = (
+        "title",
+        "excerpt",
+        "body",
+        "event__title",
+        "event__venue",
+    )
+    prepopulated_fields = {
+        "slug": ("title",),
+    }
+    ordering = (
+        "-date",
+        "-id",
+    )
+
+    fieldsets = (
+        (
+            "Journal Information",
+            {
+                "fields": (
+                    "title",
+                    "slug",
+                    "date",
+                    "event",
+                    "is_published",
+                )
+            },
+        ),
+        (
+            "Content",
+            {
+                "fields": (
+                    "excerpt",
+                    "body",
+                )
+            },
+        ),
+        (
+            "Main Image",
+            {
+                "fields": (
+                    "image",
+                    "image_medium",
+                )
+            },
+        ),
+        (
+            "Timestamps",
+            {
+                "fields": (
+                    "created_at",
+                    "updated_at",
+                )
+            },
+        ),
+    )
+
+    readonly_fields = (
+        "image_medium",
+        "created_at",
+        "updated_at",
+    )
+
+    inlines = [
+        KaguraJournalPhotoInline,
+    ]
+
+
+@admin.register(KaguraJournalPhoto)
+class KaguraJournalPhotoAdmin(admin.ModelAdmin):
+    list_display = (
+        "journal",
+        "caption",
+        "order",
+        "created_at",
+    )
+    list_filter = (
+        "journal",
+    )
+    search_fields = (
+        "journal__title",
+        "caption",
+    )
+    ordering = (
+        "journal",
+        "order",
+        "id",
+    )
+
+    fields = (
+        "journal",
+        "image",
+        "image_medium",
+        "caption",
+        "order",
+        "created_at",
+    )
+
+    readonly_fields = (
+        "image_medium",
+        "created_at",
     )

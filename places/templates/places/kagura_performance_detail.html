@@ -1,0 +1,317 @@
+{% extends 'places/base.html' %}
+
+{% block title %}{{ performance.name_en }} | Hiroshima Kagura | Hiroshima Through Film{% endblock %}
+
+{% block content %}
+
+<!-- BREADCRUMB -->
+<nav class="breadcrumb-container mb-3">
+    <a href="{% url 'home' %}">Home</a>
+    <span>›</span>
+
+    <a href="{% url 'kagura_home' %}">
+        Hiroshima Kagura
+    </a>
+
+    <span>›</span>
+
+    <span class="current">
+        {{ performance.name }}
+    </span>
+</nav>
+
+
+<!-- HERO IMAGE -->
+{% if performance.image %}
+
+<div class="hero-image mb-5">
+
+    {% if performance.image_medium %}
+
+        <img
+            src="{{ performance.image_medium.url }}"
+            alt="{{ performance.name_en }}"
+            class="img-fluid w-100 hero-photo"
+            loading="eager"
+            decoding="async"
+        >
+
+    {% else %}
+
+        <img
+            src="{{ performance.image.url }}"
+            alt="{{ performance.name_en }}"
+            class="img-fluid w-100 hero-photo"
+            loading="eager"
+            decoding="async"
+        >
+
+    {% endif %}
+
+</div>
+
+{% endif %}
+
+
+<!-- TITLE -->
+<div class="mb-5">
+
+    <h1 class="display-4 mb-1">
+        {{ performance.name }}
+    </h1>
+
+    {% if performance.name_en %}
+        <p class="text-muted fs-5 mb-3">
+            {{ performance.name_en }}
+        </p>
+    {% endif %}
+
+    {% if performance.short_description %}
+        <p class="lead">
+            {{ performance.short_description }}
+        </p>
+    {% endif %}
+
+</div>
+
+
+<!-- STORY -->
+{% if performance.story %}
+
+<section class="location-info-card p-4 p-md-5 mb-5">
+
+    <h2 class="display-6 mb-4">
+        The Story
+    </h2>
+
+    <div class="location-description">
+        {{ performance.story|linebreaks }}
+    </div>
+
+</section>
+
+{% endif %}
+
+
+<!-- CHARACTERS -->
+{% if performance.characters %}
+
+<section class="mb-5">
+
+    <h2 class="display-6 mb-4">
+        Characters
+    </h2>
+
+    <div class="location-info-card p-4 p-md-5">
+
+        <div class="location-description">
+            {{ performance.characters|linebreaks }}
+        </div>
+
+    </div>
+
+</section>
+
+{% endif %}
+
+
+<!-- HIGHLIGHTS -->
+{% if performance.highlights %}
+
+<section class="mb-5">
+
+    <h2 class="display-6 mb-4">
+        What to Watch For
+    </h2>
+
+    <div class="location-info-card p-4 p-md-5">
+
+        <div class="location-description">
+            {{ performance.highlights|linebreaks }}
+        </div>
+
+    </div>
+
+</section>
+
+{% endif %}
+
+
+<!-- COSTUMES & MASKS -->
+{% if performance.costume_description %}
+
+<section class="mb-5">
+
+    <h2 class="display-6 mb-4">
+        Costumes & Masks
+    </h2>
+
+    <div class="location-info-card p-4 p-md-5">
+
+        <div class="location-description">
+            {{ performance.costume_description|linebreaks }}
+        </div>
+
+    </div>
+
+</section>
+
+{% endif %}
+
+
+<!-- PHOTO GALLERY -->
+<section class="mb-5">
+
+    <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4">
+
+        <div>
+            <h2 class="display-6 mb-1">
+                Photo Gallery
+            </h2>
+
+            <p class="text-muted mb-0">
+                Photographs from Hiroshima Kagura performances
+            </p>
+        </div>
+
+    </div>
+
+
+    <div class="row g-4 museum-gallery">
+
+        {% for photo in performance.photos.all %}
+
+        <div class="col-12 col-md-6 col-lg-4">
+
+            <a
+                href="{% if photo.image_medium %}{{ photo.image_medium.url }}{% else %}{{ photo.image.url }}{% endif %}"
+                data-lightbox="kagura-gallery"
+                data-title="{{ photo.caption|default:performance.name_en }}"
+                class="museum-item text-decoration-none"
+            >
+
+                <div class="museum-frame">
+
+                    {% if photo.image_medium %}
+
+                        <img
+                            src="{{ photo.image_medium.url }}"
+                            class="museum-img"
+                            alt="{{ photo.caption|default:performance.name_en }}"
+                            loading="lazy"
+                            decoding="async"
+                        >
+
+                    {% elif photo.image %}
+
+                        <img
+                            src="{{ photo.image.url }}"
+                            class="museum-img"
+                            alt="{{ photo.caption|default:performance.name_en }}"
+                            loading="lazy"
+                            decoding="async"
+                        >
+
+                    {% endif %}
+
+                </div>
+
+            </a>
+
+            {% if photo.caption %}
+
+                <p class="museum-caption">
+                    {{ photo.caption }}
+                </p>
+
+            {% endif %}
+
+        </div>
+
+        {% empty %}
+
+        <div class="col-12">
+
+            <p class="text-muted">
+                No photographs are available yet.
+            </p>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+
+{% if events %}
+
+<section class="mb-5">
+
+    <h2 class="display-6 mb-4">
+        Performances & Events
+    </h2>
+
+    <div class="list-group">
+
+        {% for event in events %}
+
+        <div class="list-group-item py-3">
+
+            <div class="d-flex justify-content-between align-items-start gap-3">
+
+                <div>
+
+                    <strong class="d-block">
+                        {{ event.title }}
+                    </strong>
+
+                    {% if event.venue %}
+                        <span class="text-muted small">
+                            {{ event.venue }}
+                        </span>
+                    {% endif %}
+
+                    {% if event.troupe %}
+                        <div class="small mt-1">
+                            {{ event.troupe.name }}
+                        </div>
+                    {% endif %}
+
+                </div>
+
+                <time
+                    class="text-muted small flex-shrink-0"
+                    datetime="{{ event.date|date:'Y-m-d' }}"
+                >
+                    {{ event.date|date:"Y.m.d" }}
+                </time>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+{% endif %}
+
+
+<!-- BACK -->
+<div class="mt-5 mb-5">
+
+    <a
+        href="{% url 'kagura_home' %}"
+        class="btn btn-outline-dark"
+    >
+        ← Back to Hiroshima Kagura
+    </a>
+
+</div>
+
+
+{% endblock %}

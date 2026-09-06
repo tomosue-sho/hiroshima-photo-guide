@@ -1,0 +1,179 @@
+{% extends 'places/base.html' %}
+
+{% block title %}Kagura Journal | Hiroshima Kagura | Hiroshima Through Film{% endblock %}
+
+{% block content %}
+
+<!-- BREADCRUMB -->
+<nav class="breadcrumb-container mb-3">
+    <a href="{% url 'home' %}">Home</a>
+    <span>›</span>
+
+    <a href="{% url 'kagura_home' %}">
+        Hiroshima Kagura
+    </a>
+
+    <span>›</span>
+
+    <span class="current">
+        Kagura Journal
+    </span>
+</nav>
+
+
+<!-- HEADER -->
+<div class="mb-5">
+
+    <h1 class="display-4 mb-2">
+        Kagura Journal
+    </h1>
+
+    <p class="lead text-muted mb-0">
+        Notes and photographs from my visits to Hiroshima Kagura performances.
+    </p>
+
+</div>
+
+
+<!-- JOURNAL LIST -->
+<section class="mb-5">
+
+    {% for journal in journals %}
+
+    <article class="mb-5">
+
+        <div class="row g-4 align-items-start">
+
+            <!-- IMAGE -->
+            <div class="col-12 col-md-5">
+
+                <a
+                    href="{% url 'kagura_journal_detail' journal.slug %}"
+                    class="text-decoration-none"
+                >
+
+                    <div class="museum-frame">
+
+                        {% if journal.image_medium %}
+
+                            <img
+                                src="{{ journal.image_medium.url }}"
+                                class="museum-img"
+                                alt="{{ journal.title }}"
+                                loading="lazy"
+                                decoding="async"
+                            >
+
+                        {% elif journal.image %}
+
+                            <img
+                                src="{{ journal.image.url }}"
+                                class="museum-img"
+                                alt="{{ journal.title }}"
+                                loading="lazy"
+                                decoding="async"
+                            >
+
+                        {% else %}
+
+                            <div class="museum-img d-flex align-items-center justify-content-center bg-light">
+                                <span class="text-muted">
+                                    No Image
+                                </span>
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                </a>
+
+            </div>
+
+
+            <!-- TEXT -->
+            <div class="col-12 col-md-7">
+
+                <p class="text-muted small mb-2">
+                    {{ journal.date|date:"F j, Y" }}
+                </p>
+
+                <h2 class="h3 mb-2">
+
+                    <a
+                        href="{% url 'kagura_journal_detail' journal.slug %}"
+                        class="text-decoration-none text-dark"
+                    >
+                        {{ journal.title }}
+                    </a>
+
+                </h2>
+
+
+                {% if journal.event %}
+
+                    <p class="text-muted mb-3">
+
+                        {% if journal.event.venue %}
+                            {{ journal.event.venue }}
+                        {% endif %}
+
+                        {% if journal.event.troupe %}
+                            · {{ journal.event.troupe.name }}
+                        {% endif %}
+
+                    </p>
+
+                {% endif %}
+
+
+                {% if journal.excerpt %}
+
+                    <p class="mb-3">
+                        {{ journal.excerpt }}
+                    </p>
+
+                {% endif %}
+
+
+                <a
+                    href="{% url 'kagura_journal_detail' journal.slug %}"
+                    class="btn btn-outline-dark"
+                >
+                    Read Journal →
+                </a>
+
+            </div>
+
+        </div>
+
+    </article>
+
+    {% empty %}
+
+    <div class="location-info-card p-4 p-md-5">
+
+        <p class="text-muted mb-0">
+            No journal entries are available yet.
+        </p>
+
+    </div>
+
+    {% endfor %}
+
+</section>
+
+
+<!-- BACK -->
+<div class="mt-5 mb-5">
+
+    <a
+        href="{% url 'kagura_home' %}"
+        class="btn btn-outline-dark"
+    >
+        ← Back to Hiroshima Kagura
+    </a>
+
+</div>
+
+{% endblock %}
