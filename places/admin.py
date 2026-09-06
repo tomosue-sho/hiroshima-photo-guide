@@ -830,7 +830,6 @@ class KaguraJournalPhotoAdmin(admin.ModelAdmin):
         "journal",
         "caption",
         "order",
-        "created_at",
     )
     list_filter = (
         "journal",
@@ -851,10 +850,8 @@ class KaguraJournalPhotoAdmin(admin.ModelAdmin):
         "image_medium",
         "caption",
         "order",
-        "created_at",
     )
 
     readonly_fields = (
         "image_medium",
-        "created_at",
     )
