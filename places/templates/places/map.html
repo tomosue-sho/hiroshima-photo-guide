@@ -10,24 +10,35 @@
     Explore Hiroshima Through Film locations from the map.
 </p>
 
-<div id="location-map"></div>
+<!-- LOCATION MAP -->
+
+<div
+    id="location-map"
+    style="
+        width: 100%;
+        height: 620px;
+        border-radius: 4px;
+        overflow: hidden;
+    "
+></div>
 
 <link
     rel="stylesheet"
     href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-/>
+>
 
 <script
     src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
 </script>
 
 <script>
-    const map = L.map('location-map').setView([34.395483, 132.453592], 12);
+document.addEventListener("DOMContentLoaded", function () {
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
+    const mapElement = document.getElementById("location-map");
+
+    if (!mapElement) {
+        return;
+    }
 
     const locations = [
         {% for location in locations %}
@@ -41,22 +52,75 @@
         {% endfor %}
     ];
 
-    locations.forEach(function(location) {
-        const marker = L.marker([location.lat, location.lng]).addTo(map);
+    const map = L.map("location-map", {
+        scrollWheelZoom: false
+    }).setView([34.395483, 132.453592], 12);
+
+    L.tileLayer(
+        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        {
+            maxZoom: 19,
+            attribution: "&copy; OpenStreetMap contributors"
+        }
+    ).addTo(map);
+
+    const markerGroup = L.featureGroup();
+
+    locations.forEach(function (location) {
+
+        const marker = L.marker([
+            location.lat,
+            location.lng
+        ]);
 
         marker.bindPopup(`
-            <strong>${location.name}</strong><br>
-            <span>${location.area}</span><br>
-            <a href="${location.url}">View photos</a>
+            <div>
+                <strong>${location.name}</strong>
+                <div>${location.area}</div>
+                <div style="margin-top: 8px;">
+                    <a href="${location.url}">
+                        View photos
+                    </a>
+                </div>
+            </div>
         `);
+
+        marker.addTo(markerGroup);
     });
 
     if (locations.length > 0) {
-        const bounds = locations.map(location => [location.lat, location.lng]);
-        map.fitBounds(bounds, {
-            padding: [30, 30]
-        });
+
+        markerGroup.addTo(map);
+
+        if (locations.length === 1) {
+
+            map.setView(
+                [
+                    locations[0].lat,
+                    locations[0].lng
+                ],
+                14
+            );
+
+        } else {
+
+            map.fitBounds(markerGroup.getBounds(), {
+                padding: [40, 40]
+            });
+
+        }
     }
+
+    /*
+     * Make sure Leaflet correctly recognizes
+     * the map size after the page has loaded.
+     */
+    setTimeout(function () {
+        map.invalidateSize();
+    }, 100);
+
+});
+
 </script>
 
 {% endblock %}
