@@ -57,11 +57,11 @@ document.addEventListener("DOMContentLoaded", function () {
     }).setView([34.395483, 132.453592], 12);
 
     L.tileLayer(
-        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-        {
-            maxZoom: 19,
-            attribution: "&copy; OpenStreetMap contributors"
-        }
+    "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+    {
+        maxZoom: 19,
+        attribution: "&copy; OpenStreetMap contributors"
+    }
     ).addTo(map);
 
     const markerGroup = L.featureGroup();
