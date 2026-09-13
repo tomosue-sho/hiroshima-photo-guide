@@ -52,9 +52,10 @@ document.addEventListener("DOMContentLoaded", function () {
         {% endfor %}
     ];
 
-    const map = L.map("location-map", {
-        scrollWheelZoom: false
-    }).setView([34.395483, 132.453592], 12);
+    const map = L.map("location-map").setView(
+        [34.395483, 132.453592],
+        12
+    );
 
     L.tileLayer(
     "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
