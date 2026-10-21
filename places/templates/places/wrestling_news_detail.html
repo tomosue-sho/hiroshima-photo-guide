@@ -111,6 +111,38 @@
         {{ news.title }}
     </h1>
 
+{% with main_image=images|first %}
+    {% if main_image and main_image.image_key == "photo1" %}
+        <figure class="wrestling-inline-image mb-4">
+            {% if main_image.image_webp %}
+                <a href="{{ main_image.image_webp.url }}"
+                   data-lightbox="wrestling-{{ news.slug }}"
+                   data-title="{{ main_image.caption }}">
+                    <img src="{{ main_image.image_webp.url }}"
+                         alt="{{ main_image.caption|default:news.title }}"
+                         loading="eager"
+                         decoding="async">
+                </a>
+            {% elif main_image.image %}
+                <a href="{{ main_image.image.url }}"
+                   data-lightbox="wrestling-{{ news.slug }}"
+                   data-title="{{ main_image.caption }}">
+                    <img src="{{ main_image.image.url }}"
+                         alt="{{ main_image.caption|default:news.title }}"
+                         loading="eager"
+                         decoding="async">
+                </a>
+            {% endif %}
+
+            {% if main_image.caption %}
+                <figcaption class="wrestling-caption">
+                    {{ main_image.caption }}
+                </figcaption>
+            {% endif %}
+        </figure>
+    {% endif %}
+{% endwith %}
+
     {% if news.summary %}
         <p class="wrestling-article-summary">
             {{ news.summary }}

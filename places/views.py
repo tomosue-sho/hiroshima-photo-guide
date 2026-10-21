@@ -625,16 +625,21 @@ def kagura_journal_detail(request, slug):
     )
 
 
+
 def wrestling_news_list(request):
-    news_list = WrestlingNews.objects.filter(
-        is_published=True
-    ).order_by("-published_at")
+    news_list = (
+        WrestlingNews.objects
+        .filter(is_published=True)
+        .prefetch_related("images")
+        .order_by("-published_at")
+    )
 
     return render(
         request,
         "places/wrestling_news_list.html",
         {"news_list": news_list},
     )
+
 
 
 def wrestling_news_detail(request, slug):
