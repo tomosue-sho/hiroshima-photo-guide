@@ -1,11 +1,12 @@
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
+import re
 
 from .forms import MessageForm
 from .models import (
     About,Area,CarpNews,Collaborator,Gear,Location,Tag,CarpPageSettings,Photo,DiaryPost,
     DamLake,
-    KaguraPerformance,KaguraJournal,
+    KaguraPerformance,KaguraJournal,WrestlingNews, WrestlingNewsImage
 )
 
 
@@ -620,5 +621,63 @@ def kagura_journal_detail(request, slug):
         "places/kagura_journal_detail.html",
         {
             "journal": journal,
+        },
+    )
+
+
+def wrestling_news_list(request):
+    news_list = WrestlingNews.objects.filter(
+        is_published=True
+    ).order_by("-published_at")
+
+    return render(
+        request,
+        "places/wrestling_news_list.html",
+        {"news_list": news_list},
+    )
+
+
+def wrestling_news_detail(request, slug):
+    news = get_object_or_404(
+        WrestlingNews,
+        slug=slug,
+        is_published=True,
+    )
+
+    images = list(news.images.all())
+    image_by_key = {image.image_key: image for image in images}
+
+    # 本文中の [[image:photo1]] などを画像表示用の要素に分割する
+    parts = re.split(
+        r"(\[\[image:[A-Za-z0-9_-]+\]\])",
+        news.body,
+    )
+
+    body_segments = []
+
+    for part in parts:
+        match = re.fullmatch(
+            r"\[\[image:([A-Za-z0-9_-]+)\]\]",
+            part,
+        )
+
+        if match:
+            image = image_by_key.get(match.group(1))
+
+            if image:
+                body_segments.append({"image": image})
+            else:
+                body_segments.append({"text": part})
+
+        elif part:
+            body_segments.append({"text": part})
+
+    return render(
+        request,
+        "places/wrestling_news_detail.html",
+        {
+            "news": news,
+            "images": images,
+            "body_segments": body_segments,
         },
     )

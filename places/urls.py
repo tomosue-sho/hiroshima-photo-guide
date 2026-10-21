@@ -26,4 +26,6 @@ urlpatterns = [
     path( "kagura/performances/<slug:slug>/",views.kagura_performance_detail,name="kagura_performance_detail",),
     path("kagura/journal/",views.kagura_journal_list,name="kagura_journal_list",),
     path("kagura/journal/<slug:slug>/",views.kagura_journal_detail,name="kagura_journal_detail",),
+    path("wrestling/", views.wrestling_news_list, name="wrestling_news_list"),
+    path("wrestling/<slug:slug>/", views.wrestling_news_detail, name="wrestling_news_detail"),
 ]

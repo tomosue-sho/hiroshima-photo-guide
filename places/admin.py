@@ -15,6 +15,8 @@ from .models import (
     KaguraEvent,
     KaguraJournal,
     KaguraJournalPhoto,
+    WrestlingNews,
+    WrestlingNewsImage,
 )
 from .image_utils import process_photo_image
 from django.utils.html import format_html
@@ -847,3 +849,32 @@ class KaguraJournalPhotoAdmin(admin.ModelAdmin):
     readonly_fields = (
         "image_medium",
     )
+
+
+class WrestlingNewsImageInline(admin.TabularInline):
+    model = WrestlingNewsImage
+    extra = 1
+    fields = (
+        "image",
+        "image_key",
+        "caption",
+        "sort_order",
+    )
+
+
+@admin.register(WrestlingNews)
+class WrestlingNewsAdmin(admin.ModelAdmin):
+    list_display = (
+        "title",
+        "published_at",
+        "is_published",
+    )
+
+    list_filter = ("is_published",)
+    search_fields = ("title", "summary", "body")
+    prepopulated_fields = {"slug": ("title",)}
+    ordering = ("-published_at",)
+    inlines = [WrestlingNewsImageInline]
+
+
+# WrestlingNewsImage は記事のインラインから管理する

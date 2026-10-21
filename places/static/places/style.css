@@ -3217,3 +3217,25 @@ Top Back
     }
 }
 
+
+.carp-hero a {
+    display: block;
+}
+
+.carp-hero a img {
+    transition: opacity 0.25s ease;
+}
+
+.carp-hero a:hover img {
+    opacity: 0.82;
+}
+
+
+.wrestling-inline-image img {
+    display: block;
+    width: 100%;
+    max-width: 600px;
+    height: auto;
+    margin: 0 auto;
+    border-radius: 4px;
+}

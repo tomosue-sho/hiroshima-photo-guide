@@ -1962,3 +1962,96 @@ class KaguraJournalPhoto(models.Model):
                 "KAGURA JOURNAL PHOTO IMAGE SKIPPED:",
                 e,
             )
+            
+
+class WrestlingNews(models.Model):
+    title = models.CharField(max_length=200)
+    slug = models.SlugField(unique=True)
+    summary = models.TextField(blank=True)
+    body = models.TextField()
+
+    published_at = models.DateTimeField(default=timezone.now)
+    source_url = models.URLField(blank=True)
+    is_published = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ["-published_at"]
+        verbose_name = "女子プロレスニュース"
+        verbose_name_plural = "女子プロレスニュース"
+
+    def __str__(self):
+        return self.title
+
+
+class WrestlingNewsImage(models.Model):
+    news = models.ForeignKey(
+        WrestlingNews,
+        on_delete=models.CASCADE,
+        related_name="images",
+    )
+
+    image = models.ImageField(
+        upload_to="wrestling/",
+    )
+
+    image_webp = models.ImageField(
+        upload_to="wrestling/webp/",
+        blank=True,
+        null=True,
+    )
+
+    # 本文中で [[image:photo1]] のように参照するキー
+    image_key = models.SlugField(max_length=40)
+
+    caption = models.CharField(max_length=200, blank=True)
+    sort_order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ["sort_order", "id"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["news", "image_key"],
+                name="unique_wrestling_image_key_per_news",
+            )
+        ]
+        verbose_name = "女子プロレス記事画像"
+        verbose_name_plural = "女子プロレス記事画像"
+
+    def save(self, *args, **kwargs):
+        old_image_name = None
+
+        if self.pk:
+            old = WrestlingNewsImage.objects.get(pk=self.pk)
+            old_image_name = old.image.name
+
+        super().save(*args, **kwargs)
+
+        if not self.image:
+            return
+
+        image_changed = old_image_name != self.image.name
+
+        if image_changed or not self.image_webp:
+            try:
+                webp = create_webp_variant(
+                    self.image,
+                    max_width=1200,
+                    quality=78,
+                )
+
+                self.image_webp.save(
+                    build_variant_filename(
+                        self.image.name,
+                        "medium",
+                    ),
+                    webp,
+                    save=False,
+                )
+
+                super().save(update_fields=["image_webp"])
+
+            except Exception as e:
+                print("WRESTLING IMAGE SKIPPED:", e)
+
+    def __str__(self):
+        return f"{self.news.title} - {self.image_key}"

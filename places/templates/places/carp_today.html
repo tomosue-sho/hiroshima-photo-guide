@@ -8,18 +8,19 @@ Carp Today | Hiroshima Through Film
 
 {% block content %}
 
+
 {% if page_settings.hero_image_webp %}
-
 <div class="carp-hero mb-5">
-
-    <img src="{{ page_settings.hero_image_webp.url }}"
-         alt="{{ page_settings.title }}"
-         loading="eager"
-         decoding="async">
-
+    <a href="{% url 'wrestling_news_list' %}"
+       aria-label="Enter the wrestling news section">
+        <img src="{{ page_settings.hero_image_webp.url }}"
+             alt="{{ page_settings.title }}"
+             loading="eager"
+             decoding="async">
+    </a>
 </div>
-
 {% endif %}
+
 <h1 class="display-5 mb-4">
     ⚾ Carp Today
 </h1>

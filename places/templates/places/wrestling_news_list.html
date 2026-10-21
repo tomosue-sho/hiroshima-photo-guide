@@ -1,0 +1,111 @@
+
+{% extends "places/base.html" %}
+
+{% block title %}Ringside | Hiroshima Through Film{% endblock %}
+
+{% block content %}
+<style>
+    .wrestling-page {
+        background: #111;
+        color: #eee;
+        padding: 28px;
+        border-radius: 8px;
+        margin-bottom: 40px;
+    }
+
+    .wrestling-kicker {
+        color: #b85c65;
+        font-size: 0.75rem;
+        letter-spacing: 0.25em;
+        text-transform: uppercase;
+    }
+
+    .wrestling-heading {
+        font-family: Georgia, serif;
+        letter-spacing: 0.06em;
+        border-bottom: 1px solid #633039;
+        padding-bottom: 16px;
+    }
+
+    .wrestling-card {
+        display: block;
+        height: 100%;
+        padding: 22px;
+        color: #eee;
+        background: #1b1b1b;
+        border: 1px solid #333;
+        text-decoration: none;
+        transition: border-color 0.2s, background 0.2s;
+    }
+
+    .wrestling-card:hover {
+        color: #fff;
+        background: #242020;
+        border-color: #9b4652;
+    }
+
+    .wrestling-date {
+        color: #b6a0a2;
+        font-size: 0.8rem;
+    }
+
+    .wrestling-summary {
+        color: #c7c7c7;
+    }
+
+    .wrestling-empty {
+        color: #aaa;
+        border: 1px solid #333;
+        padding: 24px;
+    }
+
+    @media (max-width: 576px) {
+        .wrestling-page {
+            padding: 18px;
+        }
+    }
+</style>
+
+<div class="wrestling-page">
+    <p class="wrestling-kicker mb-2">Beyond the Ropes</p>
+
+    <h1 class="display-5 wrestling-heading">
+        RINGSIDE
+    </h1>
+
+    <p class="text-secondary mt-3 mb-5">
+        Women's Professional Wrestling
+    </p>
+
+    {% if news_list %}
+        <div class="row g-3">
+            {% for news in news_list %}
+                <div class="col-12">
+                    <a href="{% url 'wrestling_news_detail' news.slug %}"
+                       class="wrestling-card">
+
+                        <p class="wrestling-date mb-2">
+                            {{ news.published_at|date:"Y.m.d" }}
+                        </p>
+
+                        <h2 class="h4 mb-3">
+                            {{ news.title }}
+                        </h2>
+
+                        {% if news.summary %}
+                            <p class="wrestling-summary mb-0">
+                                {{ news.summary|truncatewords:45 }}
+                            </p>
+                        {% endif %}
+
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="wrestling-empty">
+            No stories yet. Check back soon.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

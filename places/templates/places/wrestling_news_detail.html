@@ -1,0 +1,209 @@
+
+{% extends "places/base.html" %}
+
+{% block title %}{{ news.title }} | Ringside{% endblock %}
+
+{% block content %}
+<style>
+    .wrestling-article {
+        background: #111;
+        color: #eee;
+        padding: 28px;
+        border-radius: 8px;
+        margin-bottom: 40px;
+    }
+
+    .wrestling-back {
+        color: #d18b92;
+        text-decoration: none;
+        font-size: 0.9rem;
+    }
+
+    .wrestling-back:hover {
+        color: #fff;
+    }
+
+    .wrestling-article-date {
+        color: #b6a0a2;
+        font-size: 0.85rem;
+    }
+
+    .wrestling-article-title {
+        line-height: 1.4;
+        overflow-wrap: anywhere;
+    }
+
+    .wrestling-article-summary {
+        color: #ccc;
+        font-size: 1.1rem;
+        line-height: 1.9;
+    }
+
+    .wrestling-article-body {
+        color: #ddd;
+        line-height: 2;
+        overflow-wrap: anywhere;
+    }
+
+    .wrestling-inline-image {
+        margin: 28px 0;
+    }
+
+    .wrestling-inline-image img {
+        display: block;
+        width: 100%;
+        max-width: 900px;
+        height: auto;
+        margin: 0 auto;
+        border-radius: 4px;
+    }
+
+    .wrestling-caption {
+        color: #aaa;
+        font-size: 0.85rem;
+        margin-top: 8px;
+        text-align: center;
+    }
+
+    .wrestling-gallery {
+        border-top: 1px solid #633039;
+        margin-top: 40px;
+        padding-top: 28px;
+    }
+
+    .wrestling-gallery img {
+        width: 100%;
+        height: 220px;
+        object-fit: cover;
+        border-radius: 4px;
+    }
+
+    .wrestling-gallery a {
+        display: block;
+    }
+
+    .wrestling-source {
+        color: #d18b92;
+    }
+
+    @media (max-width: 576px) {
+        .wrestling-article {
+            padding: 18px;
+        }
+
+        .wrestling-gallery img {
+            height: 180px;
+        }
+    }
+</style>
+
+<article class="wrestling-article">
+    <a href="{% url 'wrestling_news_list' %}"
+       class="wrestling-back">
+        ← Back to Ringside
+    </a>
+
+    <p class="wrestling-article-date mt-4 mb-2">
+        RINGSIDE / {{ news.published_at|date:"Y.m.d" }}
+    </p>
+
+    <h1 class="display-5 wrestling-article-title mb-4">
+        {{ news.title }}
+    </h1>
+
+    {% if news.summary %}
+        <p class="wrestling-article-summary">
+            {{ news.summary }}
+        </p>
+    {% endif %}
+
+    <hr style="border-color: #633039;">
+
+    <div class="wrestling-article-body">
+        {% for segment in body_segments %}
+            {% if segment.image %}
+                <figure class="wrestling-inline-image">
+                    {% if segment.image.image_webp %}
+                        <a href="{{ segment.image.image_webp.url }}"
+                           data-lightbox="wrestling-{{ news.slug }}"
+                           data-title="{{ segment.image.caption }}">
+                            <img src="{{ segment.image.image_webp.url }}"
+                                 alt="{{ segment.image.caption|default:news.title }}"
+                                 loading="lazy"
+                                 decoding="async">
+                        </a>
+                    {% elif segment.image.image %}
+                        <a href="{{ segment.image.image.url }}"
+                           data-lightbox="wrestling-{{ news.slug }}"
+                           data-title="{{ segment.image.caption }}">
+                            <img src="{{ segment.image.image.url }}"
+                                 alt="{{ segment.image.caption|default:news.title }}"
+                                 loading="lazy"
+                                 decoding="async">
+                        </a>
+                    {% endif %}
+
+                    {% if segment.image.caption %}
+                        <figcaption class="wrestling-caption">
+                            {{ segment.image.caption }}
+                        </figcaption>
+                    {% endif %}
+                </figure>
+            {% else %}
+                {{ segment.text|linebreaks }}
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    {% if images %}
+        <section class="wrestling-gallery">
+            <h2 class="h4 mb-4">PHOTO GALLERY</h2>
+
+            <div class="row g-3">
+                {% for image in images %}
+                    <div class="col-6 col-md-4">
+                        {% if image.image_webp %}
+                            <a href="{{ image.image_webp.url }}"
+                               data-lightbox="wrestling-gallery-{{ news.slug }}"
+                               data-title="{{ image.caption }}">
+                                <img src="{{ image.image_webp.url }}"
+                                     alt="{{ image.caption|default:news.title }}"
+                                     loading="lazy"
+                                     decoding="async">
+                            </a>
+                        {% elif image.image %}
+                            <a href="{{ image.image.url }}"
+                               data-lightbox="wrestling-gallery-{{ news.slug }}"
+                               data-title="{{ image.caption }}">
+                                <img src="{{ image.image.url }}"
+                                     alt="{{ image.caption|default:news.title }}"
+                                     loading="lazy"
+                                     decoding="async">
+                            </a>
+                        {% endif %}
+
+                        {% if image.caption %}
+                            <p class="wrestling-caption">
+                                {{ image.caption }}
+                            </p>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+    {% endif %}
+
+    {% if news.source_url %}
+        <hr style="border-color: #633039;">
+
+        <p class="mt-4">
+            <a href="{{ news.source_url }}"
+               target="_blank"
+               rel="noopener noreferrer"
+               class="wrestling-source">
+                Original Source →
+            </a>
+        </p>
+    {% endif %}
+</article>
+{% endblock %}
